@@ -2,6 +2,7 @@
 Main XENO Dashboard Window - Discord-inspired Gaming UI
 """
 import sys
+import webbrowser
 from PyQt6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, 
     QPushButton, QLabel, QTextEdit, QLineEdit, QScrollArea,
@@ -500,20 +501,62 @@ class XenoMainWindow(QMainWindow):
         header.setStyleSheet(f"font-size: 24px; font-weight: bold; color: {self.ACCENT_BLUE}; margin-bottom: 20px;")
         layout.addWidget(header)
         
+        # Action buttons (always show)
+        btn_layout = QHBoxLayout()
+        
+        # Gmail Login Button
+        gmail_login_btn = QPushButton("🌐 Login to Gmail")
+        gmail_login_btn.setStyleSheet(f"""
+            QPushButton {{
+                background-color: #4285F4;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 4px;
+                font-weight: bold;
+            }}
+            QPushButton:hover {{
+                background-color: #357AE8;
+            }}
+        """)
+        gmail_login_btn.clicked.connect(lambda: self._open_login_page("https://mail.google.com"))
+        btn_layout.addWidget(gmail_login_btn)
+        
+        # Get App Password Button
+        app_pass_btn = QPushButton("🔑 Get App Password")
+        app_pass_btn.setStyleSheet(f"""
+            QPushButton {{
+                background-color: {self.ACCENT_PURPLE};
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 4px;
+                font-weight: bold;
+            }}
+            QPushButton:hover {{
+                background-color: #7c3aed;
+            }}
+        """)
+        app_pass_btn.clicked.connect(lambda: self._open_login_page("https://myaccount.google.com/apppasswords"))
+        btn_layout.addWidget(app_pass_btn)
+        
+        btn_layout.addStretch()
+        layout.addLayout(btn_layout)
+        
         if not self.email_handler:
-            info = QLabel("⚠️ Email not configured. Please add your email credentials in Settings.")
-            info.setStyleSheet(f"color: {self.ACCENT_PURPLE}; font-size: 14px;")
+            info = QLabel("⚠️ Email not configured.\n\n1. Click 'Login to Gmail' above\n2. Click 'Get App Password' to create one\n3. Add credentials to .env file")
+            info.setStyleSheet(f"color: {self.TEXT_SECONDARY}; font-size: 14px; margin: 20px;")
             layout.addWidget(info)
             layout.addStretch()
             return page
         
-        # Action buttons
-        btn_layout = QHBoxLayout()
+        # Refresh button
+        refresh_btn_layout = QHBoxLayout()
         refresh_btn = QPushButton("🔄 Refresh Emails")
         refresh_btn.clicked.connect(self._refresh_emails)
-        btn_layout.addWidget(refresh_btn)
-        btn_layout.addStretch()
-        layout.addLayout(btn_layout)
+        refresh_btn_layout.addWidget(refresh_btn)
+        refresh_btn_layout.addStretch()
+        layout.addLayout(refresh_btn_layout)
         
         # Email list
         self.email_list = QListWidget()
@@ -579,9 +622,49 @@ class XenoMainWindow(QMainWindow):
         header.setStyleSheet(f"font-size: 24px; font-weight: bold; color: {self.ACCENT_BLUE}; margin-bottom: 20px;")
         layout.addWidget(header)
         
+        # LinkedIn Login Button (always show)
+        linkedin_layout = QHBoxLayout()
+        
+        linkedin_login_btn = QPushButton("🌐 Login to LinkedIn")
+        linkedin_login_btn.setStyleSheet(f"""
+            QPushButton {{
+                background-color: #0A66C2;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 4px;
+                font-weight: bold;
+            }}
+            QPushButton:hover {{
+                background-color: #004182;
+            }}
+        """)
+        linkedin_login_btn.clicked.connect(lambda: self._open_login_page("https://www.linkedin.com"))
+        linkedin_layout.addWidget(linkedin_login_btn)
+        
+        indeed_btn = QPushButton("🌐 Visit Indeed")
+        indeed_btn.setStyleSheet(f"""
+            QPushButton {{
+                background-color: #2164F3;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 4px;
+                font-weight: bold;
+            }}
+            QPushButton:hover {{
+                background-color: #1850C9;
+            }}
+        """)
+        indeed_btn.clicked.connect(lambda: self._open_login_page("https://www.indeed.com"))
+        linkedin_layout.addWidget(indeed_btn)
+        
+        linkedin_layout.addStretch()
+        layout.addLayout(linkedin_layout)
+        
         if not self.job_automation:
-            info = QLabel("⚠️ Job automation not available.")
-            info.setStyleSheet(f"color: {self.ACCENT_PURPLE}; font-size: 14px;")
+            info = QLabel("⚠️ Job automation not available.\n\nYou can still use the login buttons above to search manually.")
+            info.setStyleSheet(f"color: {self.TEXT_SECONDARY}; font-size: 14px; margin: 20px;")
             layout.addWidget(info)
             layout.addStretch()
             return page
@@ -667,9 +750,49 @@ class XenoMainWindow(QMainWindow):
         header.setStyleSheet(f"font-size: 24px; font-weight: bold; color: {self.ACCENT_BLUE}; margin-bottom: 20px;")
         layout.addWidget(header)
         
+        # GitHub Login Buttons (always show)
+        login_layout = QHBoxLayout()
+        
+        github_login_btn = QPushButton("🌐 Login to GitHub")
+        github_login_btn.setStyleSheet(f"""
+            QPushButton {{
+                background-color: #238636;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 4px;
+                font-weight: bold;
+            }}
+            QPushButton:hover {{
+                background-color: #2ea043;
+            }}
+        """)
+        github_login_btn.clicked.connect(lambda: self._open_login_page("https://github.com"))
+        login_layout.addWidget(github_login_btn)
+        
+        token_btn = QPushButton("🔑 Get GitHub Token")
+        token_btn.setStyleSheet(f"""
+            QPushButton {{
+                background-color: {self.ACCENT_PURPLE};
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 4px;
+                font-weight: bold;
+            }}
+            QPushButton:hover {{
+                background-color: #7c3aed;
+            }}
+        """)
+        token_btn.clicked.connect(lambda: self._open_login_page("https://github.com/settings/tokens"))
+        login_layout.addWidget(token_btn)
+        
+        login_layout.addStretch()
+        layout.addLayout(login_layout)
+        
         if not self.github_manager:
-            info = QLabel("⚠️ GitHub not configured. Please add your GitHub credentials in Settings.")
-            info.setStyleSheet(f"color: {self.ACCENT_PURPLE}; font-size: 14px;")
+            info = QLabel("⚠️ GitHub not configured.\n\n1. Click 'Login to GitHub' above\n2. Click 'Get GitHub Token' to create a personal access token\n3. Add credentials to .env file")
+            info.setStyleSheet(f"color: {self.TEXT_SECONDARY}; font-size: 14px; margin: 20px;")
             layout.addWidget(info)
             layout.addStretch()
             return page
@@ -887,6 +1010,13 @@ class XenoMainWindow(QMainWindow):
         else:
             self.chat_history.append(f'<div style="color: {self.ACCENT_PURPLE}; font-weight: bold;">XENO:</div>')
             self.chat_history.append(f'<div style="margin-bottom: 15px;">AI module not yet connected. Please add your OpenAI API key in Settings → Run setup again with: python src\\jarvis.py --setup</div>')
+    
+    def _open_login_page(self, url: str):
+        """Open a login page in the default browser"""
+        try:
+            webbrowser.open(url)
+        except Exception as e:
+            print(f"Error opening browser: {e}")
         
     def closeEvent(self, event):
         """Handle window close - minimize to tray instead"""
