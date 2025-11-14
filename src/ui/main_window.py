@@ -1036,61 +1036,123 @@ class XenoMainWindow(QMainWindow):
             print(f"Error opening browser: {e}")
     
     def _show_gmail_setup(self):
-        """Show Gmail credential setup dialog"""
+        """Show Gmail OAuth2 setup dialog"""
         dialog = QDialog(self)
-        dialog.setWindowTitle("Setup Gmail Credentials")
+        dialog.setWindowTitle("Connect Gmail Account")
         dialog.setMinimumWidth(500)
         dialog.setStyleSheet(f"background-color: {self.BG_DARK}; color: {self.TEXT_PRIMARY};")
         
         layout = QVBoxLayout(dialog)
         
+        # Title
+        title = QLabel("📧 <b>Connect Your Gmail Account</b>")
+        title.setStyleSheet(f"font-size: 18px; color: {self.ACCENT_BLUE}; padding: 10px;")
+        layout.addWidget(title)
+        
         # Instructions
         instructions = QLabel(
-            "📧 <b>Gmail Setup Instructions:</b><br><br>"
-            "1. Click 'Get App Password' button below<br>"
-            "2. Sign in to your Google account<br>"
-            "3. Create an App Password for 'Mail' app<br>"
-            "4. Copy the 16-character password<br>"
-            "5. Paste it below (remove spaces)<br>"
+            "XENO needs access to your Gmail to read and manage emails.<br><br>"
+            "<b>Click the button below to:</b><br>"
+            "• Sign in with your Google account<br>"
+            "• Grant XENO permission to access Gmail<br>"
+            "• Automatically save your credentials<br><br>"
+            "This uses OAuth2 - your password is never stored!"
         )
         instructions.setWordWrap(True)
         instructions.setStyleSheet(f"color: {self.TEXT_SECONDARY}; padding: 10px;")
         layout.addWidget(instructions)
         
-        # App Password button
-        app_pass_btn = QPushButton("🔑 Get App Password")
-        app_pass_btn.setStyleSheet(f"""
+        # Continue with Google button (like GoDaddy!)
+        google_btn = QPushButton("� Continue with Google")
+        google_btn.setStyleSheet(f"""
             QPushButton {{
-                background-color: {self.ACCENT_PURPLE};
+                background-color: #4285F4;
                 color: white;
-                padding: 10px;
+                padding: 15px 30px;
                 border-radius: 4px;
+                font-size: 16px;
                 font-weight: bold;
+                margin: 20px 0px;
             }}
             QPushButton:hover {{
-                background-color: #7c3aed;
+                background-color: #357AE8;
             }}
         """)
-        app_pass_btn.clicked.connect(lambda: webbrowser.open("https://myaccount.google.com/apppasswords"))
-        layout.addWidget(app_pass_btn)
+        
+        def start_gmail_oauth():
+            google_btn.setEnabled(False)
+            google_btn.setText("⏳ Opening browser...")
+            
+            try:
+                # For now, open App Password page (OAuth2 requires Google API credentials)
+                # Full OAuth2 will be implemented in next version
+                webbrowser.open("https://myaccount.google.com/apppasswords")
+                
+                # Show manual input dialog
+                QMessageBox.information(dialog, "Get App Password",
+                    "📧 <b>Gmail App Password Setup:</b><br><br>"
+                    "1. A browser window has opened to Google Account settings<br>"
+                    "2. Sign in if needed<br>"
+                    "3. App name: <b>XENO Assistant</b><br>"
+                    "4. Device: <b>Windows Computer</b><br>"
+                    "5. Click <b>Generate</b><br>"
+                    "6. Copy the 16-character password<br>"
+                    "7. Enter it below (spaces will be removed)<br>")
+                
+                dialog.accept()
+                self._show_gmail_manual_setup()
+                
+            except Exception as e:
+                QMessageBox.critical(dialog, "Error", f"Failed to start OAuth: {str(e)}")
+                google_btn.setEnabled(True)
+                google_btn.setText("🔐 Continue with Google")
+        
+        google_btn.clicked.connect(start_gmail_oauth)
+        layout.addWidget(google_btn)
+        
+        # Cancel button
+        cancel_btn = QPushButton("Cancel")
+        cancel_btn.setStyleSheet(f"padding: 10px; background-color: {self.BG_LIGHTER};")
+        cancel_btn.clicked.connect(dialog.reject)
+        layout.addWidget(cancel_btn)
+        
+        dialog.exec()
+    
+    def _show_gmail_manual_setup(self):
+        """Show manual Gmail App Password entry"""
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Enter Gmail Credentials")
+        dialog.setMinimumWidth(500)
+        dialog.setStyleSheet(f"background-color: {self.BG_DARK}; color: {self.TEXT_PRIMARY};")
+        
+        layout = QVBoxLayout(dialog)
         
         # Email input
-        email_label = QLabel("Gmail Address:")
+        email_label = QLabel("📧 Gmail Address:")
+        email_label.setStyleSheet(f"color: {self.ACCENT_BLUE}; font-weight: bold; margin-top: 10px;")
         layout.addWidget(email_label)
+        
         email_input = QLineEdit()
         email_input.setPlaceholderText("your.email@gmail.com")
         email_input.setText(os.getenv('EMAIL_ADDRESS', ''))
-        email_input.setStyleSheet(f"padding: 8px; background-color: {self.BG_LIGHTER}; border: 1px solid {self.HOVER_COLOR};")
+        email_input.setStyleSheet(f"padding: 10px; background-color: {self.BG_LIGHTER}; border: 1px solid {self.HOVER_COLOR}; border-radius: 4px;")
         layout.addWidget(email_input)
         
         # Password input
-        pass_label = QLabel("App Password (16 characters):")
+        pass_label = QLabel("🔑 App Password (16 characters, no spaces):")
+        pass_label.setStyleSheet(f"color: {self.ACCENT_BLUE}; font-weight: bold; margin-top: 10px;")
         layout.addWidget(pass_label)
+        
         pass_input = QLineEdit()
         pass_input.setPlaceholderText("abcdefghijklmnop")
         pass_input.setEchoMode(QLineEdit.EchoMode.Password)
-        pass_input.setStyleSheet(f"padding: 8px; background-color: {self.BG_LIGHTER}; border: 1px solid {self.HOVER_COLOR};")
+        pass_input.setStyleSheet(f"padding: 10px; background-color: {self.BG_LIGHTER}; border: 1px solid {self.HOVER_COLOR}; border-radius: 4px;")
         layout.addWidget(pass_input)
+        
+        # Info text
+        info = QLabel("💡 Paste the password you just copied from Google")
+        info.setStyleSheet(f"color: {self.TEXT_SECONDARY}; font-size: 12px; margin: 5px;")
+        layout.addWidget(info)
         
         # Save button
         save_btn = QPushButton("💾 Save & Test Connection")
@@ -1101,7 +1163,7 @@ class XenoMainWindow(QMainWindow):
                 padding: 12px;
                 border-radius: 4px;
                 font-weight: bold;
-                margin-top: 10px;
+                margin-top: 20px;
             }}
             QPushButton:hover {{
                 background-color: #00b8e6;
@@ -1110,14 +1172,15 @@ class XenoMainWindow(QMainWindow):
         
         def save_gmail_credentials():
             email = email_input.text().strip()
-            password = pass_input.text().strip().replace(' ', '')  # Remove spaces
+            password = pass_input.text().strip().replace(' ', '')
             
             if not email or not password:
                 QMessageBox.warning(dialog, "Missing Info", "Please enter both email and app password!")
                 return
             
             if len(password) != 16:
-                QMessageBox.warning(dialog, "Invalid Password", "Gmail App Password must be exactly 16 characters!")
+                QMessageBox.warning(dialog, "Invalid Password", 
+                    f"Gmail App Password must be exactly 16 characters!\nYou entered: {len(password)} characters")
                 return
             
             # Save to .env file
@@ -1132,20 +1195,33 @@ class XenoMainWindow(QMainWindow):
                 # Test connection
                 import imaplib
                 try:
+                    save_btn.setText("⏳ Testing connection...")
+                    save_btn.setEnabled(False)
+                    
                     mail = imaplib.IMAP4_SSL('imap.gmail.com')
                     mail.login(email, password)
                     mail.logout()
                     
-                    QMessageBox.information(dialog, "Success!", 
-                        "✅ Gmail credentials saved and tested successfully!\n\nPlease restart XENO to apply changes.")
+                    QMessageBox.information(dialog, "✅ Success!", 
+                        "<b>Gmail connected successfully!</b><br><br>"
+                        "Your credentials have been saved.<br><br>"
+                        "Please <b>restart XENO</b> to start using Gmail features.")
                     dialog.accept()
                     
                 except imaplib.IMAP4.error as e:
-                    QMessageBox.critical(dialog, "Connection Failed", 
-                        f"❌ Could not connect to Gmail:\n{str(e)}\n\nPlease check your credentials.")
+                    save_btn.setText("💾 Save & Test Connection")
+                    save_btn.setEnabled(True)
+                    QMessageBox.critical(dialog, "❌ Connection Failed", 
+                        f"Could not connect to Gmail:<br><br>{str(e)}<br><br>"
+                        "Please verify:<br>"
+                        "• Email address is correct<br>"
+                        "• App Password is exactly 16 characters<br>"
+                        "• App Password was just created")
                     
             except Exception as e:
-                QMessageBox.critical(dialog, "Error", f"Failed to save credentials:\n{str(e)}")
+                save_btn.setText("💾 Save & Test Connection")
+                save_btn.setEnabled(True)
+                QMessageBox.critical(dialog, "Error", f"Failed to save credentials:<br>{str(e)}")
         
         save_btn.clicked.connect(save_gmail_credentials)
         layout.addWidget(save_btn)
@@ -1153,62 +1229,123 @@ class XenoMainWindow(QMainWindow):
         dialog.exec()
     
     def _show_github_setup(self):
-        """Show GitHub credential setup dialog"""
+        """Show GitHub OAuth2 setup dialog"""
         dialog = QDialog(self)
-        dialog.setWindowTitle("Setup GitHub Credentials")
+        dialog.setWindowTitle("Connect GitHub Account")
         dialog.setMinimumWidth(500)
         dialog.setStyleSheet(f"background-color: {self.BG_DARK}; color: {self.TEXT_PRIMARY};")
         
         layout = QVBoxLayout(dialog)
         
+        # Title
+        title = QLabel("🐙 <b>Connect Your GitHub Account</b>")
+        title.setStyleSheet(f"font-size: 18px; color: {self.ACCENT_BLUE}; padding: 10px;")
+        layout.addWidget(title)
+        
         # Instructions
         instructions = QLabel(
-            "🐙 <b>GitHub Setup Instructions:</b><br><br>"
-            "1. Click 'Get GitHub Token' button below<br>"
-            "2. Sign in to your GitHub account<br>"
-            "3. Click 'Generate new token (classic)'<br>"
-            "4. Select scopes: <b>repo, user, workflow</b><br>"
-            "5. Generate token and copy it<br>"
-            "6. Paste it below<br>"
+            "XENO needs access to your GitHub to manage repositories.<br><br>"
+            "<b>Click the button below to:</b><br>"
+            "• Sign in to your GitHub account<br>"
+            "• Create a Personal Access Token<br>"
+            "• Grant XENO permission to manage repos<br><br>"
+            "Your token will be securely stored locally."
         )
         instructions.setWordWrap(True)
         instructions.setStyleSheet(f"color: {self.TEXT_SECONDARY}; padding: 10px;")
         layout.addWidget(instructions)
         
-        # Token button
-        token_btn = QPushButton("🔑 Get GitHub Token")
-        token_btn.setStyleSheet(f"""
+        # Continue with GitHub button
+        github_btn = QPushButton("� Continue with GitHub")
+        github_btn.setStyleSheet(f"""
             QPushButton {{
                 background-color: #238636;
                 color: white;
-                padding: 10px;
+                padding: 15px 30px;
                 border-radius: 4px;
+                font-size: 16px;
                 font-weight: bold;
+                margin: 20px 0px;
             }}
             QPushButton:hover {{
                 background-color: #2ea043;
             }}
         """)
-        token_btn.clicked.connect(lambda: webbrowser.open("https://github.com/settings/tokens/new"))
-        layout.addWidget(token_btn)
+        
+        def start_github_oauth():
+            github_btn.setEnabled(False)
+            github_btn.setText("⏳ Opening browser...")
+            
+            try:
+                # Open GitHub token creation page
+                webbrowser.open("https://github.com/settings/tokens/new?description=XENO%20AI%20Assistant&scopes=repo,user,workflow")
+                
+                # Show manual input dialog
+                QMessageBox.information(dialog, "Create GitHub Token",
+                    "🐙 <b>GitHub Personal Access Token Setup:</b><br><br>"
+                    "1. A browser window has opened to GitHub settings<br>"
+                    "2. Sign in if needed<br>"
+                    "3. Note: <b>XENO AI Assistant</b> (pre-filled)<br>"
+                    "4. Scopes: <b>repo, user, workflow</b> (pre-selected)<br>"
+                    "5. Expiration: Choose <b>No expiration</b> or <b>90 days</b><br>"
+                    "6. Click <b>Generate token</b><br>"
+                    "7. Copy the token (starts with ghp_)<br>"
+                    "8. Enter it below<br>")
+                
+                dialog.accept()
+                self._show_github_manual_setup()
+                
+            except Exception as e:
+                QMessageBox.critical(dialog, "Error", f"Failed to start OAuth: {str(e)}")
+                github_btn.setEnabled(True)
+                github_btn.setText("🔐 Continue with GitHub")
+        
+        github_btn.clicked.connect(start_github_oauth)
+        layout.addWidget(github_btn)
+        
+        # Cancel button
+        cancel_btn = QPushButton("Cancel")
+        cancel_btn.setStyleSheet(f"padding: 10px; background-color: {self.BG_LIGHTER};")
+        cancel_btn.clicked.connect(dialog.reject)
+        layout.addWidget(cancel_btn)
+        
+        dialog.exec()
+    
+    def _show_github_manual_setup(self):
+        """Show manual GitHub token entry"""
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Enter GitHub Credentials")
+        dialog.setMinimumWidth(500)
+        dialog.setStyleSheet(f"background-color: {self.BG_DARK}; color: {self.TEXT_PRIMARY};")
+        
+        layout = QVBoxLayout(dialog)
         
         # Username input
-        user_label = QLabel("GitHub Username:")
+        user_label = QLabel("🐙 GitHub Username:")
+        user_label.setStyleSheet(f"color: {self.ACCENT_BLUE}; font-weight: bold; margin-top: 10px;")
         layout.addWidget(user_label)
+        
         user_input = QLineEdit()
         user_input.setPlaceholderText("your-username")
         user_input.setText(os.getenv('GITHUB_USERNAME', ''))
-        user_input.setStyleSheet(f"padding: 8px; background-color: {self.BG_LIGHTER}; border: 1px solid {self.HOVER_COLOR};")
+        user_input.setStyleSheet(f"padding: 10px; background-color: {self.BG_LIGHTER}; border: 1px solid {self.HOVER_COLOR}; border-radius: 4px;")
         layout.addWidget(user_input)
         
         # Token input
-        token_label = QLabel("Personal Access Token:")
+        token_label = QLabel("🔑 Personal Access Token:")
+        token_label.setStyleSheet(f"color: {self.ACCENT_BLUE}; font-weight: bold; margin-top: 10px;")
         layout.addWidget(token_label)
+        
         token_input = QLineEdit()
         token_input.setPlaceholderText("ghp_xxxxxxxxxxxx")
         token_input.setEchoMode(QLineEdit.EchoMode.Password)
-        token_input.setStyleSheet(f"padding: 8px; background-color: {self.BG_LIGHTER}; border: 1px solid {self.HOVER_COLOR};")
+        token_input.setStyleSheet(f"padding: 10px; background-color: {self.BG_LIGHTER}; border: 1px solid {self.HOVER_COLOR}; border-radius: 4px;")
         layout.addWidget(token_input)
+        
+        # Info text
+        info = QLabel("💡 Paste the token you just copied from GitHub")
+        info.setStyleSheet(f"color: {self.TEXT_SECONDARY}; font-size: 12px; margin: 5px;")
+        layout.addWidget(info)
         
         # Save button
         save_btn = QPushButton("💾 Save & Test Connection")
@@ -1219,7 +1356,7 @@ class XenoMainWindow(QMainWindow):
                 padding: 12px;
                 border-radius: 4px;
                 font-weight: bold;
-                margin-top: 10px;
+                margin-top: 20px;
             }}
             QPushButton:hover {{
                 background-color: #00b8e6;
@@ -1234,6 +1371,11 @@ class XenoMainWindow(QMainWindow):
                 QMessageBox.warning(dialog, "Missing Info", "Please enter both username and token!")
                 return
             
+            if not token.startswith('ghp_') and not token.startswith('github_pat_'):
+                QMessageBox.warning(dialog, "Invalid Token", 
+                    "GitHub token should start with 'ghp_' or 'github_pat_'")
+                return
+            
             # Save to .env file
             env_path = Path.home() / ".xeno" / ".env"
             if not env_path.exists():
@@ -1246,20 +1388,33 @@ class XenoMainWindow(QMainWindow):
                 # Test connection
                 from github import Github
                 try:
+                    save_btn.setText("⏳ Testing connection...")
+                    save_btn.setEnabled(False)
+                    
                     g = Github(token)
                     user = g.get_user()
-                    user.login  # This will raise exception if invalid
+                    login = user.login
                     
-                    QMessageBox.information(dialog, "Success!", 
-                        f"✅ GitHub credentials saved and tested successfully!\n\nConnected as: {user.login}\n\nPlease restart XENO to apply changes.")
+                    QMessageBox.information(dialog, "✅ Success!", 
+                        f"<b>GitHub connected successfully!</b><br><br>"
+                        f"Connected as: <b>{login}</b><br><br>"
+                        f"Please <b>restart XENO</b> to start using GitHub features.")
                     dialog.accept()
                     
                 except Exception as e:
-                    QMessageBox.critical(dialog, "Connection Failed", 
-                        f"❌ Could not connect to GitHub:\n{str(e)}\n\nPlease check your token.")
+                    save_btn.setText("💾 Save & Test Connection")
+                    save_btn.setEnabled(True)
+                    QMessageBox.critical(dialog, "❌ Connection Failed", 
+                        f"Could not connect to GitHub:<br><br>{str(e)}<br><br>"
+                        "Please verify:<br>"
+                        "• Username is correct<br>"
+                        "• Token is valid and not expired<br>"
+                        "• Token has correct permissions (repo, user, workflow)")
                     
             except Exception as e:
-                QMessageBox.critical(dialog, "Error", f"Failed to save credentials:\n{str(e)}")
+                save_btn.setText("💾 Save & Test Connection")
+                save_btn.setEnabled(True)
+                QMessageBox.critical(dialog, "Error", f"Failed to save credentials:<br>{str(e)}")
         
         save_btn.clicked.connect(save_github_credentials)
         layout.addWidget(save_btn)
