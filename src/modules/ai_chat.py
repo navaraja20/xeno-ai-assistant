@@ -21,14 +21,15 @@ class AIChat:
         self.client = None
         
         # Try Google Gemini first (completely free!)
-        gemini_key = os.getenv('GEMINI_API_KEY')
+        gemini_key = os.getenv('GEMINI_API_KEY') or os.getenv('GOOGLE_API_KEY')
         if gemini_key:
             try:
                 import google.generativeai as genai
                 genai.configure(api_key=gemini_key)
-                self.client = genai.GenerativeModel('gemini-pro')
+                # Use Gemini 2.5 Flash - fastest and free!
+                self.client = genai.GenerativeModel('gemini-2.5-flash')
                 self.provider = 'gemini'
-                print("✅ Using FREE Google Gemini AI")
+                print("✅ Using FREE Google Gemini 2.5 Flash")
                 return
             except Exception as e:
                 print(f"Could not initialize Gemini: {e}")
