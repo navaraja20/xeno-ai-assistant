@@ -190,6 +190,10 @@ class AIChat:
     def clear_history(self):
         """Clear conversation history"""
         self.conversation_history = []
+    
+    def is_available(self) -> bool:
+        """Check if AI is available and configured"""
+        return self.client is not None and self.provider is not None
 
 
 def get_ai_chat(config=None):
