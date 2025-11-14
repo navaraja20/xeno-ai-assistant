@@ -441,7 +441,8 @@ class XenoMainWindow(QMainWindow):
         
         activity_list = QListWidget()
         activity_list.addItem("✓ XENO started successfully")
-        activity_list.addItem(f"✓ Configuration loaded for {self.config.user_name}")
+        user_name = self.config.user.name if self.config.user.name else "User"
+        activity_list.addItem(f"✓ Configuration loaded for {user_name}")
         
         # Add module status
         if self.email_handler:

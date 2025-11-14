@@ -53,6 +53,12 @@ def setup_logger(name: str = "xeno", debug: bool = False) -> logging.Logger:
     # Console handler with colors
     console_handler = logging.StreamHandler(sys.stdout)
     console_handler.setLevel(logging.DEBUG if debug else logging.INFO)
+    # Set encoding to UTF-8 to handle Unicode characters
+    if hasattr(sys.stdout, 'reconfigure'):
+        try:
+            sys.stdout.reconfigure(encoding='utf-8')
+        except Exception:
+            pass  # Fallback if reconfigure not available
     console_formatter = ColoredFormatter(
         '%(asctime)s | %(name)s | %(levelname)s | %(message)s',
         datefmt='%H:%M:%S'
@@ -68,7 +74,8 @@ def setup_logger(name: str = "xeno", debug: bool = False) -> logging.Logger:
     file_handler = RotatingFileHandler(
         log_file,
         maxBytes=10 * 1024 * 1024,  # 10 MB
-        backupCount=5
+        backupCount=5,
+        encoding='utf-8'  # Use UTF-8 encoding for log files
     )
     file_handler.setLevel(logging.DEBUG)
     file_formatter = logging.Formatter(
