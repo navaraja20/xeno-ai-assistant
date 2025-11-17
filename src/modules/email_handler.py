@@ -184,27 +184,42 @@ class EmailHandler:
             return None
     
     def _get_email_body(self, email_message) -> str:
-        """Extract email body from message."""
-        body = ""
+        """Extract email body from message, preferring HTML over plain text."""
+        html_body = ""
+        text_body = ""
         
         if email_message.is_multipart():
             for part in email_message.walk():
                 content_type = part.get_content_type()
                 content_disposition = str(part.get("Content-Disposition"))
                 
-                if content_type == "text/plain" and "attachment" not in content_disposition:
-                    try:
-                        body = part.get_payload(decode=True).decode()
-                        break
-                    except:
-                        pass
+                # Skip attachments
+                if "attachment" in content_disposition:
+                    continue
+                
+                try:
+                    payload = part.get_payload(decode=True)
+                    if payload:
+                        decoded = payload.decode('utf-8', errors='ignore')
+                        
+                        if content_type == "text/html":
+                            html_body = decoded
+                        elif content_type == "text/plain":
+                            text_body = decoded
+                except:
+                    pass
         else:
             try:
-                body = email_message.get_payload(decode=True).decode()
+                body = email_message.get_payload(decode=True).decode('utf-8', errors='ignore')
+                if email_message.get_content_type() == "text/html":
+                    html_body = body
+                else:
+                    text_body = body
             except:
-                body = str(email_message.get_payload())
+                text_body = str(email_message.get_payload())
         
-        return body.strip()
+        # Prefer HTML for rich formatting, fall back to plain text
+        return (html_body or text_body).strip()
     
     def send_email(self, to: str, subject: str, body: str, html: bool = False) -> bool:
         """

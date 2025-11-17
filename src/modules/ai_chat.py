@@ -6,8 +6,8 @@ from pathlib import Path
 from typing import Optional, List, Dict
 from dotenv import load_dotenv
 
-# Load environment variables
-load_dotenv()
+# Load environment variables (override to get latest values)
+load_dotenv(override=True)
 
 
 class AIChat:

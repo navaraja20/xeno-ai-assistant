@@ -9,6 +9,10 @@ from pathlib import Path
 from typing import Any, Dict, Optional
 from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings
+from dotenv import load_dotenv
+
+# Load environment variables from .env
+load_dotenv(override=True)
 
 
 class UserProfile(BaseModel):
@@ -26,10 +30,19 @@ class EmailConfig(BaseModel):
     enabled: bool = False
     provider: str = "gmail"  # gmail, outlook
     address: str = ""  # User's email address
-    password: str = ""  # App password (stored in .env)
+    password: str = ""  # App password (loaded from .env if empty)
     check_interval: int = 300  # seconds
     auto_summarize: bool = True
     notify_important: bool = True
+    
+    def __init__(self, **data):
+        """Initialize with .env fallback"""
+        super().__init__(**data)
+        # Load from .env if not provided
+        if not self.password:
+            self.password = os.getenv('EMAIL_PASSWORD', '')
+        if not self.address:
+            self.address = os.getenv('EMAIL_ADDRESS', '')
 
 
 class JobConfig(BaseModel):
@@ -48,19 +61,37 @@ class GitHubConfig(BaseModel):
     """GitHub configuration"""
     enabled: bool = False
     username: str = ""
-    token: str = ""  # Personal access token (stored in .env)
+    token: str = ""  # Personal access token (loaded from .env if empty)
     auto_update_readme: bool = True
     sync_to_linkedin: bool = True
     check_interval: int = 3600  # seconds
+    
+    def __init__(self, **data):
+        """Initialize with .env fallback"""
+        super().__init__(**data)
+        # Load from .env if not provided
+        if not self.token:
+            self.token = os.getenv('GITHUB_TOKEN', '')
+        if not self.username:
+            self.username = os.getenv('GITHUB_USERNAME', '')
 
 
 class LinkedInConfig(BaseModel):
     """LinkedIn configuration"""
     enabled: bool = False
     email: str = ""  # LinkedIn login email
-    password: str = ""  # LinkedIn password (stored in .env)
+    password: str = ""  # LinkedIn password (loaded from .env if empty)
     auto_update_profile: bool = False
     suggest_connections: bool = True
+    
+    def __init__(self, **data):
+        """Initialize with .env fallback"""
+        super().__init__(**data)
+        # Load from .env if not provided
+        if not self.password:
+            self.password = os.getenv('LINKEDIN_PASSWORD', '')
+        if not self.email:
+            self.email = os.getenv('LINKEDIN_EMAIL', '')
 
 
 class CalendarConfig(BaseModel):
@@ -75,10 +106,21 @@ class AIConfig(BaseModel):
     """AI/LLM configuration"""
     provider: str = "openai"  # openai, gemini
     model: str = "gpt-4o-mini"  # gpt-4o-mini, gpt-4o, gpt-4-turbo
-    api_key: str = ""  # API key (stored in .env)
+    api_key: str = ""  # API key (loaded from .env if empty)
     temperature: float = 0.7
     max_tokens: int = 2000
     context_window: int = 10  # number of previous messages
+    
+    def __init__(self, **data):
+        """Initialize with .env fallback"""
+        super().__init__(**data)
+        # Load from .env if not provided
+        if not self.api_key:
+            # Try both OpenAI and Gemini keys
+            if self.provider == "gemini":
+                self.api_key = os.getenv('GEMINI_API_KEY', '')
+            else:
+                self.api_key = os.getenv('OPENAI_API_KEY', '')
 
 
 class Config(BaseSettings):
