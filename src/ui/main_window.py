@@ -8,7 +8,7 @@ from pathlib import Path
 from PyQt6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, 
     QPushButton, QLabel, QTextEdit, QLineEdit, QScrollArea,
-    QFrame, QStackedWidget, QListWidget, QListWidgetItem, QDialog, QMessageBox
+    QFrame, QStackedWidget, QListWidget, QListWidgetItem, QDialog, QMessageBox, QComboBox
 )
 from PyQt6.QtCore import Qt, QTimer, QPropertyAnimation, QEasingCurve, QSize
 from PyQt6.QtGui import QFont, QPalette, QColor, QIcon
@@ -35,16 +35,29 @@ class XenoMainWindow(QMainWindow):
         self.daemon = daemon
         self.config = daemon.config
         
-        # Initialize AI chat
+        # Initialize AI chat (enhanced version with context)
         try:
-            from modules.ai_chat import get_ai_chat
-            self.ai_chat = get_ai_chat(self.config)
+            from modules.ai_chat_enhanced import get_enhanced_ai_chat
+            self.ai_chat = get_enhanced_ai_chat(
+                self.config,
+                email_handler=self.email_handler if hasattr(self, 'email_handler') else None,
+                github_manager=self.github_manager if hasattr(self, 'github_manager') else None,
+                linkedin_automation=self.linkedin_automation if hasattr(self, 'linkedin_automation') else None
+            )
         except Exception as e:
-            print(f"Could not initialize AI chat: {e}")
-            self.ai_chat = None
+            print(f"Could not initialize enhanced AI chat, using basic: {e}")
+            try:
+                from modules.ai_chat import get_ai_chat
+                self.ai_chat = get_ai_chat(self.config)
+            except Exception as e2:
+                print(f"Could not initialize AI chat: {e2}")
+                self.ai_chat = None
         
         # Initialize automation modules
         self._init_automation_modules()
+        
+        # Initialize notification system
+        self._init_notification_system()
         
         # Initialize voice system
         self._init_voice_system()
@@ -110,6 +123,14 @@ class XenoMainWindow(QMainWindow):
         except Exception as e:
             print(f"✗ Could not initialize LinkedIn automation: {e}")
         
+        # Initialize Calendar Manager
+        try:
+            from modules.calendar_manager import CalendarManager
+            self.calendar_manager = CalendarManager()
+            print("✓ Calendar manager initialized")
+        except Exception as e:
+            print(f"✗ Could not initialize calendar manager: {e}")
+        
         try:
             # Calendar Sync
             from modules.calendar_sync import CalendarSync
@@ -118,46 +139,60 @@ class XenoMainWindow(QMainWindow):
         except Exception as e:
             print(f"✗ Could not initialize calendar sync: {e}")
     
+    def _init_notification_system(self):
+        """Initialize notification and background monitoring system"""
+        try:
+            from modules.notifications import NotificationManager, BackgroundMonitor
+            
+            # Initialize notification manager
+            self.notification_manager = NotificationManager("XENO")
+            
+            # Initialize background monitor
+            self.background_monitor = BackgroundMonitor(self.notification_manager)
+            
+            # Connect automation modules to monitor
+            if self.email_handler:
+                self.background_monitor.set_email_handler(self.email_handler)
+            if self.github_manager:
+                self.background_monitor.set_github_manager(self.github_manager)
+            if self.linkedin_automation:
+                self.background_monitor.set_linkedin_automation(self.linkedin_automation)
+            
+            # Start background monitoring
+            self.background_monitor.start()
+            
+            print("✓ Notification system initialized")
+            
+        except Exception as e:
+            print(f"✗ Could not initialize notification system: {e}")
+            self.notification_manager = None
+            self.background_monitor = None
+    
     def _init_voice_system(self):
         """Initialize voice recognition and command processing"""
         try:
             from voice.recognition import VoiceRecognition
-            from voice.commands import VoiceCommandProcessor
-            import pyttsx3
+            from voice.command_handler import VoiceCommandHandler
             
             # Initialize voice recognition
             self.voice_recognition = VoiceRecognition()
             
-            # Initialize command processor
-            self.voice_command_processor = VoiceCommandProcessor(self)
-            
-            # Initialize text-to-speech
-            self.voice_engine = pyttsx3.init()
-            
-            # Configure voice
-            voices = self.voice_engine.getProperty('voices')
-            for voice in voices:
-                if 'male' in voice.name.lower() or 'david' in voice.name.lower():
-                    self.voice_engine.setProperty('voice', voice.id)
-                    break
-            
-            self.voice_engine.setProperty('rate', 150)
-            self.voice_engine.setProperty('volume', 0.9)
+            # Initialize enhanced command handler with TTS
+            self.voice_command_handler = VoiceCommandHandler(main_window=self)
             
             # Start voice command monitoring
             self._start_voice_monitoring()
             
-            print("✓ Voice system initialized")
+            print("✓ Voice system initialized with enhanced commands")
             
             # Welcome message
             if self.config.user.voice_enabled:
-                self._speak("Voice commands activated. Say 'Hey XENO' followed by your command.")
+                self.voice_command_handler.speak("Voice commands activated. Say 'Hey XENO' followed by your command.")
             
         except Exception as e:
             print(f"✗ Could not initialize voice system: {e}")
             self.voice_recognition = None
-            self.voice_command_processor = None
-            self.voice_engine = None
+            self.voice_command_handler = None
     
     def _start_voice_monitoring(self):
         """Start monitoring for voice commands"""
@@ -185,30 +220,28 @@ class XenoMainWindow(QMainWindow):
             if command == "__WAKE_WORD_DETECTED__":
                 print("🎤 Wake word detected!")
                 # Respond to wake word
-                if self.config.user.voice_enabled and self.voice_engine:
-                    self._speak("Yes Master, how can I help you?")
+                if self.config.user.voice_enabled and self.voice_command_handler:
+                    self.voice_command_handler.speak("Yes Master, how can I help you?")
                 return
             
             print(f"🎤 Voice command: {command}")
             
-            # Process command
-            response = self.voice_command_processor.process_command(command)
-            
-            if response:
-                print(f"🔊 Response: {response}")
+            # Process command with enhanced handler
+            if self.voice_command_handler:
+                response = self.voice_command_handler.process_command(command)
                 
-                # Speak response
-                if self.config.user.voice_enabled and self.voice_engine:
-                    self._speak(response)
+                if response:
+                    print(f"🔊 Response: {response}")
+                    
+                    # Add to activity timeline if dashboard exists
+                    if hasattr(self, '_add_timeline_activity'):
+                        from datetime import datetime
+                        self._add_timeline_activity(f"🎤 Voice: {command[:30]}...", datetime.now())
     
     def _speak(self, text):
-        """Speak text using TTS"""
-        try:
-            if self.voice_engine:
-                self.voice_engine.say(text)
-                self.voice_engine.runAndWait()
-        except Exception as e:
-            print(f"Error speaking: {e}")
+        """Speak text using TTS (deprecated - use voice_command_handler.speak)"""
+        if hasattr(self, 'voice_command_handler') and self.voice_command_handler:
+            self.voice_command_handler.speak(text)
         
     def _apply_theme(self):
         """Apply Discord-style dark gaming theme"""
@@ -352,6 +385,7 @@ class XenoMainWindow(QMainWindow):
         self.email_page = self._create_email_page()
         self.jobs_page = self._create_jobs_page()
         self.github_page = self._create_github_page()
+        self.calendar_page = self._create_calendar_page()
         self.settings_page = self._create_settings_page()
         
         self.content_stack.addWidget(self.chat_page)
@@ -359,6 +393,7 @@ class XenoMainWindow(QMainWindow):
         self.content_stack.addWidget(self.email_page)
         self.content_stack.addWidget(self.jobs_page)
         self.content_stack.addWidget(self.github_page)
+        self.content_stack.addWidget(self.calendar_page)
         self.content_stack.addWidget(self.settings_page)
         
         main_layout.addWidget(self.content_stack, 1)
@@ -421,7 +456,8 @@ class XenoMainWindow(QMainWindow):
             ("📧 Gmail", 2),
             ("💼 LinkedIn", 3),
             ("⚙️ GitHub", 4),
-            ("⚙️ Settings", 5),
+            ("📅 Calendar", 5),
+            ("⚙️ Settings", 6),
         ]
         
         for text, index in nav_items:
@@ -503,60 +539,599 @@ class XenoMainWindow(QMainWindow):
         return page
         
     def _create_dashboard_page(self):
-        """Create dashboard overview"""
+        """Create intelligent dashboard with briefing, analytics, and activity timeline"""
         page = QWidget()
         layout = QVBoxLayout(page)
         layout.setContentsMargins(20, 20, 20, 20)
+        layout.setSpacing(16)
         
-        header = QLabel("Dashboard")
-        header.setStyleSheet(f"font-size: 24px; font-weight: bold; color: {self.ACCENT_BLUE}; margin-bottom: 20px;")
-        layout.addWidget(header)
+        # Header with refresh
+        header_bar = QWidget()
+        header_bar.setStyleSheet("background: transparent;")
+        header_layout = QHBoxLayout(header_bar)
+        header_layout.setContentsMargins(0, 0, 0, 0)
         
-        # Stats panels - Load real stats
-        stats_layout = QHBoxLayout()
+        header = QLabel("📊 Intelligence Dashboard")
+        header.setStyleSheet(f"font-size: 24px; font-weight: bold; color: {self.ACCENT_BLUE};")
+        header_layout.addWidget(header)
         
-        # Get real stats
-        email_count = self._get_email_count()
-        jobs_count = self._get_jobs_count()
-        github_repos = self._get_github_repo_count()
+        header_layout.addStretch()
         
-        stats = [
-            ("Unread Emails", str(email_count), "📧"),
-            ("Saved Jobs", str(jobs_count), "💼"),
-            ("GitHub Repos", str(github_repos), "⚙️"),
-            ("AI Chat Active", "✓" if self.ai_chat else "✗", "🤖"),
-        ]
+        refresh_btn = QPushButton("🔄 Refresh")
+        refresh_btn.setStyleSheet(f"""
+            QPushButton {{
+                background-color: {self.ACCENT_PURPLE};
+                color: white;
+                border: none;
+                padding: 8px 20px;
+                border-radius: 4px;
+                font-weight: bold;
+            }}
+            QPushButton:hover {{
+                background-color: #9333ea;
+            }}
+        """)
+        refresh_btn.clicked.connect(self._refresh_dashboard)
+        header_layout.addWidget(refresh_btn)
         
-        for title, value, icon in stats:
-            panel = self._create_stat_panel(icon, title, value)
-            stats_layout.addWidget(panel)
+        layout.addWidget(header_bar)
         
-        layout.addLayout(stats_layout)
+        # Scroll area for dashboard content
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setStyleSheet("QScrollArea { border: none; background: transparent; }")
         
-        # Recent activity
-        activity_label = QLabel("Recent Activity")
-        activity_label.setStyleSheet(f"font-size: 18px; font-weight: bold; margin-top: 20px; margin-bottom: 10px;")
-        layout.addWidget(activity_label)
+        scroll_widget = QWidget()
+        scroll_widget.setStyleSheet("background: transparent;")
+        scroll_layout = QVBoxLayout(scroll_widget)
+        scroll_layout.setSpacing(16)
         
-        activity_list = QListWidget()
-        activity_list.addItem("✓ XENO started successfully")
-        user_name = self.config.user.name if self.config.user.name else "User"
-        activity_list.addItem(f"✓ Configuration loaded for {user_name}")
+        # Daily AI Briefing Card
+        self.briefing_card = self._create_briefing_card()
+        scroll_layout.addWidget(self.briefing_card)
         
-        # Add module status
-        if self.email_handler:
-            activity_list.addItem("✓ Email module: Connected")
-        if self.github_manager:
-            activity_list.addItem("✓ GitHub module: Connected")
-        if self.job_automation:
-            activity_list.addItem("✓ Job automation: Ready")
-        if self.ai_chat:
-            activity_list.addItem("✓ AI Chat: Ready")
+        # Analytics Cards Row
+        analytics_row = QWidget()
+        analytics_row.setStyleSheet("background: transparent;")
+        analytics_layout = QHBoxLayout(analytics_row)
+        analytics_layout.setSpacing(16)
         
-        activity_list.addItem("✓ All systems online")
-        layout.addWidget(activity_list, 1)
+        self.email_analytics = self._create_email_analytics_card()
+        self.github_analytics = self._create_github_analytics_card()
+        self.linkedin_analytics = self._create_linkedin_analytics_card()
+        
+        analytics_layout.addWidget(self.email_analytics)
+        analytics_layout.addWidget(self.github_analytics)
+        analytics_layout.addWidget(self.linkedin_analytics)
+        
+        scroll_layout.addWidget(analytics_row)
+        
+        # Activity Timeline and Goals Row
+        bottom_row = QWidget()
+        bottom_row.setStyleSheet("background: transparent;")
+        bottom_layout = QHBoxLayout(bottom_row)
+        bottom_layout.setSpacing(16)
+        
+        self.activity_timeline = self._create_activity_timeline()
+        self.goals_tracker = self._create_goals_tracker()
+        
+        bottom_layout.addWidget(self.activity_timeline, 2)
+        bottom_layout.addWidget(self.goals_tracker, 1)
+        
+        scroll_layout.addWidget(bottom_row)
+        scroll_layout.addStretch()
+        
+        scroll.setWidget(scroll_widget)
+        layout.addWidget(scroll)
         
         return page
+    
+    def _create_briefing_card(self):
+        """Create AI daily briefing card"""
+        card = QFrame()
+        card.setObjectName("briefing_card")
+        card.setStyleSheet(f"""
+            QFrame#briefing_card {{
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                    stop:0 {self.ACCENT_PURPLE}, stop:1 #9333ea);
+                border-radius: 12px;
+                padding: 24px;
+            }}
+        """)
+        
+        layout = QVBoxLayout(card)
+        layout.setSpacing(12)
+        
+        # Header
+        header_layout = QHBoxLayout()
+        
+        title = QLabel("🌅 Daily Briefing")
+        title.setStyleSheet("font-size: 20px; font-weight: bold; color: white;")
+        header_layout.addWidget(title)
+        
+        header_layout.addStretch()
+        
+        time_label = QLabel(datetime.now().strftime("%B %d, %Y"))
+        time_label.setStyleSheet("font-size: 14px; color: rgba(255, 255, 255, 0.9);")
+        header_layout.addWidget(time_label)
+        
+        layout.addLayout(header_layout)
+        
+        # Briefing content
+        self.briefing_content = QLabel("Click 'Generate Briefing' to get your AI-powered daily summary...")
+        self.briefing_content.setWordWrap(True)
+        self.briefing_content.setStyleSheet("""
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.95);
+            line-height: 1.6;
+            padding: 12px 0;
+        """)
+        layout.addWidget(self.briefing_content)
+        
+        # Generate button
+        generate_btn = QPushButton("✨ Generate Briefing")
+        generate_btn.setStyleSheet("""
+            QPushButton {
+                background-color: rgba(255, 255, 255, 0.2);
+                color: white;
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                padding: 10px 24px;
+                border-radius: 6px;
+                font-weight: bold;
+                font-size: 14px;
+            }
+            QPushButton:hover {
+                background-color: rgba(255, 255, 255, 0.3);
+            }
+        """)
+        generate_btn.clicked.connect(self._generate_daily_briefing)
+        layout.addWidget(generate_btn, alignment=Qt.AlignmentFlag.AlignLeft)
+        
+        return card
+    
+    def _create_email_analytics_card(self):
+        """Create email analytics card"""
+        return self._create_analytics_card(
+            "📧 Email",
+            [
+                ("Unread", self._get_email_count()),
+                ("Today", self._get_emails_today()),
+                ("This Week", self._get_emails_week())
+            ],
+            "#4285F4"
+        )
+    
+    def _create_github_analytics_card(self):
+        """Create GitHub analytics card"""
+        return self._create_analytics_card(
+            "⚙️ GitHub",
+            [
+                ("Repositories", self._get_github_repo_count()),
+                ("Stars", self._get_github_stars()),
+                ("Recent Commits", self._get_recent_commits())
+            ],
+            "#00d4ff"
+        )
+    
+    def _create_linkedin_analytics_card(self):
+        """Create LinkedIn analytics card"""
+        return self._create_analytics_card(
+            "💼 LinkedIn",
+            [
+                ("Jobs Viewed", self._get_jobs_viewed()),
+                ("Applications", self._get_applications_count()),
+                ("Saved Jobs", self._get_jobs_count())
+            ],
+            "#0A66C2"
+        )
+    
+    def _create_analytics_card(self, title, stats, accent_color):
+        """Create a generic analytics card"""
+        card = QFrame()
+        card.setObjectName("analytics_card")
+        card.setStyleSheet(f"""
+            QFrame#analytics_card {{
+                background-color: {self.BG_LIGHTER};
+                border-radius: 12px;
+                border-left: 4px solid {accent_color};
+                padding: 20px;
+            }}
+        """)
+        
+        layout = QVBoxLayout(card)
+        layout.setSpacing(16)
+        
+        # Title
+        title_label = QLabel(title)
+        title_label.setStyleSheet(f"font-size: 16px; font-weight: bold; color: {accent_color};")
+        layout.addWidget(title_label)
+        
+        # Stats
+        for stat_name, stat_value in stats:
+            stat_row = QWidget()
+            stat_row.setStyleSheet("background: transparent;")
+            stat_layout = QHBoxLayout(stat_row)
+            stat_layout.setContentsMargins(0, 0, 0, 0)
+            
+            name_label = QLabel(stat_name)
+            name_label.setStyleSheet(f"font-size: 13px; color: {self.TEXT_SECONDARY};")
+            stat_layout.addWidget(name_label)
+            
+            stat_layout.addStretch()
+            
+            value_label = QLabel(str(stat_value))
+            value_label.setStyleSheet(f"font-size: 20px; font-weight: bold; color: {self.TEXT_PRIMARY};")
+            stat_layout.addWidget(value_label)
+            
+            layout.addWidget(stat_row)
+        
+        return card
+    
+    def _create_activity_timeline(self):
+        """Create activity timeline widget"""
+        card = QFrame()
+        card.setObjectName("timeline_card")
+        card.setStyleSheet(f"""
+            QFrame#timeline_card {{
+                background-color: {self.BG_LIGHTER};
+                border-radius: 12px;
+                padding: 20px;
+            }}
+        """)
+        
+        layout = QVBoxLayout(card)
+        layout.setSpacing(12)
+        
+        # Header
+        header = QLabel("📅 Activity Timeline")
+        header.setStyleSheet(f"font-size: 18px; font-weight: bold; color: {self.TEXT_PRIMARY};")
+        layout.addWidget(header)
+        
+        # Separator
+        separator = QFrame()
+        separator.setFrameShape(QFrame.Shape.HLine)
+        separator.setStyleSheet(f"background-color: {self.HOVER_COLOR}; max-height: 1px;")
+        layout.addWidget(separator)
+        
+        # Timeline scroll area
+        timeline_scroll = QScrollArea()
+        timeline_scroll.setWidgetResizable(True)
+        timeline_scroll.setStyleSheet("QScrollArea { border: none; background: transparent; }")
+        
+        timeline_widget = QWidget()
+        timeline_widget.setStyleSheet("background: transparent;")
+        self.timeline_layout = QVBoxLayout(timeline_widget)
+        self.timeline_layout.setSpacing(12)
+        
+        # Add initial activities
+        self._add_timeline_activity("🚀 XENO started", datetime.now())
+        if self.email_handler:
+            self._add_timeline_activity("✓ Email connected", datetime.now())
+        if self.github_manager:
+            self._add_timeline_activity("✓ GitHub connected", datetime.now())
+        if self.ai_chat or self.ai_chat_enhanced:
+            self._add_timeline_activity("✓ AI Chat ready", datetime.now())
+        
+        self.timeline_layout.addStretch()
+        
+        timeline_scroll.setWidget(timeline_widget)
+        layout.addWidget(timeline_scroll, 1)
+        
+        return card
+    
+    def _create_goals_tracker(self):
+        """Create goals tracker widget"""
+        card = QFrame()
+        card.setObjectName("goals_card")
+        card.setStyleSheet(f"""
+            QFrame#goals_card {{
+                background-color: {self.BG_LIGHTER};
+                border-radius: 12px;
+                padding: 20px;
+            }}
+        """)
+        
+        layout = QVBoxLayout(card)
+        layout.setSpacing(12)
+        
+        # Header
+        header_row = QWidget()
+        header_row.setStyleSheet("background: transparent;")
+        header_layout = QHBoxLayout(header_row)
+        header_layout.setContentsMargins(0, 0, 0, 0)
+        
+        header = QLabel("🎯 Goals")
+        header.setStyleSheet(f"font-size: 18px; font-weight: bold; color: {self.TEXT_PRIMARY};")
+        header_layout.addWidget(header)
+        
+        header_layout.addStretch()
+        
+        add_goal_btn = QPushButton("+")
+        add_goal_btn.setFixedSize(28, 28)
+        add_goal_btn.setStyleSheet(f"""
+            QPushButton {{
+                background-color: {self.ACCENT_PURPLE};
+                color: white;
+                border: none;
+                border-radius: 14px;
+                font-weight: bold;
+                font-size: 16px;
+            }}
+            QPushButton:hover {{
+                background-color: #9333ea;
+            }}
+        """)
+        add_goal_btn.clicked.connect(self._add_goal)
+        header_layout.addWidget(add_goal_btn)
+        
+        layout.addWidget(header_row)
+        
+        # Separator
+        separator = QFrame()
+        separator.setFrameShape(QFrame.Shape.HLine)
+        separator.setStyleSheet(f"background-color: {self.HOVER_COLOR}; max-height: 1px;")
+        layout.addWidget(separator)
+        
+        # Goals list
+        self.goals_list_widget = QWidget()
+        self.goals_list_widget.setStyleSheet("background: transparent;")
+        self.goals_list_layout = QVBoxLayout(self.goals_list_widget)
+        self.goals_list_layout.setSpacing(8)
+        
+        # Load and display goals
+        self._load_goals()
+        
+        self.goals_list_layout.addStretch()
+        
+        layout.addWidget(self.goals_list_widget, 1)
+        
+        return card
+    
+    def _add_timeline_activity(self, text, timestamp):
+        """Add activity to timeline"""
+        activity = QWidget()
+        activity.setStyleSheet("background: transparent;")
+        activity_layout = QHBoxLayout(activity)
+        activity_layout.setContentsMargins(0, 0, 0, 0)
+        activity_layout.setSpacing(12)
+        
+        # Time dot
+        dot = QLabel("●")
+        dot.setStyleSheet(f"color: {self.ACCENT_PURPLE}; font-size: 12px;")
+        activity_layout.addWidget(dot)
+        
+        # Activity text
+        text_label = QLabel(text)
+        text_label.setStyleSheet(f"font-size: 13px; color: {self.TEXT_PRIMARY};")
+        activity_layout.addWidget(text_label)
+        
+        activity_layout.addStretch()
+        
+        # Time
+        time_label = QLabel(timestamp.strftime("%H:%M"))
+        time_label.setStyleSheet(f"font-size: 12px; color: {self.TEXT_SECONDARY};")
+        activity_layout.addWidget(time_label)
+        
+        # Insert at top (most recent first)
+        self.timeline_layout.insertWidget(0, activity)
+    
+    def _load_goals(self):
+        """Load goals from file"""
+        try:
+            import json
+            goals_file = Path(__file__).parent.parent.parent / "data" / "goals.json"
+            
+            if goals_file.exists():
+                with open(goals_file, 'r') as f:
+                    goals_data = json.load(f)
+                    for goal in goals_data.get('goals', []):
+                        self._add_goal_widget(goal['text'], goal['completed'])
+            else:
+                # Default goals
+                self._add_goal_widget("Review 10 job applications", False)
+                self._add_goal_widget("Respond to urgent emails", False)
+                self._add_goal_widget("Update GitHub repositories", False)
+        except Exception as e:
+            print(f"Error loading goals: {e}")
+    
+    def _add_goal_widget(self, text, completed=False):
+        """Add a goal widget to the list"""
+        goal_widget = QWidget()
+        goal_widget.setStyleSheet("background: transparent;")
+        goal_layout = QHBoxLayout(goal_widget)
+        goal_layout.setContentsMargins(0, 0, 0, 0)
+        goal_layout.setSpacing(8)
+        
+        # Checkbox
+        checkbox = QPushButton("✓" if completed else "")
+        checkbox.setCheckable(True)
+        checkbox.setChecked(completed)
+        checkbox.setFixedSize(20, 20)
+        checkbox.setStyleSheet(f"""
+            QPushButton {{
+                background-color: {"#10b981" if completed else "transparent"};
+                border: 2px solid {self.BORDER_COLOR};
+                border-radius: 4px;
+                color: white;
+                font-weight: bold;
+                font-size: 12px;
+            }}
+            QPushButton:checked {{
+                background-color: #10b981;
+                border-color: #10b981;
+            }}
+        """)
+        checkbox.clicked.connect(lambda: self._toggle_goal(goal_widget, checkbox, text_label))
+        goal_layout.addWidget(checkbox)
+        
+        # Goal text
+        text_label = QLabel(text)
+        text_label.setStyleSheet(f"""
+            font-size: 13px;
+            color: {self.TEXT_SECONDARY if completed else self.TEXT_PRIMARY};
+            {"text-decoration: line-through;" if completed else ""}
+        """)
+        goal_layout.addWidget(text_label)
+        
+        goal_layout.addStretch()
+        
+        # Find correct position (completed goals at bottom)
+        insert_pos = 0
+        if completed:
+            insert_pos = self.goals_list_layout.count() - 1  # Before stretch
+        else:
+            # Find first completed goal position
+            for i in range(self.goals_list_layout.count() - 1):
+                widget = self.goals_list_layout.itemAt(i).widget()
+                if widget:
+                    checkbox_in_widget = widget.findChild(QPushButton)
+                    if checkbox_in_widget and checkbox_in_widget.isChecked():
+                        insert_pos = i
+                        break
+            else:
+                insert_pos = self.goals_list_layout.count() - 1
+        
+        self.goals_list_layout.insertWidget(insert_pos, goal_widget)
+    
+    def _toggle_goal(self, widget, checkbox, text_label):
+        """Toggle goal completion status"""
+        completed = checkbox.isChecked()
+        checkbox.setText("✓" if completed else "")
+        text_label.setStyleSheet(f"""
+            font-size: 13px;
+            color: {self.TEXT_SECONDARY if completed else self.TEXT_PRIMARY};
+            {"text-decoration: line-through;" if completed else ""}
+        """)
+        self._save_goals()
+    
+    def _add_goal(self):
+        """Show dialog to add a new goal"""
+        from PyQt6.QtWidgets import QInputDialog
+        text, ok = QInputDialog.getText(self, "Add Goal", "Enter your goal:")
+        if ok and text:
+            self._add_goal_widget(text, False)
+            self._save_goals()
+            self._add_timeline_activity(f"🎯 New goal added: {text[:30]}...", datetime.now())
+    
+    def _save_goals(self):
+        """Save goals to file"""
+        try:
+            import json
+            goals_file = Path(__file__).parent.parent.parent / "data" / "goals.json"
+            goals_file.parent.mkdir(parents=True, exist_ok=True)
+            
+            goals = []
+            for i in range(self.goals_list_layout.count() - 1):  # -1 for stretch
+                widget = self.goals_list_layout.itemAt(i).widget()
+                if widget:
+                    checkbox = widget.findChild(QPushButton)
+                    text_label = widget.findChild(QLabel)
+                    if checkbox and text_label:
+                        goals.append({
+                            'text': text_label.text(),
+                            'completed': checkbox.isChecked()
+                        })
+            
+            with open(goals_file, 'w') as f:
+                json.dump({'goals': goals}, f, indent=2)
+        except Exception as e:
+            print(f"Error saving goals: {e}")
+    
+    def _generate_daily_briefing(self):
+        """Generate AI-powered daily briefing"""
+        try:
+            self.briefing_content.setText("🔄 Generating your personalized briefing...")
+            from PyQt6.QtWidgets import QApplication
+            QApplication.processEvents()
+            
+            if hasattr(self, 'ai_chat_enhanced') and self.ai_chat_enhanced:
+                briefing = self.ai_chat_enhanced.get_daily_briefing()
+            elif hasattr(self, 'ai_chat') and self.ai_chat:
+                # Fallback to basic AI
+                prompt = f"""Generate a brief daily summary for {self.config.user.name}.
+                
+Include:
+- A motivational greeting
+- Key priorities for today
+- Quick productivity tip
+
+Keep it under 100 words, friendly and energetic."""
+                briefing = self.ai_chat.send_message(prompt)
+            else:
+                briefing = "AI not configured. Set up Gemini API key in settings to enable daily briefings."
+            
+            self.briefing_content.setText(briefing)
+            self._add_timeline_activity("✨ Daily briefing generated", datetime.now())
+            
+        except Exception as e:
+            self.briefing_content.setText(f"Error generating briefing: {str(e)}")
+    
+    def _refresh_dashboard(self):
+        """Refresh all dashboard data"""
+        try:
+            # Update analytics cards
+            self._update_analytics_cards()
+            self._add_timeline_activity("🔄 Dashboard refreshed", datetime.now())
+        except Exception as e:
+            print(f"Error refreshing dashboard: {e}")
+    
+    def _update_analytics_cards(self):
+        """Update all analytics card values"""
+        # This would update the cards with fresh data
+        # For now, we'll just add a timeline activity
+        pass
+    
+    def _get_emails_today(self):
+        """Get count of emails received today"""
+        try:
+            if not self.email_handler:
+                return 0
+            emails = self.email_handler.get_recent_emails(max_results=50)
+            today = datetime.now().date()
+            count = sum(1 for e in emails if e.get('date') and e['date'].date() == today)
+            return count
+        except:
+            return 0
+    
+    def _get_emails_week(self):
+        """Get count of emails this week"""
+        try:
+            if not self.email_handler:
+                return 0
+            emails = self.email_handler.get_recent_emails(max_results=100)
+            return min(len(emails), 100)
+        except:
+            return 0
+    
+    def _get_github_stars(self):
+        """Get total GitHub stars"""
+        try:
+            if not self.github_manager:
+                return 0
+            repos = self.github_manager.get_repositories()
+            return sum(repo.get('stargazers_count', 0) for repo in repos)
+        except:
+            return 0
+    
+    def _get_recent_commits(self):
+        """Get recent commits count"""
+        try:
+            if not self.github_manager:
+                return 0
+            # This would query recent commits
+            return 5  # Placeholder
+        except:
+            return 0
+    
+    def _get_jobs_viewed(self):
+        """Get jobs viewed count"""
+        # Placeholder - could track in database
+        return 0
+    
+    def _get_applications_count(self):
+        """Get applications submitted count"""
+        # Placeholder - could track in database
+        return 0
     
     def _get_email_count(self):
         """Get unread email count."""
@@ -569,15 +1144,8 @@ class XenoMainWindow(QMainWindow):
     
     def _get_jobs_count(self):
         """Get saved jobs count."""
-        try:
-            from core.database import get_session
-            from models.database import JobApplication
-            session = get_session()
-            count = session.query(JobApplication).count()
-            session.close()
-            return count
-        except:
-            return 0
+        # Placeholder - could integrate with database
+        return 0
     
     def _get_github_repo_count(self):
         """Get GitHub repo count."""
@@ -1076,6 +1644,93 @@ class XenoMainWindow(QMainWindow):
             }}
         """)
         close_btn.clicked.connect(dialog.close)
+        
+        # Action buttons bar (Gmail-style)
+        action_bar = QWidget()
+        action_bar.setStyleSheet("background: transparent;")
+        action_layout = QHBoxLayout(action_bar)
+        action_layout.setContentsMargins(16, 8, 16, 8)
+        action_layout.setSpacing(8)
+        
+        # Reply button
+        reply_btn = QPushButton("↩️ Reply")
+        reply_btn.setStyleSheet(f"""
+            QPushButton {{
+                background-color: {self.ACCENT_PURPLE};
+                color: white;
+                border: none;
+                padding: 8px 24px;
+                border-radius: 4px;
+                font-weight: bold;
+                font-size: 13px;
+            }}
+            QPushButton:hover {{
+                background-color: #9333ea;
+            }}
+        """)
+        reply_btn.clicked.connect(lambda: self._draft_ai_reply(email, dialog))
+        action_layout.addWidget(reply_btn)
+        
+        # Archive button
+        archive_btn = QPushButton("📦 Archive")
+        archive_btn.setStyleSheet(f"""
+            QPushButton {{
+                background-color: transparent;
+                color: {self.TEXT_COLOR};
+                border: 1px solid {self.BORDER_COLOR};
+                padding: 8px 24px;
+                border-radius: 4px;
+                font-weight: bold;
+                font-size: 13px;
+            }}
+            QPushButton:hover {{
+                background-color: {self.HOVER_COLOR};
+            }}
+        """)
+        archive_btn.clicked.connect(lambda: self._archive_email(email, dialog))
+        action_layout.addWidget(archive_btn)
+        
+        # Delete button
+        delete_btn = QPushButton("🗑️ Delete")
+        delete_btn.setStyleSheet(f"""
+            QPushButton {{
+                background-color: transparent;
+                color: #ef4444;
+                border: 1px solid #ef4444;
+                padding: 8px 24px;
+                border-radius: 4px;
+                font-weight: bold;
+                font-size: 13px;
+            }}
+            QPushButton:hover {{
+                background-color: rgba(239, 68, 68, 0.1);
+            }}
+        """)
+        delete_btn.clicked.connect(lambda: self._delete_email(email, dialog))
+        action_layout.addWidget(delete_btn)
+        
+        # Mark as read/unread button
+        mark_btn = QPushButton("📧 Mark as Unread" if email.get('seen', False) else "✅ Mark as Read")
+        mark_btn.setStyleSheet(f"""
+            QPushButton {{
+                background-color: transparent;
+                color: {self.TEXT_COLOR};
+                border: 1px solid {self.BORDER_COLOR};
+                padding: 8px 24px;
+                border-radius: 4px;
+                font-weight: bold;
+                font-size: 13px;
+            }}
+            QPushButton:hover {{
+                background-color: {self.HOVER_COLOR};
+            }}
+        """)
+        mark_btn.clicked.connect(lambda: self._toggle_email_read_status(email, dialog))
+        action_layout.addWidget(mark_btn)
+        
+        action_layout.addStretch()
+        
+        layout.addWidget(action_bar)
         layout.addWidget(close_btn, alignment=Qt.AlignmentFlag.AlignCenter)
         
         dialog.exec()
@@ -1247,10 +1902,11 @@ class XenoMainWindow(QMainWindow):
             
             # Success! Load repos
             self.github_status_label.setText("✅ Connected! Loading repositories...")
-            self.github_status_label.setStyleSheet(f"color: {self.ONLINE_GREEN}; font-size: 14px; margin: 10px;")
+            self.github_status_label.setStyleSheet(f"color: {self.ONLINE_GREEN}; font-size: 13px;")
             
-            # Show repo list
-            self.github_list.setVisible(True)
+            # Hide login card, show repos
+            self.github_login_card.setVisible(False)
+            self.github_repos_scroll.setVisible(True)
             self._load_github_repos()
             
         except Exception as e:
@@ -1412,50 +2068,128 @@ class XenoMainWindow(QMainWindow):
             self.email_list.addItem(f"❌ Error: {str(e)}")
         
     def _create_jobs_page(self):
-        """Create LinkedIn page with login form"""
+        """Create LinkedIn jobs page with search and auto-apply"""
         page = QWidget()
         layout = QVBoxLayout(page)
         layout.setContentsMargins(20, 20, 20, 20)
+        layout.setSpacing(16)
         
-        header = QLabel("💼 LinkedIn")
-        header.setStyleSheet(f"font-size: 24px; font-weight: bold; color: {self.ACCENT_BLUE}; margin-bottom: 20px;")
+        # Header
+        header = QLabel("💼 LinkedIn Job Search")
+        header.setStyleSheet(f"font-size: 24px; font-weight: bold; color: {self.ACCENT_BLUE}; margin-bottom: 10px;")
         layout.addWidget(header)
         
-        # Login form (always visible)
-        login_frame = QFrame()
-        login_frame.setObjectName("panel")
-        login_frame.setStyleSheet(f"""
+        # Search filters panel
+        search_panel = QFrame()
+        search_panel.setObjectName("panel")
+        search_panel.setStyleSheet(f"""
             QFrame#panel {{
                 background-color: {self.BG_LIGHTER};
                 border-radius: 8px;
                 padding: 20px;
             }}
         """)
-        login_layout = QVBoxLayout(login_frame)
+        search_layout = QVBoxLayout(search_panel)
         
-        # Email input
-        email_label = QLabel("LinkedIn Email:")
-        email_label.setStyleSheet(f"color: {self.TEXT_PRIMARY}; font-size: 14px; margin-bottom: 5px;")
-        self.linkedin_email_input = QLineEdit()
-        self.linkedin_email_input.setPlaceholderText("your.email@example.com")
-        self.linkedin_email_input.setText(os.getenv('LINKEDIN_EMAIL', ''))
+        # Job keywords
+        keywords_label = QLabel("Job Keywords:")
+        keywords_label.setStyleSheet(f"color: {self.TEXT_PRIMARY}; font-weight: bold;")
+        self.job_keywords_input = QLineEdit()
+        self.job_keywords_input.setPlaceholderText("e.g., Python Developer, Data Scientist")
+        self.job_keywords_input.setStyleSheet(f"""
+            QLineEdit {{
+                background-color: {self.BG_DARK};
+                border: 1px solid {self.BORDER_COLOR};
+                border-radius: 4px;
+                padding: 10px;
+                color: {self.TEXT_PRIMARY};
+            }}
+        """)
         
-        # Password input
-        password_label = QLabel("LinkedIn Password:")
-        password_label.setStyleSheet(f"color: {self.TEXT_PRIMARY}; font-size: 14px; margin-top: 10px; margin-bottom: 5px;")
-        self.linkedin_password_input = QLineEdit()
-        self.linkedin_password_input.setEchoMode(QLineEdit.EchoMode.Password)
-        self.linkedin_password_input.setPlaceholderText("Your password")
-        self.linkedin_password_input.setText(os.getenv('LINKEDIN_PASSWORD', ''))
+        # Location
+        location_label = QLabel("Location:")
+        location_label.setStyleSheet(f"color: {self.TEXT_PRIMARY}; font-weight: bold;")
+        self.job_location_input = QLineEdit()
+        self.job_location_input.setPlaceholderText("e.g., New York, NY")
+        self.job_location_input.setStyleSheet(f"""
+            QLineEdit {{
+                background-color: {self.BG_DARK};
+                border: 1px solid {self.BORDER_COLOR};
+                border-radius: 4px;
+                padding: 10px;
+                color: {self.TEXT_PRIMARY};
+            }}
+        """)
         
-        # Login button
-        self.linkedin_login_btn = QPushButton("🔑 Login to LinkedIn")
-        self.linkedin_login_btn.setStyleSheet(f"""
+        # Filters row
+        filters_row = QWidget()
+        filters_row.setStyleSheet("background: transparent;")
+        filters_layout = QHBoxLayout(filters_row)
+        filters_layout.setContentsMargins(0, 0, 0, 0)
+        
+        # Job type
+        job_type_label = QLabel("Job Type:")
+        job_type_label.setStyleSheet(f"color: {self.TEXT_PRIMARY}; font-weight: bold;")
+        self.job_type_combo = QComboBox()
+        self.job_type_combo.addItems(["Any", "Full-time", "Part-time", "Contract", "Internship"])
+        self.job_type_combo.setStyleSheet(f"""
+            QComboBox {{
+                background-color: {self.BG_DARK};
+                border: 1px solid {self.BORDER_COLOR};
+                border-radius: 4px;
+                padding: 8px;
+                color: {self.TEXT_PRIMARY};
+            }}
+        """)
+        
+        # Experience level
+        experience_label = QLabel("Experience:")
+        experience_label.setStyleSheet(f"color: {self.TEXT_PRIMARY}; font-weight: bold;")
+        self.experience_combo = QComboBox()
+        self.experience_combo.addItems(["Any", "Entry level", "Associate", "Mid-Senior level", "Director", "Executive"])
+        self.experience_combo.setStyleSheet(f"""
+            QComboBox {{
+                background-color: {self.BG_DARK};
+                border: 1px solid {self.BORDER_COLOR};
+                border-radius: 4px;
+                padding: 8px;
+                color: {self.TEXT_PRIMARY};
+            }}
+        """)
+        
+        # Remote checkbox
+        self.remote_checkbox = QPushButton("🏠 Remote Only")
+        self.remote_checkbox.setCheckable(True)
+        self.remote_checkbox.setStyleSheet(f"""
+            QPushButton {{
+                background-color: {self.BG_DARK};
+                border: 1px solid {self.BORDER_COLOR};
+                border-radius: 4px;
+                padding: 8px 16px;
+                color: {self.TEXT_PRIMARY};
+            }}
+            QPushButton:checked {{
+                background-color: {self.ACCENT_PURPLE};
+                border-color: {self.ACCENT_PURPLE};
+                color: white;
+            }}
+        """)
+        
+        filters_layout.addWidget(job_type_label)
+        filters_layout.addWidget(self.job_type_combo)
+        filters_layout.addWidget(experience_label)
+        filters_layout.addWidget(self.experience_combo)
+        filters_layout.addWidget(self.remote_checkbox)
+        filters_layout.addStretch()
+        
+        # Search button
+        search_btn = QPushButton("🔍 Search Jobs")
+        search_btn.setStyleSheet(f"""
             QPushButton {{
                 background-color: #0A66C2;
                 color: white;
                 border: none;
-                padding: 12px 20px;
+                padding: 12px 24px;
                 border-radius: 4px;
                 font-weight: bold;
                 font-size: 14px;
@@ -1464,40 +2198,261 @@ class XenoMainWindow(QMainWindow):
                 background-color: #004182;
             }}
         """)
-        self.linkedin_login_btn.clicked.connect(self._linkedin_login)
+        search_btn.clicked.connect(self._linkedin_search_jobs)
         
-        login_layout.addWidget(email_label)
-        login_layout.addWidget(self.linkedin_email_input)
-        login_layout.addWidget(password_label)
-        login_layout.addWidget(self.linkedin_password_input)
-        login_layout.addWidget(self.linkedin_login_btn)
+        search_layout.addWidget(keywords_label)
+        search_layout.addWidget(self.job_keywords_input)
+        search_layout.addWidget(location_label)
+        search_layout.addWidget(self.job_location_input)
+        search_layout.addWidget(filters_row)
+        search_layout.addWidget(search_btn)
         
-        layout.addWidget(login_frame)
+        layout.addWidget(search_panel)
         
-        # Status label
-        self.linkedin_status_label = QLabel("")
-        self.linkedin_status_label.setStyleSheet(f"color: {self.TEXT_SECONDARY}; font-size: 14px; margin: 10px;")
-        layout.addWidget(self.linkedin_status_label)
-        
-        # Profile/data display (hidden until login)
-        self.linkedin_data = QTextEdit()
-        self.linkedin_data.setReadOnly(True)
-        self.linkedin_data.setStyleSheet(f"""
-            QTextEdit {{
-                background-color: {self.BG_LIGHTER};
-                border: 1px solid {self.HOVER_COLOR};
-                border-radius: 4px;
-                padding: 10px;
+        # Jobs list scroll area
+        self.jobs_scroll = QScrollArea()
+        self.jobs_scroll.setWidgetResizable(True)
+        self.jobs_scroll.setStyleSheet(f"""
+            QScrollArea {{
+                border: none;
+                background-color: transparent;
             }}
         """)
-        self.linkedin_data.setVisible(False)
-        layout.addWidget(self.linkedin_data, 1)
         
-        layout.addStretch()
+        self.jobs_container = QWidget()
+        self.jobs_container.setStyleSheet("background: transparent;")
+        self.jobs_layout = QVBoxLayout(self.jobs_container)
+        self.jobs_layout.setContentsMargins(0, 0, 0, 0)
+        self.jobs_layout.setSpacing(12)
+        self.jobs_layout.addStretch()
+        
+        self.jobs_scroll.setWidget(self.jobs_container)
+        layout.addWidget(self.jobs_scroll, 1)
         
         return page
     
+    def _linkedin_search_jobs(self):
+        """Search for LinkedIn jobs with filters"""
+        try:
+            keywords = self.job_keywords_input.text().strip()
+            if not keywords:
+                QMessageBox.warning(self, "Missing Keywords", "Please enter job keywords to search.")
+                return
+            
+            if not self.linkedin_automation:
+                QMessageBox.warning(self, "Not Connected", "Please configure LinkedIn credentials in settings.")
+                return
+            
+            # Clear previous results
+            while self.jobs_layout.count() > 1:
+                item = self.jobs_layout.takeAt(0)
+                if item.widget():
+                    item.widget().deleteLater()
+            
+            # Show loading message
+            loading = QLabel("🔍 Searching for jobs...")
+            loading.setStyleSheet(f"color: {self.TEXT_SECONDARY}; font-size: 16px; padding: 40px;")
+            loading.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            self.jobs_layout.insertWidget(0, loading)
+            
+            # Process events to show loading
+            from PyQt6.QtWidgets import QApplication
+            QApplication.processEvents()
+            
+            # Get filter values
+            location = self.job_location_input.text().strip()
+            job_type = self.job_type_combo.currentText() if self.job_type_combo.currentText() != "Any" else ""
+            experience = self.experience_combo.currentText() if self.experience_combo.currentText() != "Any" else ""
+            remote = self.remote_checkbox.isChecked()
+            
+            # Search jobs
+            jobs = self.linkedin_automation.search_jobs(
+                keywords=keywords,
+                location=location,
+                job_type=job_type,
+                experience_level=experience,
+                remote=remote,
+                max_results=25
+            )
+            
+            # Remove loading
+            loading.deleteLater()
+            
+            if not jobs:
+                no_results = QLabel("No jobs found. Try different keywords or filters.")
+                no_results.setStyleSheet(f"color: {self.TEXT_SECONDARY}; font-size: 16px; padding: 40px;")
+                no_results.setAlignment(Qt.AlignmentFlag.AlignCenter)
+                self.jobs_layout.insertWidget(0, no_results)
+                return
+            
+            # Display job cards
+            for job in jobs:
+                job_card = self._create_job_card(job)
+                self.jobs_layout.insertWidget(self.jobs_layout.count() - 1, job_card)
+            
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Failed to search jobs: {str(e)}")
+    
+    def _create_job_card(self, job: dict):
+        """Create a job card widget"""
+        card = QFrame()
+        card.setObjectName("job_card")
+        card.setStyleSheet(f"""
+            QFrame#job_card {{
+                background-color: {self.BG_LIGHTER};
+                border: 1px solid {self.BORDER_COLOR};
+                border-radius: 8px;
+                padding: 16px;
+            }}
+            QFrame#job_card:hover {{
+                border-color: {self.ACCENT_PURPLE};
+                background-color: {self.HOVER_COLOR};
+            }}
+        """)
+        
+        layout = QVBoxLayout(card)
+        layout.setSpacing(8)
+        
+        # Title and company
+        title = QLabel(job.get('title', 'Unknown Position'))
+        title.setStyleSheet(f"font-size: 16px; font-weight: bold; color: {self.TEXT_PRIMARY};")
+        title.setWordWrap(True)
+        layout.addWidget(title)
+        
+        company = QLabel(job.get('company', 'Unknown Company'))
+        company.setStyleSheet(f"font-size: 14px; color: {self.ACCENT_BLUE};")
+        layout.addWidget(company)
+        
+        # Location and salary
+        info_layout = QHBoxLayout()
+        info_layout.setSpacing(16)
+        
+        location = QLabel(f"📍 {job.get('location', 'Unknown')}")
+        location.setStyleSheet(f"font-size: 13px; color: {self.TEXT_SECONDARY};")
+        info_layout.addWidget(location)
+        
+        if job.get('salary'):
+            salary = QLabel(f"💰 {job['salary']}")
+            salary.setStyleSheet(f"font-size: 13px; color: {self.TEXT_SECONDARY};")
+            info_layout.addWidget(salary)
+        
+        info_layout.addStretch()
+        layout.addLayout(info_layout)
+        
+        # Description preview
+        if job.get('description'):
+            desc = QLabel(job['description'][:200] + "..." if len(job.get('description', '')) > 200 else job.get('description', ''))
+            desc.setWordWrap(True)
+            desc.setStyleSheet(f"font-size: 13px; color: {self.TEXT_SECONDARY}; margin: 8px 0;")
+            layout.addWidget(desc)
+        
+        # Buttons row
+        buttons_row = QWidget()
+        buttons_row.setStyleSheet("background: transparent;")
+        buttons_layout = QHBoxLayout(buttons_row)
+        buttons_layout.setContentsMargins(0, 8, 0, 0)
+        buttons_layout.setSpacing(8)
+        
+        # Easy Apply badge
+        if job.get('is_easy_apply'):
+            easy_badge = QLabel("⚡ Easy Apply")
+            easy_badge.setStyleSheet(f"""
+                background-color: #10b981;
+                color: white;
+                border-radius: 4px;
+                padding: 4px 12px;
+                font-size: 12px;
+                font-weight: bold;
+            """)
+            buttons_layout.addWidget(easy_badge)
+        
+        buttons_layout.addStretch()
+        
+        # Auto-apply button
+        if job.get('is_easy_apply'):
+            apply_btn = QPushButton("🤖 Auto-Apply")
+            apply_btn.setStyleSheet(f"""
+                QPushButton {{
+                    background-color: {self.ACCENT_PURPLE};
+                    color: white;
+                    border: none;
+                    padding: 8px 16px;
+                    border-radius: 4px;
+                    font-weight: bold;
+                    font-size: 13px;
+                }}
+                QPushButton:hover {{
+                    background-color: #9333ea;
+                }}
+            """)
+            apply_btn.clicked.connect(lambda: self._auto_apply_job(job))
+            buttons_layout.addWidget(apply_btn)
+        
+        # View button
+        view_btn = QPushButton("👁️ View")
+        view_btn.setStyleSheet(f"""
+            QPushButton {{
+                background-color: transparent;
+                color: {self.TEXT_PRIMARY};
+                border: 1px solid {self.BORDER_COLOR};
+                padding: 8px 16px;
+                border-radius: 4px;
+                font-weight: bold;
+                font-size: 13px;
+            }}
+            QPushButton:hover {{
+                background-color: {self.HOVER_COLOR};
+            }}
+        """)
+        view_btn.clicked.connect(lambda: webbrowser.open(job.get('url', '')))
+        buttons_layout.addWidget(view_btn)
+        
+        layout.addWidget(buttons_row)
+        
+        return card
+    
+    def _auto_apply_job(self, job: dict):
+        """Auto-apply to a job with AI-generated cover letter"""
+        try:
+            if not self.linkedin_automation:
+                QMessageBox.warning(self, "Not Connected", "LinkedIn automation not configured.")
+                return
+            
+            # Confirm auto-apply
+            reply = QMessageBox.question(
+                self,
+                "Auto-Apply to Job",
+                f"Apply to:\n{job.get('title', 'Unknown')}\nat {job.get('company', 'Unknown')}?\n\nAn AI cover letter will be generated.",
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+            )
+            
+            if reply != QMessageBox.StandardButton.Yes:
+                return
+            
+            # Generate AI cover letter
+            cover_letter = self.linkedin_automation.generate_cover_letter_ai(
+                job_details=job,
+                user_info={'name': self.config.user.name}
+            )
+            
+            # Apply to job
+            success = self.linkedin_automation.apply_to_job(
+                job_url=job.get('url', ''),
+                cover_letter=cover_letter
+            )
+            
+            if success:
+                QMessageBox.information(self, "Success", "Application submitted successfully!")
+                job['applied'] = True
+            else:
+                QMessageBox.warning(self, "Incomplete", 
+                    "Application started but may require manual completion. Please check LinkedIn.")
+            
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Failed to auto-apply: {str(e)}")
+    
     def _search_jobs(self):
+
         """Search for jobs."""
         if not self.job_automation:
             return
@@ -1532,57 +2487,108 @@ class XenoMainWindow(QMainWindow):
             self.job_list.addItem(f"❌ Error: {str(e)}")
         
     def _create_github_page(self):
-        """Create GitHub management page with login form"""
+        """Create GitHub management page with modern UI matching GitHub's design"""
         page = QWidget()
-        layout = QVBoxLayout(page)
-        layout.setContentsMargins(20, 20, 20, 20)
+        main_layout = QVBoxLayout(page)
+        main_layout.setContentsMargins(0, 0, 0, 0)
+        main_layout.setSpacing(0)
         
-        header = QLabel("⚙️ GitHub")
-        header.setStyleSheet(f"font-size: 24px; font-weight: bold; color: {self.ACCENT_BLUE}; margin-bottom: 20px;")
-        layout.addWidget(header)
+        # Header section
+        header = QWidget()
+        header.setStyleSheet(f"background-color: {self.BG_LIGHTER}; padding: 20px;")
+        header_layout = QHBoxLayout(header)
         
-        # Login form (always visible)
-        login_frame = QFrame()
-        login_frame.setObjectName("panel")
-        login_frame.setStyleSheet(f"""
-            QFrame#panel {{
-                background-color: {self.BG_LIGHTER};
-                border-radius: 8px;
-                padding: 20px;
+        github_icon = QLabel("⚙️ GitHub")
+        github_icon.setStyleSheet(f"font-size: 24px; font-weight: bold; color: {self.ACCENT_BLUE};")
+        header_layout.addWidget(github_icon)
+        
+        header_layout.addStretch()
+        
+        # Refresh button
+        refresh_btn = QPushButton("🔄 Refresh")
+        refresh_btn.setStyleSheet(f"""
+            QPushButton {{
+                background-color: #238636;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 6px;
+                font-weight: 600;
+            }}
+            QPushButton:hover {{
+                background-color: #2ea043;
             }}
         """)
-        login_layout = QVBoxLayout(login_frame)
+        refresh_btn.clicked.connect(self._refresh_github_repos)
+        header_layout.addWidget(refresh_btn)
         
-        # Username input
-        username_label = QLabel("GitHub Username:")
-        username_label.setStyleSheet(f"color: {self.TEXT_PRIMARY}; font-size: 14px; margin-bottom: 5px;")
+        main_layout.addWidget(header)
+        
+        # Content area
+        content = QWidget()
+        content_layout = QVBoxLayout(content)
+        content_layout.setContentsMargins(20, 20, 20, 20)
+        
+        # Login card (hidden after successful login)
+        self.github_login_card = QFrame()
+        self.github_login_card.setStyleSheet(f"""
+            QFrame {{
+                background-color: {self.BG_LIGHTER};
+                border: 1px solid {self.HOVER_COLOR};
+                border-radius: 8px;
+                padding: 24px;
+            }}
+        """)
+        login_card_layout = QVBoxLayout(self.github_login_card)
+        
+        login_title = QLabel("Connect to GitHub")
+        login_title.setStyleSheet(f"font-size: 18px; font-weight: bold; color: {self.TEXT_PRIMARY}; margin-bottom: 16px;")
+        login_card_layout.addWidget(login_title)
+        
+        # Username
+        username_label = QLabel("Username:")
+        username_label.setStyleSheet(f"color: {self.TEXT_SECONDARY}; font-size: 13px;")
         self.github_username_input = QLineEdit()
-        self.github_username_input.setPlaceholderText("your-username")
+        self.github_username_input.setPlaceholderText("octocat")
         self.github_username_input.setText(os.getenv('GITHUB_USERNAME', ''))
+        self.github_username_input.setStyleSheet(f"""
+            QLineEdit {{
+                background-color: {self.BG_DARK};
+                border: 1px solid {self.HOVER_COLOR};
+                border-radius: 6px;
+                padding: 8px 12px;
+                color: {self.TEXT_PRIMARY};
+                font-size: 14px;
+            }}
+            QLineEdit:focus {{
+                border-color: {self.ACCENT_BLUE};
+            }}
+        """)
         
-        # Token input
+        # Token
         token_label = QLabel("Personal Access Token:")
-        token_label.setStyleSheet(f"color: {self.TEXT_PRIMARY}; font-size: 14px; margin-top: 10px; margin-bottom: 5px;")
+        token_label.setStyleSheet(f"color: {self.TEXT_SECONDARY}; font-size: 13px; margin-top: 12px;")
         self.github_token_input = QLineEdit()
         self.github_token_input.setEchoMode(QLineEdit.EchoMode.Password)
         self.github_token_input.setPlaceholderText("ghp_xxxxxxxxxxxx")
         self.github_token_input.setText(os.getenv('GITHUB_TOKEN', ''))
+        self.github_token_input.setStyleSheet(self.github_username_input.styleSheet())
         
-        # Get Token link
-        token_help = QLabel('<a href="https://github.com/settings/tokens/new?scopes=repo,read:user" style="color: #00d4ff;">Create Personal Access Token</a>')
+        # Help link
+        token_help = QLabel('<a href="https://github.com/settings/tokens/new?scopes=repo,read:user" style="color: #00d4ff; text-decoration: none;">→ Create a new token</a>')
         token_help.setOpenExternalLinks(True)
-        token_help.setStyleSheet("margin-bottom: 10px;")
+        token_help.setStyleSheet("margin-top: 8px; margin-bottom: 16px;")
         
         # Login button
-        self.github_login_btn = QPushButton("🔑 Login and Retrieve Repositories")
+        self.github_login_btn = QPushButton("Connect GitHub Account")
         self.github_login_btn.setStyleSheet(f"""
             QPushButton {{
                 background-color: #238636;
                 color: white;
                 border: none;
-                padding: 12px 20px;
-                border-radius: 4px;
-                font-weight: bold;
+                padding: 10px 20px;
+                border-radius: 6px;
+                font-weight: 600;
                 font-size: 14px;
             }}
             QPushButton:hover {{
@@ -1591,77 +2597,559 @@ class XenoMainWindow(QMainWindow):
         """)
         self.github_login_btn.clicked.connect(self._github_login)
         
-        login_layout.addWidget(username_label)
-        login_layout.addWidget(self.github_username_input)
-        login_layout.addWidget(token_label)
-        login_layout.addWidget(self.github_token_input)
-        login_layout.addWidget(token_help)
-        login_layout.addWidget(self.github_login_btn)
+        login_card_layout.addWidget(username_label)
+        login_card_layout.addWidget(self.github_username_input)
+        login_card_layout.addWidget(token_label)
+        login_card_layout.addWidget(self.github_token_input)
+        login_card_layout.addWidget(token_help)
+        login_card_layout.addWidget(self.github_login_btn)
         
-        layout.addWidget(login_frame)
+        content_layout.addWidget(self.github_login_card)
         
         # Status label
         self.github_status_label = QLabel("")
-        self.github_status_label.setStyleSheet(f"color: {self.TEXT_SECONDARY}; font-size: 14px; margin: 10px;")
-        layout.addWidget(self.github_status_label)
+        self.github_status_label.setStyleSheet(f"color: {self.TEXT_SECONDARY}; font-size: 13px; margin: 12px 0;")
+        content_layout.addWidget(self.github_status_label)
         
-        # Repo list (hidden until login)
-        self.github_list = QListWidget()
-        self.github_list.setStyleSheet(f"""
-            QListWidget {{
-                background-color: {self.BG_LIGHTER};
-                border: 1px solid {self.HOVER_COLOR};
-                border-radius: 4px;
-                padding: 10px;
-            }}
-            QListWidget::item {{
-                padding: 10px;
-                border-bottom: 1px solid {self.HOVER_COLOR};
-            }}
-            QListWidget::item:hover {{
-                background-color: {self.HOVER_COLOR};
-            }}
-        """)
-        self.github_list.setVisible(False)
-        layout.addWidget(self.github_list, 1)
+        # Repository list (scroll area with cards)
+        repos_scroll = QScrollArea()
+        repos_scroll.setWidgetResizable(True)
+        repos_scroll.setFrameShape(QFrame.Shape.NoFrame)
+        repos_scroll.setStyleSheet(f"background-color: {self.BG_DARK}; border: none;")
         
-        layout.addStretch()
+        self.github_repos_container = QWidget()
+        self.github_repos_layout = QVBoxLayout(self.github_repos_container)
+        self.github_repos_layout.setSpacing(12)
+        self.github_repos_layout.setContentsMargins(0, 0, 0, 0)
+        
+        repos_scroll.setWidget(self.github_repos_container)
+        repos_scroll.setVisible(False)
+        self.github_repos_scroll = repos_scroll
+        
+        content_layout.addWidget(repos_scroll, 1)
+        
+        main_layout.addWidget(content, 1)
         
         return page
     
     def _refresh_github_repos(self):
-        """Refresh GitHub repositories."""
+        """Refresh GitHub repositories with modern cards"""
+        if not self.github_manager:
+            return
+        
+        self._load_github_repos()
+    
+    def _load_github_repos(self):
+        """Load GitHub repositories and display as cards"""
         if not self.github_manager:
             return
         
         try:
-            self.github_list.clear()
-            self.github_list.addItem("Loading repositories...")
+            # Clear existing widgets
+            while self.github_repos_layout.count():
+                child = self.github_repos_layout.takeAt(0)
+                if child.widget():
+                    child.widget().deleteLater()
             
-            # Connect and get repos
-            if not self.github_manager.connect():
-                self.github_list.clear()
-                self.github_list.addItem("❌ Failed to connect to GitHub")
-                return
-            
+            # Get repositories
             repos = self.github_manager.get_repositories()
-            self.github_list.clear()
             
             if not repos:
-                self.github_list.addItem("No repositories found")
+                no_repos_label = QLabel("No repositories found")
+                no_repos_label.setStyleSheet(f"color: {self.TEXT_SECONDARY}; font-size: 14px; padding: 20px;")
+                self.github_repos_layout.addWidget(no_repos_label)
                 return
             
+            # Create repository cards
             for repo in repos:
-                item_text = (f"{repo['name']}\n"
-                           f"⭐ {repo['stars']} | 🍴 {repo['forks']} | {repo['language']}\n"
-                           f"{repo['description'][:100] if repo['description'] else 'No description'}")
-                self.github_list.addItem(item_text)
+                repo_card = self._create_repo_card(repo)
+                self.github_repos_layout.addWidget(repo_card)
+            
+            # Add stretch at the end
+            self.github_repos_layout.addStretch()
+            
+            self.github_status_label.setText(f"\u2705 Loaded {len(repos)} repositories")
             
         except Exception as e:
-            self.github_list.clear()
-            self.github_list.addItem(f"❌ Error: {str(e)}")
+            error_label = QLabel(f"\u274c Error loading repositories: {str(e)}")
+            error_label.setStyleSheet(f"color: #ff4444; font-size: 14px; padding: 20px;")
+            self.github_repos_layout.addWidget(error_label)
+    
+    def _create_repo_card(self, repo):
+        """Create a GitHub-style repository card"""
+        card = QFrame()
+        card.setStyleSheet(f"""
+            QFrame {{
+                background-color: {self.BG_LIGHTER};
+                border: 1px solid {self.HOVER_COLOR};
+                border-radius: 6px;
+                padding: 16px;
+            }}
+            QFrame:hover {{
+                border-color: {self.ACCENT_BLUE};
+            }}
+        """)
+        
+        layout = QVBoxLayout(card)
+        layout.setSpacing(8)
+        layout.setContentsMargins(0, 0, 0, 0)
+        
+        # Repo name and link
+        name_layout = QHBoxLayout()
+        repo_name = QLabel(f"<a href='{repo.get('url', '#')}' style='color: {self.ACCENT_BLUE}; text-decoration: none; font-weight: 600; font-size: 15px;'>📦 {repo.get('name', 'Unknown')}</a>")
+        repo_name.setOpenExternalLinks(True)
+        repo_name.setTextFormat(Qt.TextFormat.RichText)
+        name_layout.addWidget(repo_name)
+        
+        # Visibility badge
+        visibility = "Public" if repo.get('private', False) == False else "Private"
+        visibility_badge = QLabel(visibility)
+        visibility_badge.setStyleSheet(f"""
+            background-color: {self.HOVER_COLOR};
+            color: {self.TEXT_SECONDARY};
+            border: 1px solid {self.HOVER_COLOR};
+            border-radius: 12px;
+            padding: 2px 8px;
+            font-size: 11px;
+        """)
+        visibility_badge.setFixedHeight(20)
+        name_layout.addWidget(visibility_badge)
+        name_layout.addStretch()
+        
+        layout.addLayout(name_layout)
+        
+        # Description
+        description = repo.get('description', '')
+        if description:
+            desc_label = QLabel(description[:150] + ('...' if len(description) > 150 else ''))
+            desc_label.setStyleSheet(f"color: {self.TEXT_SECONDARY}; font-size: 13px;")
+            desc_label.setWordWrap(True)
+            layout.addWidget(desc_label)
+        
+        # Stats row
+        stats_layout = QHBoxLayout()
+        stats_layout.setSpacing(16)
+        
+        # Language
+        language = repo.get('language', '')
+        if language:
+            lang_label = QLabel(f"🔵 {language}")
+            lang_label.setStyleSheet(f"color: {self.TEXT_SECONDARY}; font-size: 12px;")
+            stats_layout.addWidget(lang_label)
+        
+        # Stars
+        stars = repo.get('stars', 0)
+        star_label = QLabel(f"⭐ {stars}")
+        star_label.setStyleSheet(f"color: {self.TEXT_SECONDARY}; font-size: 12px;")
+        stats_layout.addWidget(star_label)
+        
+        # Forks
+        forks = repo.get('forks', 0)
+        fork_label = QLabel(f"🍴 {forks}")
+        fork_label.setStyleSheet(f"color: {self.TEXT_SECONDARY}; font-size: 12px;")
+        stats_layout.addWidget(fork_label)
+        
+        # Updated date
+        updated = repo.get('updated_at', '')
+        if updated:
+            # Parse and format date
+            try:
+                from datetime import datetime
+                dt = datetime.fromisoformat(updated.replace('Z', '+00:00'))
+                time_ago = self._time_ago(dt)
+                updated_label = QLabel(f"Updated {time_ago}")
+                updated_label.setStyleSheet(f"color: {self.TEXT_SECONDARY}; font-size: 12px;")
+                stats_layout.addWidget(updated_label)
+            except:
+                pass
+        
+        stats_layout.addStretch()
+        layout.addLayout(stats_layout)
+        
+        return card
+    
+    def _time_ago(self, dt):
+        """Calculate time ago from datetime"""
+        from datetime import datetime, timezone
+        now = datetime.now(timezone.utc)
+        diff = now - dt
+        
+        seconds = diff.total_seconds()
+        if seconds < 60:
+            return "just now"
+        elif seconds < 3600:
+            minutes = int(seconds / 60)
+            return f"{minutes} minute{'s' if minutes != 1 else ''} ago"
+        elif seconds < 86400:
+            hours = int(seconds / 3600)
+            return f"{hours} hour{'s' if hours != 1 else ''} ago"
+        else:
+            days = int(seconds / 86400)
+            return f"{days} day{'s' if days != 1 else ''} ago"
+    
+    def _draft_ai_reply(self, email, dialog):
+        """Draft an AI-powered reply to the email"""
+        try:
+            # Close the email viewer
+            dialog.close()
+            
+            # Prepare context for AI
+            email_context = f"""
+Email From: {email.get('from', 'Unknown')}
+Subject: {email.get('subject', 'No Subject')}
+Date: {email.get('date', '')}
+
+Email Body:
+{email.get('body', '')}
+
+Please draft a professional and contextually appropriate reply to this email.
+Keep it concise, friendly, and professional.
+"""
+            
+            # Use enhanced AI if available, otherwise basic AI
+            if hasattr(self, 'ai_chat_enhanced') and self.ai_chat_enhanced:
+                response = self.ai_chat_enhanced.send_message(email_context)
+            elif hasattr(self, 'ai_chat') and self.ai_chat:
+                response = self.ai_chat.send_message(email_context)
+            else:
+                QMessageBox.warning(self, "AI Not Available", "AI chat is not configured. Please set up AI first.")
+                return
+            
+            # Show compose dialog with AI draft
+            self._show_compose_dialog(
+                to=email.get('from', ''),
+                subject=f"Re: {email.get('subject', 'No Subject')}",
+                body=response
+            )
+            
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Failed to draft reply: {str(e)}")
+    
+    def _show_compose_dialog(self, to="", subject="", body=""):
+        """Show email composition dialog"""
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Compose Email")
+        dialog.setMinimumSize(700, 650)
+        dialog.setStyleSheet(f"""
+            QDialog {{
+                background-color: {self.BG_COLOR};
+            }}
+        """)
+        
+        layout = QVBoxLayout(dialog)
+        layout.setSpacing(12)
+        layout.setContentsMargins(20, 20, 20, 20)
+        
+        # Header with title and template selector
+        header = QWidget()
+        header.setStyleSheet("background: transparent;")
+        header_layout = QHBoxLayout(header)
+        header_layout.setContentsMargins(0, 0, 0, 0)
+        header_layout.setSpacing(16)
+        
+        # Title
+        title = QLabel("Compose Email")
+        title.setStyleSheet(f"""
+            color: {self.TEXT_COLOR};
+            font-size: 24px;
+            font-weight: bold;
+        """)
+        header_layout.addWidget(title)
+        
+        header_layout.addStretch()
+        
+        # Template selector
+        template_label = QLabel("Template:")
+        template_label.setStyleSheet(f"color: {self.TEXT_COLOR}; font-weight: bold;")
+        header_layout.addWidget(template_label)
+        
+        template_combo = QComboBox()
+        template_combo.addItem("None", None)
+        
+        # Load templates
+        templates = self._load_email_templates()
+        for template in templates:
+            template_combo.addItem(template['name'], template)
+        
+        template_combo.setStyleSheet(f"""
+            QComboBox {{
+                background-color: {self.BG_LIGHTER};
+                border: 1px solid {self.BORDER_COLOR};
+                border-radius: 4px;
+                padding: 8px 12px;
+                color: {self.TEXT_COLOR};
+                font-size: 13px;
+                min-width: 150px;
+            }}
+            QComboBox:hover {{
+                border: 1px solid {self.ACCENT_PURPLE};
+            }}
+            QComboBox::drop-down {{
+                border: none;
+                width: 20px;
+            }}
+            QComboBox::down-arrow {{
+                image: none;
+                border-left: 5px solid transparent;
+                border-right: 5px solid transparent;
+                border-top: 5px solid {self.TEXT_COLOR};
+                margin-right: 5px;
+            }}
+            QComboBox QAbstractItemView {{
+                background-color: {self.BG_LIGHTER};
+                border: 1px solid {self.BORDER_COLOR};
+                selection-background-color: {self.ACCENT_PURPLE};
+                selection-color: white;
+                color: {self.TEXT_COLOR};
+                padding: 5px;
+            }}
+        """)
+        header_layout.addWidget(template_combo)
+        
+        layout.addWidget(header)
+        
+        # To field
+        to_label = QLabel("To:")
+        to_label.setStyleSheet(f"color: {self.TEXT_COLOR}; font-weight: bold;")
+        layout.addWidget(to_label)
+        
+        to_input = QLineEdit(to)
+        to_input.setStyleSheet(f"""
+            QLineEdit {{
+                background-color: {self.BG_LIGHTER};
+                border: 1px solid {self.BORDER_COLOR};
+                border-radius: 4px;
+                padding: 10px;
+                color: {self.TEXT_COLOR};
+                font-size: 13px;
+            }}
+            QLineEdit:focus {{
+                border: 2px solid {self.ACCENT_PURPLE};
+            }}
+        """)
+        layout.addWidget(to_input)
+        
+        # Subject field
+        subject_label = QLabel("Subject:")
+        subject_label.setStyleSheet(f"color: {self.TEXT_COLOR}; font-weight: bold;")
+        layout.addWidget(subject_label)
+        
+        subject_input = QLineEdit(subject)
+        subject_input.setStyleSheet(f"""
+            QLineEdit {{
+                background-color: {self.BG_LIGHTER};
+                border: 1px solid {self.BORDER_COLOR};
+                border-radius: 4px;
+                padding: 10px;
+                color: {self.TEXT_COLOR};
+                font-size: 13px;
+            }}
+            QLineEdit:focus {{
+                border: 2px solid {self.ACCENT_PURPLE};
+            }}
+        """)
+        layout.addWidget(subject_input)
+        
+        # Body field
+        body_label = QLabel("Message:")
+        body_label.setStyleSheet(f"color: {self.TEXT_COLOR}; font-weight: bold;")
+        layout.addWidget(body_label)
+        
+        body_input = QTextEdit(body)
+        body_input.setStyleSheet(f"""
+            QTextEdit {{
+                background-color: {self.BG_LIGHTER};
+                border: 1px solid {self.BORDER_COLOR};
+                border-radius: 4px;
+                padding: 10px;
+                color: {self.TEXT_COLOR};
+                font-size: 13px;
+                font-family: 'Segoe UI', Arial, sans-serif;
+            }}
+            QTextEdit:focus {{
+                border: 2px solid {self.ACCENT_PURPLE};
+            }}
+        """)
+        layout.addWidget(body_input)
+        
+        # Button bar
+        button_bar = QWidget()
+        button_bar.setStyleSheet("background: transparent;")
+        button_layout = QHBoxLayout(button_bar)
+        button_layout.setContentsMargins(0, 8, 0, 0)
+        button_layout.setSpacing(8)
+        
+        # Send button
+        send_btn = QPushButton("📧 Send")
+        send_btn.setStyleSheet(f"""
+            QPushButton {{
+                background-color: {self.ACCENT_PURPLE};
+                color: white;
+                border: none;
+                padding: 10px 32px;
+                border-radius: 4px;
+                font-weight: bold;
+                font-size: 14px;
+            }}
+            QPushButton:hover {{
+                background-color: #9333ea;
+            }}
+        """)
+        send_btn.clicked.connect(lambda: self._send_email(
+            to_input.text(),
+            subject_input.text(),
+            body_input.toPlainText(),
+            dialog
+        ))
+        button_layout.addWidget(send_btn)
+        
+        # Cancel button
+        cancel_btn = QPushButton("Cancel")
+        cancel_btn.setStyleSheet(f"""
+            QPushButton {{
+                background-color: transparent;
+                color: {self.TEXT_COLOR};
+                border: 1px solid {self.BORDER_COLOR};
+                padding: 10px 32px;
+                border-radius: 4px;
+                font-weight: bold;
+                font-size: 14px;
+            }}
+            QPushButton:hover {{
+                background-color: {self.HOVER_COLOR};
+            }}
+        """)
+        cancel_btn.clicked.connect(dialog.close)
+        button_layout.addWidget(cancel_btn)
+        
+        button_layout.addStretch()
+        
+        layout.addWidget(button_bar)
+        
+        # Template selection handler
+        def on_template_selected(index):
+            template = template_combo.itemData(index)
+            if template:
+                subject_input.setText(template.get('subject', ''))
+                body_input.setPlainText(template.get('body', ''))
+        
+        template_combo.currentIndexChanged.connect(on_template_selected)
+        
+        dialog.exec()
+    
+    def _load_email_templates(self):
+        """Load email templates from JSON file"""
+        try:
+            import json
+            template_file = Path(__file__).parent.parent.parent / "data" / "email_templates.json"
+            
+            if template_file.exists():
+                with open(template_file, 'r') as f:
+                    data = json.load(f)
+                    return data.get('templates', [])
+            return []
+        except Exception as e:
+            print(f"Error loading templates: {e}")
+            return []
+    
+    def _send_email(self, to, subject, body, dialog):
+        """Send the composed email"""
+        try:
+            if not to or not subject or not body:
+                QMessageBox.warning(self, "Missing Information", "Please fill in all fields.")
+                return
+            
+            if not self.email_handler:
+                QMessageBox.critical(self, "Error", "Email handler not configured.")
+                return
+            
+            # Send email using email handler
+            self.email_handler.send_email(to, subject, body)
+            
+            QMessageBox.information(self, "Success", "Email sent successfully!")
+            dialog.close()
+            
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Failed to send email: {str(e)}")
+    
+    def _archive_email(self, email, dialog):
+        """Archive the email"""
+        try:
+            if not self.email_handler:
+                QMessageBox.critical(self, "Error", "Email handler not configured.")
+                return
+            
+            # Archive email (move to Archive folder)
+            msg_id = email.get('id')
+            if msg_id:
+                self.email_handler.archive_email(msg_id)
+                QMessageBox.information(self, "Success", "Email archived successfully!")
+                dialog.close()
+                self._refresh_email()
+            
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Failed to archive email: {str(e)}")
+    
+    def _delete_email(self, email, dialog):
+        """Delete the email"""
+        try:
+            # Confirm deletion
+            reply = QMessageBox.question(
+                self,
+                "Confirm Delete",
+                "Are you sure you want to delete this email?",
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+            )
+            
+            if reply != QMessageBox.StandardButton.Yes:
+                return
+            
+            if not self.email_handler:
+                QMessageBox.critical(self, "Error", "Email handler not configured.")
+                return
+            
+            # Delete email
+            msg_id = email.get('id')
+            if msg_id:
+                self.email_handler.delete_email(msg_id)
+                QMessageBox.information(self, "Success", "Email deleted successfully!")
+                dialog.close()
+                self._refresh_email()
+            
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Failed to delete email: {str(e)}")
+    
+    def _toggle_email_read_status(self, email, dialog):
+        """Toggle email read/unread status"""
+        try:
+            if not self.email_handler:
+                QMessageBox.critical(self, "Error", "Email handler not configured.")
+                return
+            
+            msg_id = email.get('id')
+            is_seen = email.get('seen', False)
+            
+            if msg_id:
+                if is_seen:
+                    self.email_handler.mark_as_unread(msg_id)
+                    QMessageBox.information(self, "Success", "Email marked as unread!")
+                else:
+                    self.email_handler.mark_as_read(msg_id)
+                    QMessageBox.information(self, "Success", "Email marked as read!")
+                
+                dialog.close()
+                self._refresh_email()
+            
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Failed to update email status: {str(e)}")
+    
+    def _refresh_email(self):
+        """Refresh the email list"""
+        if hasattr(self, '_load_emails'):
+            self._load_emails()
     
     def _show_github_stats(self):
+
         """Show GitHub user stats."""
         if not self.github_manager:
             return
@@ -1684,6 +3172,392 @@ class XenoMainWindow(QMainWindow):
         except Exception as e:
             from PyQt6.QtWidgets import QMessageBox
             QMessageBox.warning(self, "Error", f"Failed to get stats: {str(e)}")
+    
+    def _create_calendar_page(self):
+        """Create calendar integration page"""
+        page = QWidget()
+        layout = QVBoxLayout(page)
+        layout.setContentsMargins(20, 20, 20, 20)
+        layout.setSpacing(15)
+        
+        # Header
+        header = QLabel("📅 Calendar Integration")
+        header.setFont(QFont("Segoe UI", 18, QFont.Weight.Bold))
+        header.setStyleSheet("color: #1a73e8; margin-bottom: 10px;")
+        layout.addWidget(header)
+        
+        # Sync button
+        sync_btn = QPushButton("🔄 Sync with Google Calendar")
+        sync_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #1a73e8;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 6px;
+                font-size: 14px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: #1557b0;
+            }
+        """)
+        sync_btn.clicked.connect(self._sync_calendar)
+        layout.addWidget(sync_btn)
+        
+        # Add event button
+        add_event_btn = QPushButton("➕ Add New Event")
+        add_event_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #34a853;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 6px;
+                font-size: 14px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: #2d8e47;
+            }
+        """)
+        add_event_btn.clicked.connect(self._show_add_event_dialog)
+        layout.addWidget(add_event_btn)
+        
+        # Today's events card
+        self.todays_events_card = self._create_todays_events_card()
+        layout.addWidget(self.todays_events_card)
+        
+        # Upcoming events card
+        self.upcoming_events_card = self._create_upcoming_events_card()
+        layout.addWidget(self.upcoming_events_card)
+        
+        layout.addStretch()
+        
+        scroll = QScrollArea()
+        scroll.setWidget(page)
+        scroll.setWidgetResizable(True)
+        scroll.setStyleSheet("QScrollArea { border: none; background-color: #f5f5f5; }")
+        
+        return scroll
+    
+    def _create_todays_events_card(self):
+        """Create today's events card"""
+        card = QFrame()
+        card.setStyleSheet("""
+            QFrame {
+                background-color: white;
+                border-radius: 8px;
+                padding: 15px;
+            }
+        """)
+        
+        layout = QVBoxLayout(card)
+        
+        title = QLabel("📋 Today's Events")
+        title.setFont(QFont("Segoe UI", 14, QFont.Weight.Bold))
+        title.setStyleSheet("color: #202124; margin-bottom: 10px;")
+        layout.addWidget(title)
+        
+        self.todays_events_list = QWidget()
+        self.todays_events_layout = QVBoxLayout(self.todays_events_list)
+        self.todays_events_layout.setSpacing(8)
+        layout.addWidget(self.todays_events_list)
+        
+        return card
+    
+    def _create_upcoming_events_card(self):
+        """Create upcoming events card (7 days)"""
+        card = QFrame()
+        card.setStyleSheet("""
+            QFrame {
+                background-color: white;
+                border-radius: 8px;
+                padding: 15px;
+            }
+        """)
+        
+        layout = QVBoxLayout(card)
+        
+        title = QLabel("📅 Upcoming Events (Next 7 Days)")
+        title.setFont(QFont("Segoe UI", 14, QFont.Weight.Bold))
+        title.setStyleSheet("color: #202124; margin-bottom: 10px;")
+        layout.addWidget(title)
+        
+        self.upcoming_events_list = QWidget()
+        self.upcoming_events_layout = QVBoxLayout(self.upcoming_events_list)
+        self.upcoming_events_layout.setSpacing(8)
+        layout.addWidget(self.upcoming_events_list)
+        
+        return card
+    
+    def _create_event_widget(self, event):
+        """Create widget for a single event"""
+        widget = QFrame()
+        widget.setStyleSheet("""
+            QFrame {
+                background-color: #f8f9fa;
+                border-left: 4px solid #1a73e8;
+                border-radius: 4px;
+                padding: 10px;
+            }
+            QFrame:hover {
+                background-color: #e8f0fe;
+            }
+        """)
+        
+        layout = QVBoxLayout(widget)
+        layout.setSpacing(5)
+        
+        # Event title
+        title = QLabel(event.get('summary', 'No Title'))
+        title.setFont(QFont("Segoe UI", 12, QFont.Weight.Bold))
+        title.setStyleSheet("color: #202124;")
+        layout.addWidget(title)
+        
+        # Event time
+        start = event.get('start', {})
+        end = event.get('end', {})
+        
+        if 'dateTime' in start:
+            from datetime import datetime
+            start_dt = datetime.fromisoformat(start['dateTime'].replace('Z', '+00:00'))
+            end_dt = datetime.fromisoformat(end['dateTime'].replace('Z', '+00:00'))
+            
+            time_str = f"🕐 {start_dt.strftime('%I:%M %p')} - {end_dt.strftime('%I:%M %p')}"
+        else:
+            time_str = "📅 All Day"
+        
+        time_label = QLabel(time_str)
+        time_label.setStyleSheet("color: #5f6368; font-size: 11px;")
+        layout.addWidget(time_label)
+        
+        # Location if available
+        if 'location' in event:
+            location_label = QLabel(f"📍 {event['location']}")
+            location_label.setStyleSheet("color: #5f6368; font-size: 11px;")
+            layout.addWidget(location_label)
+        
+        # Description if available
+        if 'description' in event:
+            desc = event['description']
+            if len(desc) > 100:
+                desc = desc[:100] + "..."
+            desc_label = QLabel(desc)
+            desc_label.setWordWrap(True)
+            desc_label.setStyleSheet("color: #5f6368; font-size: 11px; margin-top: 5px;")
+            layout.addWidget(desc_label)
+        
+        return widget
+    
+    def _sync_calendar(self):
+        """Sync calendar with Google Calendar"""
+        try:
+            if not self.calendar_manager:
+                from PyQt6.QtWidgets import QMessageBox
+                QMessageBox.warning(self, "Error", "Calendar manager not initialized")
+                return
+            
+            # Clear existing events
+            while self.todays_events_layout.count():
+                child = self.todays_events_layout.takeAt(0)
+                if child.widget():
+                    child.widget().deleteLater()
+            
+            while self.upcoming_events_layout.count():
+                child = self.upcoming_events_layout.takeAt(0)
+                if child.widget():
+                    child.widget().deleteLater()
+            
+            # Get today's events
+            todays_events = self.calendar_manager.get_todays_events()
+            if todays_events:
+                for event in todays_events:
+                    event_widget = self._create_event_widget(event)
+                    self.todays_events_layout.addWidget(event_widget)
+            else:
+                no_events = QLabel("No events today")
+                no_events.setStyleSheet("color: #5f6368; font-style: italic; padding: 10px;")
+                self.todays_events_layout.addWidget(no_events)
+            
+            # Get upcoming events
+            upcoming_events = self.calendar_manager.get_upcoming_events(max_results=10, days_ahead=7)
+            if upcoming_events:
+                # Filter out today's events
+                from datetime import datetime, timezone
+                today_start = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+                today_end = today_start.replace(hour=23, minute=59, second=59)
+                
+                future_events = []
+                for event in upcoming_events:
+                    start = event.get('start', {})
+                    if 'dateTime' in start:
+                        event_dt = datetime.fromisoformat(start['dateTime'].replace('Z', '+00:00'))
+                        if event_dt > today_end:
+                            future_events.append(event)
+                
+                if future_events:
+                    for event in future_events:
+                        event_widget = self._create_event_widget(event)
+                        self.upcoming_events_layout.addWidget(event_widget)
+                else:
+                    no_events = QLabel("No upcoming events")
+                    no_events.setStyleSheet("color: #5f6368; font-style: italic; padding: 10px;")
+                    self.upcoming_events_layout.addWidget(no_events)
+            else:
+                no_events = QLabel("No upcoming events")
+                no_events.setStyleSheet("color: #5f6368; font-style: italic; padding: 10px;")
+                self.upcoming_events_layout.addWidget(no_events)
+            
+            # Log to timeline
+            if hasattr(self, 'timeline_manager'):
+                self.timeline_manager.add_activity(
+                    "calendar_sync",
+                    "Calendar Synced",
+                    f"Synced with Google Calendar: {len(todays_events)} today, {len(future_events) if 'future_events' in locals() else 0} upcoming"
+                )
+            
+            from PyQt6.QtWidgets import QMessageBox
+            QMessageBox.information(self, "Success", "Calendar synced successfully!")
+            
+        except Exception as e:
+            from PyQt6.QtWidgets import QMessageBox
+            QMessageBox.warning(self, "Error", f"Failed to sync calendar: {str(e)}")
+    
+    def _show_add_event_dialog(self):
+        """Show dialog to add new calendar event"""
+        from PyQt6.QtWidgets import QDialog, QFormLayout, QLineEdit, QTextEdit, QDialogButtonBox, QDateTimeEdit
+        from datetime import datetime, timedelta
+        
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Add Calendar Event")
+        dialog.setMinimumWidth(500)
+        dialog.setStyleSheet("""
+            QDialog {
+                background-color: white;
+            }
+            QLineEdit, QTextEdit, QDateTimeEdit {
+                padding: 8px;
+                border: 1px solid #dadce0;
+                border-radius: 4px;
+                font-size: 13px;
+            }
+            QLineEdit:focus, QTextEdit:focus, QDateTimeEdit:focus {
+                border: 2px solid #1a73e8;
+            }
+        """)
+        
+        layout = QFormLayout(dialog)
+        
+        # Event fields
+        title_input = QLineEdit()
+        title_input.setPlaceholderText("Meeting with team")
+        
+        start_time_input = QDateTimeEdit()
+        start_time_input.setDateTime(datetime.now())
+        start_time_input.setCalendarPopup(True)
+        start_time_input.setDisplayFormat("yyyy-MM-dd hh:mm AP")
+        
+        end_time_input = QDateTimeEdit()
+        end_time_input.setDateTime(datetime.now() + timedelta(hours=1))
+        end_time_input.setCalendarPopup(True)
+        end_time_input.setDisplayFormat("yyyy-MM-dd hh:mm AP")
+        
+        location_input = QLineEdit()
+        location_input.setPlaceholderText("Conference Room A")
+        
+        description_input = QTextEdit()
+        description_input.setPlaceholderText("Event details...")
+        description_input.setMaximumHeight(100)
+        
+        attendees_input = QLineEdit()
+        attendees_input.setPlaceholderText("email1@example.com, email2@example.com")
+        
+        layout.addRow("Title*:", title_input)
+        layout.addRow("Start Time*:", start_time_input)
+        layout.addRow("End Time*:", end_time_input)
+        layout.addRow("Location:", location_input)
+        layout.addRow("Description:", description_input)
+        layout.addRow("Attendees:", attendees_input)
+        
+        # Buttons
+        buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
+        buttons.accepted.connect(dialog.accept)
+        buttons.rejected.connect(dialog.reject)
+        layout.addRow(buttons)
+        
+        if dialog.exec() == QDialog.DialogCode.Accepted:
+            title = title_input.text().strip()
+            if not title:
+                from PyQt6.QtWidgets import QMessageBox
+                QMessageBox.warning(self, "Error", "Event title is required")
+                return
+            
+            start_dt = start_time_input.dateTime().toPyDateTime()
+            end_dt = end_time_input.dateTime().toPyDateTime()
+            location = location_input.text().strip() or None
+            description = description_input.toPlainText().strip() or None
+            
+            attendees = []
+            if attendees_input.text().strip():
+                attendees = [email.strip() for email in attendees_input.text().split(',')]
+            
+            self._create_calendar_event(title, start_dt, end_dt, description, location, attendees)
+    
+    def _create_calendar_event(self, title, start_time, end_time, description=None, location=None, attendees=None):
+        """Create a new calendar event"""
+        try:
+            if not self.calendar_manager:
+                from PyQt6.QtWidgets import QMessageBox
+                QMessageBox.warning(self, "Error", "Calendar manager not initialized")
+                return
+            
+            # Check for conflicts
+            conflicts = self.calendar_manager.check_conflicts(start_time, end_time)
+            if conflicts:
+                from PyQt6.QtWidgets import QMessageBox
+                conflict_msg = "This event conflicts with:\n\n"
+                for event in conflicts:
+                    conflict_msg += f"• {event.get('summary', 'Untitled')}\n"
+                
+                reply = QMessageBox.question(
+                    self, 
+                    "Schedule Conflict",
+                    conflict_msg + "\nDo you want to create this event anyway?",
+                    QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+                )
+                
+                if reply == QMessageBox.StandardButton.No:
+                    return
+            
+            # Create event
+            event = self.calendar_manager.create_event(
+                summary=title,
+                start_time=start_time,
+                end_time=end_time,
+                description=description,
+                location=location,
+                attendees=attendees
+            )
+            
+            if event:
+                # Refresh calendar display
+                self._sync_calendar()
+                
+                # Log to timeline
+                if hasattr(self, 'timeline_manager'):
+                    self.timeline_manager.add_activity(
+                        "calendar_event",
+                        "Event Created",
+                        f"Created calendar event: {title}"
+                    )
+                
+                from PyQt6.QtWidgets import QMessageBox
+                QMessageBox.information(self, "Success", f"Event '{title}' created successfully!")
+            
+        except Exception as e:
+            from PyQt6.QtWidgets import QMessageBox
+            QMessageBox.warning(self, "Error", f"Failed to create event: {str(e)}")
         
     def _create_settings_page(self):
         """Create settings page"""

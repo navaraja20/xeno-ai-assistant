@@ -315,7 +315,49 @@ class EmailHandler:
             logger.error(f"Failed to mark email as read: {e}")
             return False
     
+    def mark_as_unread(self, email_id: str) -> bool:
+        """Mark an email as unread."""
+        try:
+            self.imap.store(email_id.encode(), '-FLAGS', '\\Seen')
+            logger.info(f"Marked email {email_id} as unread")
+            return True
+        except Exception as e:
+            logger.error(f"Failed to mark email as unread: {e}")
+            return False
+    
+    def archive_email(self, email_id: str) -> bool:
+        """Archive an email (move to Archive folder)."""
+        try:
+            # Try to move to Archive folder, create if doesn't exist
+            try:
+                self.imap.create('Archive')
+            except:
+                pass  # Folder might already exist
+            
+            # Copy to Archive and delete from INBOX
+            self.imap.copy(email_id.encode(), 'Archive')
+            self.imap.store(email_id.encode(), '+FLAGS', '\\Deleted')
+            self.imap.expunge()
+            
+            logger.info(f"Archived email {email_id}")
+            return True
+        except Exception as e:
+            logger.error(f"Failed to archive email: {e}")
+            return False
+    
+    def delete_email(self, email_id: str) -> bool:
+        """Permanently delete an email."""
+        try:
+            self.imap.store(email_id.encode(), '+FLAGS', '\\Deleted')
+            self.imap.expunge()
+            logger.info(f"Deleted email {email_id}")
+            return True
+        except Exception as e:
+            logger.error(f"Failed to delete email: {e}")
+            return False
+    
     def search_emails(self, query: str, max_results: int = 20) -> List[Dict]:
+
         """
         Search emails by subject or sender.
         

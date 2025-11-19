@@ -1,0 +1,44 @@
+{
+  "templates": [
+    {
+      "name": "Thank You",
+      "subject": "Thank you",
+      "body": "Dear [Name],\n\nThank you for your email. I appreciate you taking the time to reach out.\n\n[Your message here]\n\nBest regards,\n[Your Name]"
+    },
+    {
+      "name": "Follow-up",
+      "subject": "Following up on [Topic]",
+      "body": "Hi [Name],\n\nI wanted to follow up on our previous conversation about [Topic].\n\n[Your message here]\n\nLooking forward to hearing from you.\n\nBest regards,\n[Your Name]"
+    },
+    {
+      "name": "Meeting Request",
+      "subject": "Meeting Request - [Topic]",
+      "body": "Hi [Name],\n\nI would like to schedule a meeting to discuss [Topic].\n\nWould you be available for a [Duration] meeting sometime this week? I'm flexible with timing and can work around your schedule.\n\nPlease let me know what works best for you.\n\nBest regards,\n[Your Name]"
+    },
+    {
+      "name": "Out of Office",
+      "subject": "Out of Office - [Your Name]",
+      "body": "Thank you for your email.\n\nI am currently out of the office and will have limited access to email. I will return on [Date] and will respond to your message as soon as possible.\n\nFor urgent matters, please contact [Alternative Contact] at [Email/Phone].\n\nBest regards,\n[Your Name]"
+    },
+    {
+      "name": "Introduction",
+      "subject": "Introduction - [Your Name]",
+      "body": "Hi [Name],\n\nI hope this email finds you well. My name is [Your Name] and I am [Your Title/Role] at [Company/Organization].\n\n[Brief introduction and purpose]\n\nI would love to connect and discuss [Topic]. Would you be open to a brief call or meeting?\n\nBest regards,\n[Your Name]"
+    },
+    {
+      "name": "Acknowledgment",
+      "subject": "Re: [Original Subject]",
+      "body": "Hi [Name],\n\nThank you for bringing this to my attention. I have received your email and I am looking into this matter.\n\nI will get back to you with a detailed response by [Date/Time].\n\nBest regards,\n[Your Name]"
+    },
+    {
+      "name": "Decline Politely",
+      "subject": "Re: [Original Subject]",
+      "body": "Hi [Name],\n\nThank you for thinking of me for [Opportunity/Request].\n\nUnfortunately, I won't be able to [participate/attend/help] at this time due to [brief reason]. I appreciate your understanding.\n\n[Optional: Suggest alternative or express interest in future opportunities]\n\nBest regards,\n[Your Name]"
+    },
+    {
+      "name": "Project Update",
+      "subject": "Project Update - [Project Name]",
+      "body": "Hi Team,\n\nHere's a quick update on [Project Name]:\n\n✅ Completed:\n- [Item 1]\n- [Item 2]\n\n🔄 In Progress:\n- [Item 1]\n- [Item 2]\n\n📅 Next Steps:\n- [Item 1]\n- [Item 2]\n\nPlease let me know if you have any questions or concerns.\n\nBest regards,\n[Your Name]"
+    }
+  ]
+}
