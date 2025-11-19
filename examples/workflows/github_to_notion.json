@@ -1,0 +1,85 @@
+{
+  "workflow_id": "github-to-notion",
+  "name": "GitHub Issues to Notion",
+  "description": "Sync GitHub issues and PRs to Notion database for tracking",
+  "enabled": true,
+  "trigger": {
+    "trigger_id": "github-webhook",
+    "trigger_type": "webhook",
+    "config": {
+      "path": "/webhooks/github/issues",
+      "method": "POST",
+      "description": "GitHub webhook for issues and pull requests"
+    }
+  },
+  "actions": [
+    {
+      "action_id": "check-issue-type",
+      "action_type": "condition",
+      "service": "xeno",
+      "operation": "evaluate_condition",
+      "parameters": {
+        "field": "{{webhook_data.action}}",
+        "operator": "equals",
+        "value": "opened"
+      },
+      "on_true": ["create-notion-page"],
+      "on_false": ["update-notion-page"]
+    },
+    {
+      "action_id": "create-notion-page",
+      "action_type": "api_call",
+      "service": "notion",
+      "operation": "create_page",
+      "parameters": {
+        "parent_id": "YOUR_DATABASE_ID",
+        "properties": {
+          "Name": "#{{issue_number}} - {{issue_title}}",
+          "Status": "{{issue_state}}",
+          "Type": "{{issue_type}}",
+          "Repository": "{{repository_name}}",
+          "Author": "{{issue_author}}",
+          "Labels": "{{issue_labels}}",
+          "Created": "{{created_at}}",
+          "URL": "{{issue_url}}"
+        },
+        "content": [
+          {
+            "type": "heading_2",
+            "text": "Description"
+          },
+          {
+            "type": "text",
+            "text": "{{issue_body}}"
+          }
+        ]
+      }
+    },
+    {
+      "action_id": "update-notion-page",
+      "action_type": "api_call",
+      "service": "notion",
+      "operation": "update_page",
+      "parameters": {
+        "page_id": "{{notion_page_id}}",
+        "properties": {
+          "Status": "{{issue_state}}",
+          "Labels": "{{issue_labels}}",
+          "Updated": "{{updated_at}}"
+        }
+      }
+    },
+    {
+      "action_id": "notify-team",
+      "action_type": "api_call",
+      "service": "slack",
+      "operation": "send_message",
+      "parameters": {
+        "channel": "#github-updates",
+        "text": "🔔 GitHub {{action}}: {{issue_title}}\n\n**Repository:** {{repository_name}}\n**Author:** {{issue_author}}\n**Link:** {{issue_url}}"
+      }
+    }
+  ],
+  "created_at": "2024-01-15T10:00:00Z",
+  "updated_at": "2024-01-15T10:00:00Z"
+}

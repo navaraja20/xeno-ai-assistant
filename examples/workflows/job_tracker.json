@@ -1,0 +1,55 @@
+{
+  "workflow_id": "job-application-tracker",
+  "name": "LinkedIn Job Application Tracker",
+  "description": "Track all job applications from LinkedIn in Trello and Todoist",
+  "enabled": true,
+  "trigger": {
+    "trigger_id": "linkedin-application",
+    "trigger_type": "event",
+    "config": {
+      "event": "linkedin_application_sent",
+      "description": "Triggered when job application is sent via LinkedIn"
+    }
+  },
+  "actions": [
+    {
+      "action_id": "create-trello-card",
+      "action_type": "api_call",
+      "service": "trello",
+      "operation": "create_card",
+      "parameters": {
+        "board_id": "YOUR_BOARD_ID",
+        "list_id": "YOUR_APPLICATIONS_LIST_ID",
+        "name": "Application: {{company_name}}",
+        "desc": "**Position:** {{job_title}}\n**Company:** {{company_name}}\n**Location:** {{location}}\n**Applied:** {{application_date}}\n**LinkedIn URL:** {{job_url}}",
+        "due": "in 7 days",
+        "labels": ["job-application"]
+      }
+    },
+    {
+      "action_id": "create-followup-task",
+      "action_type": "api_call",
+      "service": "todoist",
+      "operation": "create_task",
+      "parameters": {
+        "content": "Follow up: {{company_name}} - {{job_title}}",
+        "description": "Send follow-up email or check application status",
+        "due_string": "in 3 days",
+        "priority": 3,
+        "labels": ["job-search", "follow-up"]
+      }
+    },
+    {
+      "action_id": "notify-discord",
+      "action_type": "api_call",
+      "service": "discord",
+      "operation": "send_message",
+      "parameters": {
+        "channel_id": "YOUR_CHANNEL_ID",
+        "content": "📧 New job application sent!\n\n**Company:** {{company_name}}\n**Position:** {{job_title}}\n**Status:** Application submitted ✅"
+      }
+    }
+  ],
+  "created_at": "2024-01-15T10:00:00Z",
+  "updated_at": "2024-01-15T10:00:00Z"
+}

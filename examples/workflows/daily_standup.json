@@ -1,0 +1,37 @@
+{
+  "workflow_id": "daily-standup",
+  "name": "Daily Standup",
+  "description": "Automatically post daily standup message with today's tasks",
+  "enabled": true,
+  "trigger": {
+    "trigger_id": "schedule-9am",
+    "trigger_type": "schedule",
+    "config": {
+      "cron": "0 9 * * 1-5",
+      "description": "Every weekday at 9 AM"
+    }
+  },
+  "actions": [
+    {
+      "action_id": "get-todoist-tasks",
+      "action_type": "api_call",
+      "service": "todoist",
+      "operation": "get_tasks",
+      "parameters": {
+        "filter": "today"
+      }
+    },
+    {
+      "action_id": "send-slack-message",
+      "action_type": "api_call",
+      "service": "slack",
+      "operation": "send_message",
+      "parameters": {
+        "channel": "#general",
+        "text": "Good morning team! 🌅\n\nHere are my tasks for today:\n{{tasks}}\n\nLet me know if you need anything!"
+      }
+    }
+  ],
+  "created_at": "2024-01-15T10:00:00Z",
+  "updated_at": "2024-01-15T10:00:00Z"
+}

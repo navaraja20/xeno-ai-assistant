@@ -1,0 +1,80 @@
+{
+  "workflow_id": "social-media-digest",
+  "name": "Daily Social Media Digest",
+  "description": "Collect social media activity and create daily summary in Notion",
+  "enabled": true,
+  "trigger": {
+    "trigger_id": "evening-digest",
+    "trigger_type": "schedule",
+    "config": {
+      "cron": "0 18 * * *",
+      "description": "Every day at 6 PM"
+    }
+  },
+  "actions": [
+    {
+      "action_id": "get-twitter-mentions",
+      "action_type": "api_call",
+      "service": "twitter",
+      "operation": "get_mentions",
+      "parameters": {
+        "user_id": "YOUR_USER_ID",
+        "max_results": 10
+      }
+    },
+    {
+      "action_id": "get-github-notifications",
+      "action_type": "api_call",
+      "service": "github",
+      "operation": "list_notifications",
+      "parameters": {
+        "all": false,
+        "participating": true
+      }
+    },
+    {
+      "action_id": "create-notion-digest",
+      "action_type": "api_call",
+      "service": "notion",
+      "operation": "create_page",
+      "parameters": {
+        "parent_id": "YOUR_DATABASE_ID",
+        "properties": {
+          "Name": "Social Digest - {{current_date}}",
+          "Type": "Daily Summary",
+          "Date": "{{current_date}}"
+        },
+        "content": [
+          {
+            "type": "heading_2",
+            "text": "Twitter Mentions ({{mention_count}})"
+          },
+          {
+            "type": "text",
+            "text": "{{mentions_summary}}"
+          },
+          {
+            "type": "heading_2",
+            "text": "GitHub Notifications ({{notification_count}})"
+          },
+          {
+            "type": "text",
+            "text": "{{notifications_summary}}"
+          }
+        ]
+      }
+    },
+    {
+      "action_id": "send-slack-summary",
+      "action_type": "api_call",
+      "service": "slack",
+      "operation": "send_message",
+      "parameters": {
+        "channel": "#personal",
+        "text": "📊 Daily Social Media Digest\n\n**Twitter:** {{mention_count}} mentions\n**GitHub:** {{notification_count}} notifications\n\nFull summary in Notion: {{notion_url}}"
+      }
+    }
+  ],
+  "created_at": "2024-01-15T10:00:00Z",
+  "updated_at": "2024-01-15T10:00:00Z"
+}

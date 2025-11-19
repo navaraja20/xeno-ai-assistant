@@ -1,0 +1,68 @@
+{
+  "workflow_id": "email-to-tasks",
+  "name": "Important Email to Tasks",
+  "description": "Convert high-priority emails into actionable tasks in Notion and Todoist",
+  "enabled": true,
+  "trigger": {
+    "trigger_id": "important-email",
+    "trigger_type": "event",
+    "config": {
+      "event": "important_email_received",
+      "description": "ML model detects important email (priority >= 0.8)"
+    }
+  },
+  "actions": [
+    {
+      "action_id": "create-notion-page",
+      "action_type": "api_call",
+      "service": "notion",
+      "operation": "create_page",
+      "parameters": {
+        "parent_id": "YOUR_DATABASE_ID",
+        "properties": {
+          "Name": "{{email_subject}}",
+          "From": "{{email_from}}",
+          "Priority": "{{email_priority}}",
+          "Date Received": "{{email_date}}",
+          "Status": "To Do"
+        },
+        "content": [
+          {
+            "type": "heading_2",
+            "text": "Email Content"
+          },
+          {
+            "type": "text",
+            "text": "{{email_body}}"
+          }
+        ]
+      }
+    },
+    {
+      "action_id": "create-todoist-task",
+      "action_type": "api_call",
+      "service": "todoist",
+      "operation": "create_task",
+      "parameters": {
+        "content": "Reply to: {{email_subject}}",
+        "description": "From: {{email_from}}\n\n{{email_body}}",
+        "due_string": "today",
+        "priority": 4,
+        "labels": ["email", "urgent"]
+      }
+    },
+    {
+      "action_id": "send-notification",
+      "action_type": "notification",
+      "service": "xeno",
+      "operation": "send_desktop_notification",
+      "parameters": {
+        "title": "Important Email Received",
+        "message": "{{email_subject}} from {{email_from}}",
+        "priority": "high"
+      }
+    }
+  ],
+  "created_at": "2024-01-15T10:00:00Z",
+  "updated_at": "2024-01-15T10:00:00Z"
+}
