@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XENO Extension Settings</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: #2b2d31;
+      color: #ffffff;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .header h1 {
+      font-size: 32px;
+      color: #5865F2;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      color: #b5bac1;
+      font-size: 14px;
+    }
+
+    .settings-card {
+      background: #313338;
+      border: 1px solid #40444b;
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .settings-card h2 {
+      font-size: 18px;
+      margin-bottom: 16px;
+      color: #ffffff;
+    }
+
+    .settings-card p {
+      color: #b5bac1;
+      font-size: 13px;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #b5bac1;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="url"],
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      background: #2b2d31;
+      border: 1px solid #40444b;
+      border-radius: 6px;
+      color: #ffffff;
+      font-size: 14px;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #5865F2;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      background: #2b2d31;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-bottom: 8px;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+
+    .checkbox-group label {
+      flex: 1;
+      margin: 0;
+      cursor: pointer;
+      text-transform: none;
+      letter-spacing: normal;
+      font-weight: normal;
+      color: #ffffff;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: #5865F2;
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      background: #4752C4;
+    }
+
+    .btn-secondary {
+      background: #40444b;
+      color: #ffffff;
+      margin-left: 10px;
+    }
+
+    .btn-secondary:hover {
+      background: #4e5158;
+    }
+
+    .status-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .status-indicator.connected {
+      background: rgba(87, 242, 135, 0.1);
+      color: #57F287;
+      border: 1px solid rgba(87, 242, 135, 0.2);
+    }
+
+    .status-indicator.disconnected {
+      background: rgba(237, 66, 69, 0.1);
+      color: #ED4245;
+      border: 1px solid rgba(237, 66, 69, 0.2);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .save-notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #57F287;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      opacity: 0;
+      transform: translateX(400px);
+      transition: all 0.3s;
+      z-index: 1000;
+    }
+
+    .save-notification.show {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .keyboard-shortcuts {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .shortcut-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background: #2b2d31;
+      border-radius: 6px;
+    }
+
+    .shortcut-key {
+      background: #40444b;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-family: monospace;
+      color: #5865F2;
+    }
+
+    @media (max-width: 600px) {
+      .keyboard-shortcuts {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>⚡ XENO Extension Settings</h1>
+      <p>Configure your XENO browser extension</p>
+    </div>
+
+    <div id="connection-status" class="status-indicator disconnected">
+      <span class="status-dot"></span>
+      <span>Disconnected from XENO Desktop</span>
+    </div>
+
+    <div class="settings-card">
+      <h2>🔗 Desktop Connection</h2>
+      <p>Connect the browser extension to your XENO desktop application for real-time synchronization.</p>
+      
+      <div class="form-group">
+        <label>WebSocket Server URL</label>
+        <input type="url" id="server-url" placeholder="ws://localhost:8765" value="ws://localhost:8765">
+      </div>
+
+      <button id="test-connection" class="btn btn-secondary">Test Connection</button>
+    </div>
+
+    <div class="settings-card">
+      <h2>👤 User Information</h2>
+      <p>This information will be used to auto-fill job applications and forms.</p>
+      
+      <div class="form-group">
+        <label>First Name</label>
+        <input type="text" id="first-name" placeholder="John">
+      </div>
+
+      <div class="form-group">
+        <label>Last Name</label>
+        <input type="text" id="last-name" placeholder="Doe">
+      </div>
+
+      <div class="form-group">
+        <label>Email</label>
+        <input type="text" id="email" placeholder="john.doe@example.com">
+      </div>
+
+      <div class="form-group">
+        <label>Phone</label>
+        <input type="text" id="phone" placeholder="+1 (555) 123-4567">
+      </div>
+
+      <div class="form-group">
+        <label>LinkedIn URL</label>
+        <input type="url" id="linkedin-url" placeholder="https://www.linkedin.com/in/johndoe">
+      </div>
+    </div>
+
+    <div class="settings-card">
+      <h2>⚙️ Features</h2>
+      <p>Enable or disable specific XENO features.</p>
+      
+      <div class="checkbox-group">
+        <input type="checkbox" id="enable-quick-apply" checked>
+        <label for="enable-quick-apply">LinkedIn Quick Apply</label>
+      </div>
+
+      <div class="checkbox-group">
+        <input type="checkbox" id="enable-github" checked>
+        <label for="enable-github">GitHub Integration</label>
+      </div>
+
+      <div class="checkbox-group">
+        <input type="checkbox" id="enable-gmail" checked>
+        <label for="enable-gmail">Gmail Enhancements</label>
+      </div>
+
+      <div class="checkbox-group">
+        <input type="checkbox" id="enable-ai-assist" checked>
+        <label for="enable-ai-assist">AI Email Assistant</label>
+      </div>
+
+      <div class="checkbox-group">
+        <input type="checkbox" id="enable-priority" checked>
+        <label for="enable-priority">ML Priority Predictions</label>
+      </div>
+
+      <div class="checkbox-group">
+        <input type="checkbox" id="enable-context-menu" checked>
+        <label for="enable-context-menu">Context Menu Actions</label>
+      </div>
+
+      <div class="checkbox-group">
+        <input type="checkbox" id="enable-notifications" checked>
+        <label for="enable-notifications">Desktop Notifications</label>
+      </div>
+    </div>
+
+    <div class="settings-card">
+      <h2>⌨️ Keyboard Shortcuts</h2>
+      <p>Quick access to XENO features from anywhere.</p>
+      
+      <div class="keyboard-shortcuts">
+        <div class="shortcut-item">
+          <span>Quick Email</span>
+          <span class="shortcut-key">Ctrl+Shift+E</span>
+        </div>
+        <div class="shortcut-item">
+          <span>Quick Calendar</span>
+          <span class="shortcut-key">Ctrl+Shift+C</span>
+        </div>
+        <div class="shortcut-item">
+          <span>Open XENO</span>
+          <span class="shortcut-key">Ctrl+Shift+X</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-card">
+      <h2>📊 Statistics</h2>
+      <p>Your XENO activity summary.</p>
+      
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 16px;">
+        <div style="text-align: center;">
+          <div style="font-size: 32px; font-weight: 700; color: #5865F2;" id="stat-emails">0</div>
+          <div style="font-size: 12px; color: #b5bac1; margin-top: 4px;">Emails Sent</div>
+        </div>
+        <div style="text-align: center;">
+          <div style="font-size: 32px; font-weight: 700; color: #5865F2;" id="stat-tasks">0</div>
+          <div style="font-size: 12px; color: #b5bac1; margin-top: 4px;">Tasks Created</div>
+        </div>
+        <div style="text-align: center;">
+          <div style="font-size: 32px; font-weight: 700; color: #5865F2;" id="stat-events">0</div>
+          <div style="font-size: 12px; color: #b5bac1; margin-top: 4px;">Events Scheduled</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align: right; margin-top: 30px;">
+      <button id="reset-btn" class="btn btn-secondary">Reset to Defaults</button>
+      <button id="save-btn" class="btn btn-primary">Save Settings</button>
+    </div>
+  </div>
+
+  <div id="save-notification" class="save-notification">
+    Settings saved successfully!
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>
