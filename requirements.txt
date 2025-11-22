@@ -87,6 +87,12 @@ websockets==12.0
 # Integration Hub
 aiohttp==3.9.1
 
+# IoT & Wearable
+bleak==0.21.1  # Bluetooth Low Energy
+paho-mqtt==1.6.1  # MQTT for IoT devices
+fitbit==0.3.1  # Fitbit API
+garminconnect==0.2.0  # Garmin Connect
+
 # Development
 pytest==7.4.3
 pytest-asyncio==0.21.1
