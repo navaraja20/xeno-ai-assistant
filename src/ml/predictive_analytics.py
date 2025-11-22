@@ -12,7 +12,7 @@ import numpy as np
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingRegressor
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
-from core.logger import setup_logger
+from src.core.logger import setup_logger
 
 
 class PredictiveAnalytics:
@@ -713,3 +713,7 @@ class PredictiveAnalytics:
                 recommendations.append("You're most productive in afternoons - save complex tasks for after lunch")
         
         return recommendations
+
+# Aliases for compatibility
+PredictiveEngine = PredictiveAnalytics
+BehaviorAnalyzer = PredictiveAnalytics

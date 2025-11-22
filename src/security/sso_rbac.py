@@ -5,7 +5,7 @@ Supports OAuth2, SAML, and OIDC protocols
 
 import aiohttp
 import secrets
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 from datetime import datetime, timedelta
 from urllib.parse import urlencode, parse_qs, urlparse
 import base64

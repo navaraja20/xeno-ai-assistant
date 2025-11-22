@@ -1,0 +1,10 @@
+{
+  "test_model_accuracy": [
+    {
+      "metric_name": "accuracy",
+      "value": 0.95,
+      "timestamp": "2025-11-22T14:14:02.768585",
+      "context": {}
+    }
+  ]
+}

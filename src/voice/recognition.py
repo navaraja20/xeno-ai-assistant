@@ -6,7 +6,7 @@ import speech_recognition as sr
 import threading
 import queue
 from pathlib import Path
-from core.logger import setup_logger
+from src.core.logger import setup_logger
 
 
 class VoiceRecognition:

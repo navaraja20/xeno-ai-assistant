@@ -93,6 +93,10 @@ paho-mqtt==1.6.1  # MQTT for IoT devices
 fitbit==0.3.1  # Fitbit API
 garminconnect==0.2.0  # Garmin Connect
 
+# Security & SSO
+PyJWT==2.8.0  # JWT tokens
+pyotp==2.9.0  # MFA/TOTP
+
 # Development
 pytest==7.4.3
 pytest-asyncio==0.21.1

@@ -12,7 +12,7 @@ from matplotlib.figure import Figure
 import seaborn as sns
 import numpy as np
 import pandas as pd
-from core.logger import setup_logger
+from src.core.logger import setup_logger
 
 
 class AnalyticsDashboard:

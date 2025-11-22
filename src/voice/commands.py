@@ -3,7 +3,7 @@ Voice Command Processor for XENO
 Processes voice commands and triggers actions
 """
 import re
-from core.logger import setup_logger
+from src.core.logger import setup_logger
 
 
 class VoiceCommandProcessor:

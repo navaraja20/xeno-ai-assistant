@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, Optional
-from core.logger import setup_logger
+from src.core.logger import setup_logger
 
 
 class AnalyticsCollector:
