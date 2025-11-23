@@ -451,8 +451,9 @@ class ABTestingManager:
         
         test = self.active_tests[test_name]
         
-        # Use hash of user_id for consistent assignment
-        hash_value = int(hashlib.md5(user_id.encode()).hexdigest(), 16)
+        # Use hash of user_id for consistent assignment (not for security)
+        # Using SHA256 for better collision resistance
+        hash_value = int(hashlib.sha256(user_id.encode()).hexdigest()[:16], 16)
         
         if (hash_value % 100) < (test["traffic_split"] * 100):
             return "variant_a"

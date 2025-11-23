@@ -29,10 +29,11 @@ def test_security_with_team_collaboration():
         
         team_mgr = TeamManager()
         team = team_mgr.create_team("team_alpha", "Alpha Team", "Secure project team", "alice")
-        team_mgr.add_member("team_alpha", "bob")
+        team_mgr.add_member("team_alpha", "bob", "alice")  # Fixed: added 'added_by' parameter
         
         print("  ✓ Users authenticated successfully")
         print("  ✓ Team created with secure access control")
+        print("  ✓ Bob added to team by Alice")
         print("  ✓ Integration: PASSED")
         return True
     except Exception as e:
@@ -81,14 +82,15 @@ def test_iot_with_voice_control():
         
         # Set up smart home
         smart_home = SmartHomeHub()
-        smart_home.add_light("living_room", "Living Room Light", "philips_hue")
+        light = smart_home.add_light("living_room", "Living Room Light", "philips_hue")  # Fixed: use add_light method
         
         # Set up voice engine
         voice_engine = AdvancedVoiceEngine()
-        voice_engine.set_language(Language.ENGLISH)
+        voice_engine.set_language(Language.ENGLISH_US)
         
-        # Simulate voice command to control light
-        light_status = smart_home.get_device("living_room")
+        # Verify light was added
+        light_device = smart_home.get_device("living_room")
+        assert light_device is not None, "Light device not found"
         
         print("  ✓ Smart home hub initialized")
         print("  ✓ Voice engine ready (13 languages)")
@@ -198,7 +200,9 @@ print("=" * 70)
 if passed == len(tests):
     print("\n🎉 ALL INTEGRATION TESTS PASSED! 🚀")
     print("XENO features work seamlessly together!\n")
-    sys.exit(0)
 else:
     print(f"\n⚠️  {len(tests) - passed} integration test(s) failed\n")
-    sys.exit(1)
+
+if __name__ == "__main__":
+    sys.exit(0 if passed == len(tests) else 1)
+

@@ -182,17 +182,25 @@ def _enable_autostart_macos() -> bool:
     with open(plist_path, 'wb') as f:
         plistlib.dump(plist_content, f)
     
-    # Load the launch agent
-    os.system(f"launchctl load {plist_path}")
+    # Load the launch agent (using subprocess for security)
+    import subprocess
+    try:
+        subprocess.run(['launchctl', 'load', str(plist_path)], check=True, capture_output=True)
+    except subprocess.CalledProcessError:
+        pass  # Silently ignore if launchctl fails
     return True
 
 
 def _disable_autostart_macos() -> bool:
     """Disable autostart on macOS"""
+    import subprocess
     plist_path = Path.home() / "Library" / "LaunchAgents" / "com.xeno.assistant.plist"
     
     if plist_path.exists():
-        os.system(f"launchctl unload {plist_path}")
+        try:
+            subprocess.run(['launchctl', 'unload', str(plist_path)], check=True, capture_output=True)
+        except subprocess.CalledProcessError:
+            pass  # Silently ignore if launchctl fails
         plist_path.unlink()
     
     return True

@@ -1,0 +1,10 @@
+{
+  "communication_style": "technical",
+  "detail_level": "detailed",
+  "response_format": "conversational",
+  "tone": "neutral",
+  "preferred_time_format": "12h",
+  "timezone": "UTC",
+  "language": "en",
+  "expertise_level": {}
+}

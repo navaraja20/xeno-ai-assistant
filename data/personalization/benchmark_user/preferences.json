@@ -1,0 +1,11 @@
+{
+  "communication_style": "professional",
+  "detail_level": "medium",
+  "response_format": "conversational",
+  "tone": "neutral",
+  "preferred_time_format": "12h",
+  "timezone": "UTC",
+  "language": "en",
+  "expertise_level": {},
+  "test_key": "test_value"
+}

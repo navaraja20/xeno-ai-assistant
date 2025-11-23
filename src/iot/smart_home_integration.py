@@ -22,6 +22,30 @@ class SmartHomeHub:
         """Register a smart device"""
         self.devices[device.device_id] = device
     
+    def add_light(self, device_id: str, name: str, light_type: str = "generic") -> 'SmartLight':
+        """Convenience method to add a smart light"""
+        light = SmartLight(device_id, name, f"http://api.{light_type}.local", "default_key")
+        self.register_device(light)
+        return light
+    
+    def add_thermostat(self, device_id: str, name: str) -> 'SmartThermostat':
+        """Convenience method to add a smart thermostat"""
+        thermostat = SmartThermostat(device_id, name, "http://api.thermostat.local", "default_key")
+        self.register_device(thermostat)
+        return thermostat
+    
+    def add_lock(self, device_id: str, name: str) -> 'SmartLock':
+        """Convenience method to add a smart lock"""
+        lock = SmartLock(device_id, name, "http://api.lock.local", "default_key")
+        self.register_device(lock)
+        return lock
+    
+    def add_camera(self, device_id: str, name: str) -> 'SmartCamera':
+        """Convenience method to add a smart camera"""
+        camera = SmartCamera(device_id, name, "http://api.camera.local", "default_key")
+        self.register_device(camera)
+        return camera
+    
     def get_device(self, device_id: str) -> Optional['SmartDevice']:
         """Get device by ID"""
         return self.devices.get(device_id)

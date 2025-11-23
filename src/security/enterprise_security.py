@@ -259,6 +259,10 @@ class AuthenticationManager:
     
     def verify_session(self, token: str) -> Optional[Dict[str, Any]]:
         """Verify session token"""
+        # Check if token has been revoked
+        if token not in self.sessions:
+            return None
+        
         try:
             payload = jwt.decode(token, self.secret_key, algorithms=["HS256"])
             return payload

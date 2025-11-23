@@ -9,5 +9,1540 @@
     ],
     "created_at": "2025-11-22T14:18:48.994269",
     "settings": {}
+  },
+  "team_alpha": {
+    "team_id": "team_alpha",
+    "name": "Alpha Team",
+    "description": "Secure project team",
+    "owner": "alice",
+    "members": [
+      "alice",
+      "bob"
+    ],
+    "created_at": "2025-11-23T19:25:43.913568",
+    "settings": {}
+  },
+  "team_0": {
+    "team_id": "team_0",
+    "name": "Team team_0",
+    "description": "Benchmark team",
+    "owner": "owner",
+    "members": [
+      "owner",
+      "member1"
+    ],
+    "created_at": "2025-11-23T19:25:40.833847",
+    "settings": {}
+  },
+  "team_1": {
+    "team_id": "team_1",
+    "name": "Team team_1",
+    "description": "Benchmark team",
+    "owner": "owner",
+    "members": [
+      "owner",
+      "member1"
+    ],
+    "created_at": "2025-11-23T19:25:40.869744",
+    "settings": {}
+  },
+  "team_2": {
+    "team_id": "team_2",
+    "name": "Team team_2",
+    "description": "Benchmark team",
+    "owner": "owner",
+    "members": [
+      "owner",
+      "member1"
+    ],
+    "created_at": "2025-11-23T19:25:40.903115",
+    "settings": {}
+  },
+  "team_3": {
+    "team_id": "team_3",
+    "name": "Team team_3",
+    "description": "Benchmark team",
+    "owner": "owner",
+    "members": [
+      "owner",
+      "member1"
+    ],
+    "created_at": "2025-11-23T19:25:40.945892",
+    "settings": {}
+  },
+  "team_4": {
+    "team_id": "team_4",
+    "name": "Team team_4",
+    "description": "Benchmark team",
+    "owner": "owner",
+    "members": [
+      "owner",
+      "member1"
+    ],
+    "created_at": "2025-11-23T19:25:40.969081",
+    "settings": {}
+  },
+  "team_5": {
+    "team_id": "team_5",
+    "name": "Team team_5",
+    "description": "Benchmark team",
+    "owner": "owner",
+    "members": [
+      "owner",
+      "member1"
+    ],
+    "created_at": "2025-11-23T19:25:40.997046",
+    "settings": {}
+  },
+  "team_6": {
+    "team_id": "team_6",
+    "name": "Team team_6",
+    "description": "Benchmark team",
+    "owner": "owner",
+    "members": [
+      "owner",
+      "member1"
+    ],
+    "created_at": "2025-11-23T19:25:41.026648",
+    "settings": {}
+  },
+  "team_7": {
+    "team_id": "team_7",
+    "name": "Team team_7",
+    "description": "Benchmark team",
+    "owner": "owner",
+    "members": [
+      "owner",
+      "member1"
+    ],
+    "created_at": "2025-11-23T19:25:41.056798",
+    "settings": {}
+  },
+  "team_8": {
+    "team_id": "team_8",
+    "name": "Team team_8",
+    "description": "Benchmark team",
+    "owner": "owner",
+    "members": [
+      "owner",
+      "member1"
+    ],
+    "created_at": "2025-11-23T19:25:41.089098",
+    "settings": {}
+  },
+  "team_9": {
+    "team_id": "team_9",
+    "name": "Team team_9",
+    "description": "Benchmark team",
+    "owner": "owner",
+    "members": [
+      "owner",
+      "member1"
+    ],
+    "created_at": "2025-11-23T19:25:41.127250",
+    "settings": {}
+  },
+  "team_10": {
+    "team_id": "team_10",
+    "name": "Team team_10",
+    "description": "Benchmark team",
+    "owner": "owner",
+    "members": [
+      "owner",
+      "member1"
+    ],
+    "created_at": "2025-11-23T19:25:41.163799",
+    "settings": {}
+  },
+  "team_11": {
+    "team_id": "team_11",
+    "name": "Team team_11",
+    "description": "Benchmark team",
+    "owner": "owner",
+    "members": [
+      "owner",
+      "member1"
+    ],
+    "created_at": "2025-11-23T19:25:41.194133",
+    "settings": {}
+  },
+  "team_12": {
+    "team_id": "team_12",
+    "name": "Team team_12",
+    "description": "Benchmark team",
+    "owner": "owner",
+    "members": [
+      "owner",
+      "member1"
+    ],
+    "created_at": "2025-11-23T19:25:41.229315",
+    "settings": {}
+  },
+  "team_13": {
+    "team_id": "team_13",
+    "name": "Team team_13",
+    "description": "Benchmark team",
+    "owner": "owner",
+    "members": [
+      "owner",
+      "member1"
+    ],
+    "created_at": "2025-11-23T19:25:41.257575",
+    "settings": {}
+  },
+  "team_14": {
+    "team_id": "team_14",
+    "name": "Team team_14",
+    "description": "Benchmark team",
+    "owner": "owner",
+    "members": [
+      "owner",
+      "member1"
+    ],
+    "created_at": "2025-11-23T19:25:41.289057",
+    "settings": {}
+  },
+  "team_15": {
+    "team_id": "team_15",
+    "name": "Team team_15",
+    "description": "Benchmark team",
+    "owner": "owner",
+    "members": [
+      "owner",
+      "member1"
+    ],
+    "created_at": "2025-11-23T19:25:41.316405",
+    "settings": {}
+  },
+  "team_16": {
+    "team_id": "team_16",
+    "name": "Team team_16",
+    "description": "Benchmark team",
+    "owner": "owner",
+    "members": [
+      "owner",
+      "member1"
+    ],
+    "created_at": "2025-11-23T19:25:41.342412",
+    "settings": {}
+  },
+  "team_17": {
+    "team_id": "team_17",
+    "name": "Team team_17",
+    "description": "Benchmark team",
+    "owner": "owner",
+    "members": [
+      "owner",
+      "member1"
+    ],
+    "created_at": "2025-11-23T19:25:41.375405",
+    "settings": {}
+  },
+  "team_18": {
+    "team_id": "team_18",
+    "name": "Team team_18",
+    "description": "Benchmark team",
+    "owner": "owner",
+    "members": [
+      "owner",
+      "member1"
+    ],
+    "created_at": "2025-11-23T19:25:41.403569",
+    "settings": {}
+  },
+  "team_19": {
+    "team_id": "team_19",
+    "name": "Team team_19",
+    "description": "Benchmark team",
+    "owner": "owner",
+    "members": [
+      "owner",
+      "member1"
+    ],
+    "created_at": "2025-11-23T19:25:41.439883",
+    "settings": {}
+  },
+  "team_20": {
+    "team_id": "team_20",
+    "name": "Team team_20",
+    "description": "Benchmark team",
+    "owner": "owner",
+    "members": [
+      "owner",
+      "member1"
+    ],
+    "created_at": "2025-11-23T19:25:41.469764",
+    "settings": {}
+  },
+  "team_21": {
+    "team_id": "team_21",
+    "name": "Team team_21",
+    "description": "Benchmark team",
+    "owner": "owner",
+    "members": [
+      "owner",
+      "member1"
+    ],
+    "created_at": "2025-11-23T19:25:41.493925",
+    "settings": {}
+  },
+  "team_22": {
+    "team_id": "team_22",
+    "name": "Team team_22",
+    "description": "Benchmark team",
+    "owner": "owner",
+    "members": [
+      "owner",
+      "member1"
+    ],
+    "created_at": "2025-11-23T19:25:41.526700",
+    "settings": {}
+  },
+  "team_23": {
+    "team_id": "team_23",
+    "name": "Team team_23",
+    "description": "Benchmark team",
+    "owner": "owner",
+    "members": [
+      "owner",
+      "member1"
+    ],
+    "created_at": "2025-11-23T19:25:41.557707",
+    "settings": {}
+  },
+  "team_24": {
+    "team_id": "team_24",
+    "name": "Team team_24",
+    "description": "Benchmark team",
+    "owner": "owner",
+    "members": [
+      "owner",
+      "member1"
+    ],
+    "created_at": "2025-11-23T19:25:41.591943",
+    "settings": {}
+  },
+  "team_25": {
+    "team_id": "team_25",
+    "name": "Test Team team_25",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.041743",
+    "settings": {}
+  },
+  "team_26": {
+    "team_id": "team_26",
+    "name": "Test Team team_26",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.055864",
+    "settings": {}
+  },
+  "team_27": {
+    "team_id": "team_27",
+    "name": "Test Team team_27",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.066456",
+    "settings": {}
+  },
+  "team_28": {
+    "team_id": "team_28",
+    "name": "Test Team team_28",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.076426",
+    "settings": {}
+  },
+  "team_29": {
+    "team_id": "team_29",
+    "name": "Test Team team_29",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.089046",
+    "settings": {}
+  },
+  "team_30": {
+    "team_id": "team_30",
+    "name": "Test Team team_30",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.098485",
+    "settings": {}
+  },
+  "team_31": {
+    "team_id": "team_31",
+    "name": "Test Team team_31",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.109820",
+    "settings": {}
+  },
+  "team_32": {
+    "team_id": "team_32",
+    "name": "Test Team team_32",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.124360",
+    "settings": {}
+  },
+  "team_33": {
+    "team_id": "team_33",
+    "name": "Test Team team_33",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.139358",
+    "settings": {}
+  },
+  "team_34": {
+    "team_id": "team_34",
+    "name": "Test Team team_34",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.154751",
+    "settings": {}
+  },
+  "team_35": {
+    "team_id": "team_35",
+    "name": "Test Team team_35",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.167912",
+    "settings": {}
+  },
+  "team_36": {
+    "team_id": "team_36",
+    "name": "Test Team team_36",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.179092",
+    "settings": {}
+  },
+  "team_37": {
+    "team_id": "team_37",
+    "name": "Test Team team_37",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.190219",
+    "settings": {}
+  },
+  "team_38": {
+    "team_id": "team_38",
+    "name": "Test Team team_38",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.200294",
+    "settings": {}
+  },
+  "team_39": {
+    "team_id": "team_39",
+    "name": "Test Team team_39",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.211750",
+    "settings": {}
+  },
+  "team_40": {
+    "team_id": "team_40",
+    "name": "Test Team team_40",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.220817",
+    "settings": {}
+  },
+  "team_41": {
+    "team_id": "team_41",
+    "name": "Test Team team_41",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.230866",
+    "settings": {}
+  },
+  "team_42": {
+    "team_id": "team_42",
+    "name": "Test Team team_42",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.245660",
+    "settings": {}
+  },
+  "team_43": {
+    "team_id": "team_43",
+    "name": "Test Team team_43",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.257816",
+    "settings": {}
+  },
+  "team_44": {
+    "team_id": "team_44",
+    "name": "Test Team team_44",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.274924",
+    "settings": {}
+  },
+  "team_45": {
+    "team_id": "team_45",
+    "name": "Test Team team_45",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.289433",
+    "settings": {}
+  },
+  "team_46": {
+    "team_id": "team_46",
+    "name": "Test Team team_46",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.300664",
+    "settings": {}
+  },
+  "team_47": {
+    "team_id": "team_47",
+    "name": "Test Team team_47",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.310747",
+    "settings": {}
+  },
+  "team_48": {
+    "team_id": "team_48",
+    "name": "Test Team team_48",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.320948",
+    "settings": {}
+  },
+  "team_49": {
+    "team_id": "team_49",
+    "name": "Test Team team_49",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.330661",
+    "settings": {}
+  },
+  "team_50": {
+    "team_id": "team_50",
+    "name": "Test Team team_50",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.341100",
+    "settings": {}
+  },
+  "team_51": {
+    "team_id": "team_51",
+    "name": "Test Team team_51",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.354315",
+    "settings": {}
+  },
+  "team_52": {
+    "team_id": "team_52",
+    "name": "Test Team team_52",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.364484",
+    "settings": {}
+  },
+  "team_53": {
+    "team_id": "team_53",
+    "name": "Test Team team_53",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.378980",
+    "settings": {}
+  },
+  "team_54": {
+    "team_id": "team_54",
+    "name": "Test Team team_54",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.391453",
+    "settings": {}
+  },
+  "team_55": {
+    "team_id": "team_55",
+    "name": "Test Team team_55",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.404694",
+    "settings": {}
+  },
+  "team_56": {
+    "team_id": "team_56",
+    "name": "Test Team team_56",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.417291",
+    "settings": {}
+  },
+  "team_57": {
+    "team_id": "team_57",
+    "name": "Test Team team_57",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.431669",
+    "settings": {}
+  },
+  "team_58": {
+    "team_id": "team_58",
+    "name": "Test Team team_58",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.444930",
+    "settings": {}
+  },
+  "team_59": {
+    "team_id": "team_59",
+    "name": "Test Team team_59",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.457968",
+    "settings": {}
+  },
+  "team_60": {
+    "team_id": "team_60",
+    "name": "Test Team team_60",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.474235",
+    "settings": {}
+  },
+  "team_61": {
+    "team_id": "team_61",
+    "name": "Test Team team_61",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.493277",
+    "settings": {}
+  },
+  "team_62": {
+    "team_id": "team_62",
+    "name": "Test Team team_62",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.510256",
+    "settings": {}
+  },
+  "team_63": {
+    "team_id": "team_63",
+    "name": "Test Team team_63",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.526038",
+    "settings": {}
+  },
+  "team_64": {
+    "team_id": "team_64",
+    "name": "Test Team team_64",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.542799",
+    "settings": {}
+  },
+  "team_65": {
+    "team_id": "team_65",
+    "name": "Test Team team_65",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.559862",
+    "settings": {}
+  },
+  "team_66": {
+    "team_id": "team_66",
+    "name": "Test Team team_66",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.579045",
+    "settings": {}
+  },
+  "team_67": {
+    "team_id": "team_67",
+    "name": "Test Team team_67",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.596031",
+    "settings": {}
+  },
+  "team_68": {
+    "team_id": "team_68",
+    "name": "Test Team team_68",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.609262",
+    "settings": {}
+  },
+  "team_69": {
+    "team_id": "team_69",
+    "name": "Test Team team_69",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.621347",
+    "settings": {}
+  },
+  "team_70": {
+    "team_id": "team_70",
+    "name": "Test Team team_70",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.632653",
+    "settings": {}
+  },
+  "team_71": {
+    "team_id": "team_71",
+    "name": "Test Team team_71",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.648045",
+    "settings": {}
+  },
+  "team_72": {
+    "team_id": "team_72",
+    "name": "Test Team team_72",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.664244",
+    "settings": {}
+  },
+  "team_73": {
+    "team_id": "team_73",
+    "name": "Test Team team_73",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.677409",
+    "settings": {}
+  },
+  "team_74": {
+    "team_id": "team_74",
+    "name": "Test Team team_74",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T19:25:35.689544",
+    "settings": {}
+  },
+  "team_75": {
+    "team_id": "team_75",
+    "name": "Test Team team_75",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T14:56:31.397505",
+    "settings": {}
+  },
+  "team_76": {
+    "team_id": "team_76",
+    "name": "Test Team team_76",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T14:56:31.410346",
+    "settings": {}
+  },
+  "team_77": {
+    "team_id": "team_77",
+    "name": "Test Team team_77",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T14:56:31.422040",
+    "settings": {}
+  },
+  "team_78": {
+    "team_id": "team_78",
+    "name": "Test Team team_78",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T14:56:31.434221",
+    "settings": {}
+  },
+  "team_79": {
+    "team_id": "team_79",
+    "name": "Test Team team_79",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T14:56:31.446080",
+    "settings": {}
+  },
+  "team_80": {
+    "team_id": "team_80",
+    "name": "Test Team team_80",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T14:56:31.458158",
+    "settings": {}
+  },
+  "team_81": {
+    "team_id": "team_81",
+    "name": "Test Team team_81",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T14:56:31.470994",
+    "settings": {}
+  },
+  "team_82": {
+    "team_id": "team_82",
+    "name": "Test Team team_82",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T14:56:31.483676",
+    "settings": {}
+  },
+  "team_83": {
+    "team_id": "team_83",
+    "name": "Test Team team_83",
+    "description": "Test team",
+    "owner": "test_owner",
+    "members": [
+      "test_owner"
+    ],
+    "created_at": "2025-11-23T14:56:31.495918",
+    "settings": {}
+  },
+  "bench_team": {
+    "team_id": "bench_team",
+    "name": "Benchmark Team",
+    "description": "For benchmarking",
+    "owner": "bench_owner",
+    "members": [
+      "bench_owner",
+      "member_0",
+      "member_1",
+      "member_2",
+      "member_3",
+      "member_4",
+      "member_5",
+      "member_6",
+      "member_7",
+      "member_8",
+      "member_9",
+      "member_10",
+      "member_11",
+      "member_12",
+      "member_13",
+      "member_14",
+      "member_15",
+      "member_16",
+      "member_17",
+      "member_18",
+      "member_19",
+      "member_20",
+      "member_21",
+      "member_22",
+      "member_23",
+      "member_24",
+      "member_25",
+      "member_26",
+      "member_27",
+      "member_28",
+      "member_29",
+      "member_30",
+      "member_31",
+      "member_32",
+      "member_33",
+      "member_34",
+      "member_35",
+      "member_36",
+      "member_37",
+      "member_38",
+      "member_39",
+      "member_40",
+      "member_41",
+      "member_42",
+      "member_43",
+      "member_44",
+      "member_45",
+      "member_46",
+      "member_47",
+      "member_48",
+      "member_49",
+      "member_50",
+      "member_51",
+      "member_52",
+      "member_53",
+      "member_54",
+      "member_55",
+      "member_56",
+      "member_57",
+      "member_58",
+      "member_59",
+      "member_60",
+      "member_61",
+      "member_62",
+      "member_63",
+      "member_64",
+      "member_65",
+      "member_66",
+      "member_67",
+      "member_68",
+      "member_69",
+      "member_70",
+      "member_71",
+      "member_72",
+      "member_73",
+      "member_74",
+      "member_75",
+      "member_76",
+      "member_77",
+      "member_78",
+      "member_79",
+      "member_80",
+      "member_81",
+      "member_82",
+      "member_83",
+      "member_84",
+      "member_85",
+      "member_86",
+      "member_87",
+      "member_88",
+      "member_89",
+      "member_90",
+      "member_91",
+      "member_92",
+      "member_93",
+      "member_94",
+      "member_95",
+      "member_96",
+      "member_97",
+      "member_98",
+      "member_99",
+      "member_100",
+      "member_101",
+      "member_102",
+      "member_103",
+      "member_104",
+      "member_105",
+      "member_106",
+      "member_107",
+      "member_108",
+      "member_109",
+      "member_110",
+      "member_111",
+      "member_112",
+      "member_113",
+      "member_114",
+      "member_115",
+      "member_116",
+      "member_117",
+      "member_118",
+      "member_119",
+      "member_120",
+      "member_121",
+      "member_122",
+      "member_123",
+      "member_124",
+      "member_125",
+      "member_126",
+      "member_127",
+      "member_128",
+      "member_129",
+      "member_130",
+      "member_131",
+      "member_132",
+      "member_133",
+      "member_134",
+      "member_135",
+      "member_136",
+      "member_137",
+      "member_138",
+      "member_139",
+      "member_140",
+      "member_141",
+      "member_142",
+      "member_143",
+      "member_144",
+      "member_145",
+      "member_146",
+      "member_147",
+      "member_148",
+      "member_149",
+      "member_150",
+      "member_151",
+      "member_152",
+      "member_153",
+      "member_154",
+      "member_155",
+      "member_156",
+      "member_157",
+      "member_158",
+      "member_159",
+      "member_160",
+      "member_161",
+      "member_162",
+      "member_163",
+      "member_164",
+      "member_165",
+      "member_166",
+      "member_167",
+      "member_168",
+      "member_169",
+      "member_170",
+      "member_171",
+      "member_172",
+      "member_173",
+      "member_174",
+      "member_175",
+      "member_176",
+      "member_177",
+      "member_178",
+      "member_179",
+      "member_180",
+      "member_181",
+      "member_182",
+      "member_183",
+      "member_184",
+      "member_185",
+      "member_186",
+      "member_187",
+      "member_188",
+      "member_189",
+      "member_190",
+      "member_191",
+      "member_192",
+      "member_193",
+      "member_194",
+      "member_195",
+      "member_196",
+      "member_197",
+      "member_198",
+      "member_199",
+      "member_200",
+      "member_201",
+      "member_202",
+      "member_203",
+      "member_204",
+      "member_205",
+      "member_206",
+      "member_207",
+      "member_208",
+      "member_209",
+      "member_210",
+      "member_211",
+      "member_212",
+      "member_213",
+      "member_214",
+      "member_215",
+      "member_216",
+      "member_217",
+      "member_218",
+      "member_219",
+      "member_220",
+      "member_221",
+      "member_222",
+      "member_223",
+      "member_224",
+      "member_225",
+      "member_226",
+      "member_227",
+      "member_228",
+      "member_229",
+      "member_230",
+      "member_231",
+      "member_232",
+      "member_233",
+      "member_234",
+      "member_235",
+      "member_236",
+      "member_237",
+      "member_238",
+      "member_239",
+      "member_240",
+      "member_241",
+      "member_242",
+      "member_243",
+      "member_244",
+      "member_245",
+      "member_246",
+      "member_247",
+      "member_248",
+      "member_249",
+      "member_250",
+      "member_251",
+      "member_252",
+      "member_253",
+      "member_254",
+      "member_255",
+      "member_256",
+      "member_257",
+      "member_258",
+      "member_259",
+      "member_260",
+      "member_261",
+      "member_262",
+      "member_263",
+      "member_264",
+      "member_265",
+      "member_266",
+      "member_267",
+      "member_268",
+      "member_269",
+      "member_270",
+      "member_271",
+      "member_272",
+      "member_273",
+      "member_274",
+      "member_275",
+      "member_276",
+      "member_277",
+      "member_278",
+      "member_279",
+      "member_280",
+      "member_281",
+      "member_282",
+      "member_283",
+      "member_284",
+      "member_285",
+      "member_286",
+      "member_287",
+      "member_288",
+      "member_289",
+      "member_290",
+      "member_291",
+      "member_292",
+      "member_293",
+      "member_294",
+      "member_295",
+      "member_296",
+      "member_297",
+      "member_298",
+      "member_299",
+      "member_300",
+      "member_301",
+      "member_302",
+      "member_303",
+      "member_304",
+      "member_305",
+      "member_306",
+      "member_307",
+      "member_308",
+      "member_309",
+      "member_310",
+      "member_311",
+      "member_312",
+      "member_313",
+      "member_314",
+      "member_315",
+      "member_316",
+      "member_317",
+      "member_318",
+      "member_319",
+      "member_320",
+      "member_321",
+      "member_322",
+      "member_323",
+      "member_324",
+      "member_325",
+      "member_326",
+      "member_327",
+      "member_328",
+      "member_329",
+      "member_330",
+      "member_331",
+      "member_332",
+      "member_333",
+      "member_334",
+      "member_335",
+      "member_336",
+      "member_337",
+      "member_338",
+      "member_339",
+      "member_340",
+      "member_341",
+      "member_342",
+      "member_343",
+      "member_344",
+      "member_345",
+      "member_346",
+      "member_347",
+      "member_348",
+      "member_349",
+      "member_350",
+      "member_351",
+      "member_352",
+      "member_353",
+      "member_354",
+      "member_355",
+      "member_356",
+      "member_357",
+      "member_358",
+      "member_359",
+      "member_360",
+      "member_361",
+      "member_362",
+      "member_363",
+      "member_364",
+      "member_365",
+      "member_366",
+      "member_367",
+      "member_368",
+      "member_369",
+      "member_370",
+      "member_371",
+      "member_372",
+      "member_373",
+      "member_374",
+      "member_375",
+      "member_376",
+      "member_377",
+      "member_378",
+      "member_379",
+      "member_380",
+      "member_381",
+      "member_382",
+      "member_383",
+      "member_384",
+      "member_385",
+      "member_386",
+      "member_387",
+      "member_388",
+      "member_389",
+      "member_390",
+      "member_391",
+      "member_392",
+      "member_393",
+      "member_394",
+      "member_395",
+      "member_396",
+      "member_397",
+      "member_398",
+      "member_399",
+      "member_400",
+      "member_401",
+      "member_402",
+      "member_403",
+      "member_404",
+      "member_405",
+      "member_406",
+      "member_407",
+      "member_408",
+      "member_409",
+      "member_410",
+      "member_411",
+      "member_412",
+      "member_413",
+      "member_414",
+      "member_415",
+      "member_416",
+      "member_417",
+      "member_418",
+      "member_419",
+      "member_420",
+      "member_421",
+      "member_422",
+      "member_423",
+      "member_424",
+      "member_425",
+      "member_426",
+      "member_427",
+      "member_428",
+      "member_429",
+      "member_430",
+      "member_431",
+      "member_432",
+      "member_433"
+    ],
+    "created_at": "2025-11-23T19:25:35.703946",
+    "settings": {}
+  },
+  "dev_team_001": {
+    "team_id": "dev_team_001",
+    "name": "Development Team",
+    "description": "Core development team",
+    "owner": "alice",
+    "members": [
+      "alice",
+      "bob",
+      "charlie",
+      "diana",
+      "eve"
+    ],
+    "created_at": "2025-11-23T19:25:43.187864",
+    "settings": {}
+  },
+  "perm_team": {
+    "team_id": "perm_team",
+    "name": "Permission Test Team",
+    "description": "Testing permissions",
+    "owner": "owner_user",
+    "members": [
+      "owner_user",
+      "member_user"
+    ],
+    "created_at": "2025-11-23T19:25:43.233182",
+    "settings": {
+      "feature_enabled": true
+    }
+  },
+  "remove_team": {
+    "team_id": "remove_team",
+    "name": "Remove Test",
+    "description": "Test removal",
+    "owner": "admin",
+    "members": [
+      "admin"
+    ],
+    "created_at": "2025-11-23T19:25:43.269593",
+    "settings": {}
+  },
+  "cal_team": {
+    "team_id": "cal_team",
+    "name": "Calendar Team",
+    "description": "Team with calendar",
+    "owner": "cal_owner",
+    "members": [
+      "cal_owner",
+      "cal_member"
+    ],
+    "created_at": "2025-11-23T19:25:43.303158",
+    "settings": {}
+  },
+  "access_team": {
+    "team_id": "access_team",
+    "name": "Access Team",
+    "description": "Access control test",
+    "owner": "team_lead",
+    "members": [
+      "team_lead",
+      "team_member"
+    ],
+    "created_at": "2025-11-23T19:25:43.352559",
+    "settings": {}
+  },
+  "task_team": {
+    "team_id": "task_team",
+    "name": "Task Team",
+    "description": "Task management team",
+    "owner": "project_manager",
+    "members": [
+      "project_manager",
+      "developer1",
+      "developer2"
+    ],
+    "created_at": "2025-11-23T19:25:43.397975",
+    "settings": {}
+  },
+  "status_team": {
+    "team_id": "status_team",
+    "name": "Status Team",
+    "description": "Task status tracking",
+    "owner": "lead",
+    "members": [
+      "lead",
+      "worker"
+    ],
+    "created_at": "2025-11-23T19:25:43.461133",
+    "settings": {}
+  },
+  "reassign_team": {
+    "team_id": "reassign_team",
+    "name": "Reassignment Team",
+    "description": "Test reassignment",
+    "owner": "manager",
+    "members": [
+      "manager",
+      "dev_a",
+      "dev_b"
+    ],
+    "created_at": "2025-11-23T19:25:43.536469",
+    "settings": {}
+  },
+  "project_alpha": {
+    "team_id": "project_alpha",
+    "name": "Project Alpha Team",
+    "description": "Complete project team",
+    "owner": "project_lead",
+    "members": [
+      "project_lead",
+      "backend_dev",
+      "frontend_dev",
+      "qa_engineer",
+      "designer"
+    ],
+    "created_at": "2025-11-23T19:25:43.594189",
+    "settings": {}
+  },
+  "sprint_team": {
+    "team_id": "sprint_team",
+    "name": "Agile Sprint Team",
+    "description": "2-week sprint team",
+    "owner": "scrum_master",
+    "members": [
+      "scrum_master",
+      "developer"
+    ],
+    "created_at": "2025-11-23T19:25:43.700603",
+    "settings": {}
   }
 }
