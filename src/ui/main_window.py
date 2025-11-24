@@ -8,7 +8,17 @@ from datetime import datetime
 from pathlib import Path
 
 from dotenv import load_dotenv, set_key
-from PyQt6.QtCore import QEasingCurve, QPropertyAnimation, QSize, Qt, QTimer
+
+# CRITICAL: Import QWebEngine BEFORE any QApplication is created
+try:
+    from PyQt6.QtWebEngineWidgets import QWebEngineView
+    from PyQt6.QtWebEngineCore import QWebEngineProfile, QWebEngineSettings
+    WEBENGINE_AVAILABLE = True
+except ImportError:
+    WEBENGINE_AVAILABLE = False
+    print("⚠️  PyQt6-WebEngine not available. Web views will be disabled.")
+
+from PyQt6.QtCore import QEasingCurve, QPropertyAnimation, QSize, Qt, QTimer, QUrl
 from PyQt6.QtGui import QColor, QFont, QIcon, QPalette
 from PyQt6.QtWidgets import (
     QComboBox,
@@ -1254,13 +1264,13 @@ Keep it under 100 words, friendly and energetic."""
             return 0
 
     def _create_email_page(self):
-        """Create Gmail-style email management page"""
+        """Create embedded Gmail web interface"""
         page = QWidget()
         main_layout = QVBoxLayout(page)
         main_layout.setContentsMargins(0, 0, 0, 0)
         main_layout.setSpacing(0)
 
-        # Gmail-style header bar
+        # Header bar with Gmail branding
         header_bar = QFrame()
         header_bar.setStyleSheet(
             f"""
@@ -1279,7 +1289,27 @@ Keep it under 100 words, friendly and energetic."""
         header_layout.addWidget(gmail_logo)
         header_layout.addStretch()
 
-        # Add refresh button to header
+        # Home button to return to inbox
+        home_btn = QPushButton("🏠 Inbox")
+        home_btn.setStyleSheet(
+            f"""
+            QPushButton {{
+                background-color: transparent;
+                color: {self.TEXT_PRIMARY};
+                border: 1px solid {self.HOVER_COLOR};
+                padding: 8px 16px;
+                border-radius: 4px;
+                font-size: 13px;
+            }}
+            QPushButton:hover {{
+                background-color: {self.HOVER_COLOR};
+            }}
+        """
+        )
+        home_btn.clicked.connect(lambda: self.gmail_webview.setUrl(QUrl("https://mail.google.com/mail/u/0/#inbox")))
+        header_layout.addWidget(home_btn)
+
+        # Refresh button
         refresh_btn = QPushButton("🔄 Refresh")
         refresh_btn.setStyleSheet(
             f"""
@@ -1296,9 +1326,65 @@ Keep it under 100 words, friendly and energetic."""
             }}
         """
         )
-        refresh_btn.clicked.connect(self._load_gmail_emails)
+        refresh_btn.clicked.connect(lambda: self.gmail_webview.reload())
         header_layout.addWidget(refresh_btn)
+
         main_layout.addWidget(header_bar)
+
+        # Embedded Gmail web view
+        if WEBENGINE_AVAILABLE:
+            # Create persistent profile to save login session
+            self.gmail_profile = QWebEngineProfile("GmailProfile", self)
+            self.gmail_profile.setPersistentStoragePath(str(Path.home() / ".xeno" / "gmail_data"))
+            self.gmail_profile.setPersistentCookiesPolicy(
+                QWebEngineProfile.PersistentCookiesPolicy.ForcePersistentCookies
+            )
+
+            # Create web view with persistent profile
+            self.gmail_webview = QWebEngineView()
+            self.gmail_webview.setPage(self.gmail_profile.createNewPage(self.gmail_webview))
+
+            # Enable all features for full Gmail functionality
+            settings = self.gmail_webview.settings()
+            settings.setAttribute(QWebEngineSettings.WebAttribute.JavaScriptEnabled, True)
+            settings.setAttribute(QWebEngineSettings.WebAttribute.PluginsEnabled, True)
+            settings.setAttribute(QWebEngineSettings.WebAttribute.LocalStorageEnabled, True)
+            settings.setAttribute(QWebEngineSettings.WebAttribute.AutoLoadImages, True)
+            settings.setAttribute(QWebEngineSettings.WebAttribute.AllowRunningInsecureContent, False)
+            settings.setAttribute(QWebEngineSettings.WebAttribute.LocalContentCanAccessFileUrls, True)
+            settings.setAttribute(QWebEngineSettings.WebAttribute.JavascriptCanOpenWindows, True)
+            settings.setAttribute(QWebEngineSettings.WebAttribute.FullScreenSupportEnabled, True)
+
+            # Load Gmail
+            self.gmail_webview.setUrl(QUrl("https://mail.google.com/mail/u/0/"))
+
+            # Add loading progress
+            self.gmail_webview.loadProgress.connect(lambda p: print(f"📧 Gmail loading: {p}%"))
+            self.gmail_webview.loadFinished.connect(lambda ok: print(f"📧 Gmail loaded: {'✅' if ok else '❌'}"))
+
+            main_layout.addWidget(self.gmail_webview, 1)
+
+            # Info label
+            info_label = QLabel("💡 Sign in to your Gmail account in the browser above. Your session will be saved.")
+            info_label.setStyleSheet(
+                f"color: {self.TEXT_SECONDARY}; padding: 10px; background: {self.BG_LIGHTER}; font-size: 12px;"
+            )
+            info_label.setWordWrap(True)
+            main_layout.addWidget(info_label)
+
+        else:
+            # Fallback if QWebEngineView not available
+            error_label = QLabel(
+                "❌ Web Engine not available. Install PyQt6-WebEngine:\n\npip install PyQt6-WebEngine\n\nThen restart XENO."
+            )
+            error_label.setStyleSheet(
+                f"color: #ff4444; padding: 40px; font-size: 14px; background: {self.BG_LIGHTER};"
+            )
+            error_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            error_label.setWordWrap(True)
+            main_layout.addWidget(error_label, 1)
+
+        return page
 
         # Login form (shown when not logged in)
         self.gmail_login_frame = QFrame()
@@ -2308,18 +2394,128 @@ Keep it under 100 words, friendly and energetic."""
             self.email_list.addItem(f"❌ Error: {str(e)}")
 
     def _create_jobs_page(self):
-        """Create LinkedIn jobs page with search and auto-apply"""
+        """Create embedded LinkedIn web interface"""
         page = QWidget()
         layout = QVBoxLayout(page)
-        layout.setContentsMargins(20, 20, 20, 20)
-        layout.setSpacing(16)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
 
-        # Header
-        header = QLabel("💼 LinkedIn Job Search")
+        # Header with LinkedIn branding
+        header = QFrame()
         header.setStyleSheet(
-            f"font-size: 24px; font-weight: bold; color: {self.ACCENT_BLUE}; margin-bottom: 10px;"
+            f"""
+            QFrame {{
+                background-color: {self.BG_LIGHTER};
+                border-bottom: 1px solid {self.HOVER_COLOR};
+                padding: 15px 20px;
+            }}
+        """
         )
+        header_layout = QHBoxLayout(header)
+        header_layout.setContentsMargins(0, 0, 0, 0)
+
+        linkedin_logo = QLabel("💼 LinkedIn")
+        linkedin_logo.setStyleSheet(
+            f"font-size: 20px; font-weight: bold; color: #0a66c2;"  # LinkedIn blue
+        )
+        header_layout.addWidget(linkedin_logo)
+        header_layout.addStretch()
+
+        # Navigation buttons
+        jobs_btn = QPushButton("💼 Jobs")
+        jobs_btn.setStyleSheet(
+            f"""
+            QPushButton {{
+                background-color: transparent;
+                color: {self.TEXT_PRIMARY};
+                border: 1px solid {self.HOVER_COLOR};
+                padding: 8px 16px;
+                border-radius: 4px;
+                font-size: 13px;
+            }}
+            QPushButton:hover {{
+                background-color: {self.HOVER_COLOR};
+            }}
+        """
+        )
+        jobs_btn.clicked.connect(lambda: self.linkedin_webview.setUrl(QUrl("https://www.linkedin.com/jobs/")))
+        header_layout.addWidget(jobs_btn)
+
+        feed_btn = QPushButton("📰 Feed")
+        feed_btn.setStyleSheet(jobs_btn.styleSheet())
+        feed_btn.clicked.connect(lambda: self.linkedin_webview.setUrl(QUrl("https://www.linkedin.com/feed/")))
+        header_layout.addWidget(feed_btn)
+
+        network_btn = QPushButton("👥 Network")
+        network_btn.setStyleSheet(jobs_btn.styleSheet())
+        network_btn.clicked.connect(lambda: self.linkedin_webview.setUrl(QUrl("https://www.linkedin.com/mynetwork/")))
+        header_layout.addWidget(network_btn)
+
+        # Refresh button
+        refresh_btn = QPushButton("🔄 Refresh")
+        refresh_btn.setStyleSheet(jobs_btn.styleSheet())
+        refresh_btn.clicked.connect(lambda: self.linkedin_webview.reload())
+        header_layout.addWidget(refresh_btn)
+
         layout.addWidget(header)
+
+        # Embedded LinkedIn web view
+        if WEBENGINE_AVAILABLE:
+            # Create persistent profile to save login session
+            self.linkedin_profile = QWebEngineProfile("LinkedInProfile", self)
+            self.linkedin_profile.setPersistentStoragePath(str(Path.home() / ".xeno" / "linkedin_data"))
+            self.linkedin_profile.setPersistentCookiesPolicy(
+                QWebEngineProfile.PersistentCookiesPolicy.ForcePersistentCookies
+            )
+
+            # Create web view with persistent profile
+            self.linkedin_webview = QWebEngineView()
+            self.linkedin_webview.setPage(self.linkedin_profile.createNewPage(self.linkedin_webview))
+
+            # Enable all features for full LinkedIn functionality
+            settings = self.linkedin_webview.settings()
+            settings.setAttribute(QWebEngineSettings.WebAttribute.JavaScriptEnabled, True)
+            settings.setAttribute(QWebEngineSettings.WebAttribute.PluginsEnabled, True)
+            settings.setAttribute(QWebEngineSettings.WebAttribute.LocalStorageEnabled, True)
+            settings.setAttribute(QWebEngineSettings.WebAttribute.AutoLoadImages, True)
+            settings.setAttribute(QWebEngineSettings.WebAttribute.JavascriptCanOpenWindows, True)
+            settings.setAttribute(QWebEngineSettings.WebAttribute.FullScreenSupportEnabled, True)
+
+            # Set user agent to avoid mobile version
+            self.linkedin_profile.setHttpUserAgent(
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            )
+
+            # Load LinkedIn Jobs page
+            self.linkedin_webview.setUrl(QUrl("https://www.linkedin.com/jobs/"))
+
+            # Add loading progress
+            self.linkedin_webview.loadProgress.connect(lambda p: print(f"💼 LinkedIn loading: {p}%"))
+            self.linkedin_webview.loadFinished.connect(lambda ok: print(f"💼 LinkedIn loaded: {'✅' if ok else '❌'}"))
+
+            layout.addWidget(self.linkedin_webview, 1)
+
+            # Info label
+            info_label = QLabel("💡 Sign in to LinkedIn in the browser above. Search jobs, apply, network - all within XENO!")
+            info_label.setStyleSheet(
+                f"color: {self.TEXT_SECONDARY}; padding: 10px; background: {self.BG_LIGHTER}; font-size: 12px;"
+            )
+            info_label.setWordWrap(True)
+            layout.addWidget(info_label)
+
+        else:
+            # Fallback if QWebEngineView not available
+            error_label = QLabel(
+                "❌ Web Engine not available. Install PyQt6-WebEngine:\n\npip install PyQt6-WebEngine\n\nThen restart XENO."
+            )
+            error_label.setStyleSheet(
+                f"color: #ff4444; padding: 40px; font-size: 14px; background: {self.BG_LIGHTER};"
+            )
+            error_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            error_label.setWordWrap(True)
+            layout.addWidget(error_label, 1)
+
+        return page
 
         # Search filters panel
         search_panel = QFrame()
@@ -2778,22 +2974,65 @@ Keep it under 100 words, friendly and energetic."""
             self.job_list.addItem(f"❌ Error: {str(e)}")
 
     def _create_github_page(self):
-        """Create GitHub management page with modern UI matching GitHub's design"""
+        """Create embedded GitHub web interface"""
         page = QWidget()
         main_layout = QVBoxLayout(page)
         main_layout.setContentsMargins(0, 0, 0, 0)
         main_layout.setSpacing(0)
 
-        # Header section
-        header = QWidget()
-        header.setStyleSheet(f"background-color: {self.BG_LIGHTER}; padding: 20px;")
+        # Header section with GitHub branding
+        header = QFrame()
+        header.setStyleSheet(
+            f"""
+            QFrame {{
+                background-color: {self.BG_LIGHTER};
+                border-bottom: 1px solid {self.HOVER_COLOR};
+                padding: 15px 20px;
+            }}
+        """
+        )
         header_layout = QHBoxLayout(header)
+        header_layout.setContentsMargins(0, 0, 0, 0)
 
         github_icon = QLabel("⚙️ GitHub")
-        github_icon.setStyleSheet(f"font-size: 24px; font-weight: bold; color: {self.ACCENT_BLUE};")
+        github_icon.setStyleSheet(f"font-size: 20px; font-weight: bold; color: {self.ACCENT_BLUE};")
         header_layout.addWidget(github_icon)
-
         header_layout.addStretch()
+
+        # Navigation buttons
+        repos_btn = QPushButton("📦 Repositories")
+        repos_btn.setStyleSheet(
+            f"""
+            QPushButton {{
+                background-color: transparent;
+                color: {self.TEXT_PRIMARY};
+                border: 1px solid {self.HOVER_COLOR};
+                padding: 8px 16px;
+                border-radius: 6px;
+                font-size: 13px;
+            }}
+            QPushButton:hover {{
+                background-color: {self.HOVER_COLOR};
+            }}
+        """
+        )
+        repos_btn.clicked.connect(lambda: self.github_webview.setUrl(QUrl("https://github.com?tab=repositories")))
+        header_layout.addWidget(repos_btn)
+
+        issues_btn = QPushButton("🐛 Issues")
+        issues_btn.setStyleSheet(repos_btn.styleSheet())
+        issues_btn.clicked.connect(lambda: self.github_webview.setUrl(QUrl("https://github.com/issues")))
+        header_layout.addWidget(issues_btn)
+
+        prs_btn = QPushButton("🔀 Pull Requests")
+        prs_btn.setStyleSheet(repos_btn.styleSheet())
+        prs_btn.clicked.connect(lambda: self.github_webview.setUrl(QUrl("https://github.com/pulls")))
+        header_layout.addWidget(prs_btn)
+
+        profile_btn = QPushButton("👤 Profile")
+        profile_btn.setStyleSheet(repos_btn.styleSheet())
+        profile_btn.clicked.connect(lambda: self.github_webview.setUrl(QUrl("https://github.com")))
+        header_layout.addWidget(profile_btn)
 
         # Refresh button
         refresh_btn = QPushButton("🔄 Refresh")
@@ -2812,10 +3051,68 @@ Keep it under 100 words, friendly and energetic."""
             }}
         """
         )
-        refresh_btn.clicked.connect(self._refresh_github_repos)
+        refresh_btn.clicked.connect(lambda: self.github_webview.reload())
         header_layout.addWidget(refresh_btn)
 
         main_layout.addWidget(header)
+
+        # Embedded GitHub web view
+        if WEBENGINE_AVAILABLE:
+            # Create persistent profile to save login session
+            self.github_profile = QWebEngineProfile("GitHubProfile", self)
+            self.github_profile.setPersistentStoragePath(str(Path.home() / ".xeno" / "github_data"))
+            self.github_profile.setPersistentCookiesPolicy(
+                QWebEngineProfile.PersistentCookiesPolicy.ForcePersistentCookies
+            )
+
+            # Create web view with persistent profile
+            self.github_webview = QWebEngineView()
+            self.github_webview.setPage(self.github_profile.createNewPage(self.github_webview))
+
+            # Enable all features for full GitHub functionality
+            settings = self.github_webview.settings()
+            settings.setAttribute(QWebEngineSettings.WebAttribute.JavaScriptEnabled, True)
+            settings.setAttribute(QWebEngineSettings.WebAttribute.PluginsEnabled, True)
+            settings.setAttribute(QWebEngineSettings.WebAttribute.LocalStorageEnabled, True)
+            settings.setAttribute(QWebEngineSettings.WebAttribute.AutoLoadImages, True)
+            settings.setAttribute(QWebEngineSettings.WebAttribute.JavascriptCanOpenWindows, True)
+            settings.setAttribute(QWebEngineSettings.WebAttribute.FullScreenSupportEnabled, True)
+
+            # Set user agent for better compatibility
+            self.github_profile.setHttpUserAgent(
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            )
+
+            # Load GitHub
+            self.github_webview.setUrl(QUrl("https://github.com"))
+
+            # Add loading progress
+            self.github_webview.loadProgress.connect(lambda p: print(f"⚙️ GitHub loading: {p}%"))
+            self.github_webview.loadFinished.connect(lambda ok: print(f"⚙️ GitHub loaded: {'✅' if ok else '❌'}"))
+
+            main_layout.addWidget(self.github_webview, 1)
+
+            # Info label
+            info_label = QLabel("💡 Sign in to GitHub in the browser above. Browse repos, manage issues, review PRs - all within XENO!")
+            info_label.setStyleSheet(
+                f"color: {self.TEXT_SECONDARY}; padding: 10px; background: {self.BG_LIGHTER}; font-size: 12px;"
+            )
+            info_label.setWordWrap(True)
+            main_layout.addWidget(info_label)
+
+        else:
+            # Fallback if QWebEngineView not available
+            error_label = QLabel(
+                "❌ Web Engine not available. Install PyQt6-WebEngine:\n\npip install PyQt6-WebEngine\n\nThen restart XENO."
+            )
+            error_label.setStyleSheet(
+                f"color: #ff4444; padding: 40px; font-size: 14px; background: {self.BG_LIGHTER};"
+            )
+            error_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            error_label.setWordWrap(True)
+            main_layout.addWidget(error_label, 1)
+
+        return page
 
         # Content area
         content = QWidget()
