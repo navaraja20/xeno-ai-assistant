@@ -10,10 +10,10 @@
         "event_id": "meeting_001",
         "title": "Daily Standup",
         "description": "Daily team sync",
-        "start_time": "2025-11-23T20:25:43.318751",
-        "end_time": "2025-11-23T20:55:43.318751",
+        "start_time": "2025-11-24T13:31:54.459121",
+        "end_time": "2025-11-24T14:01:54.459121",
         "created_by": "cal_owner",
-        "created_at": "2025-11-23T19:25:43.318751"
+        "created_at": "2025-11-24T12:31:54.459121"
       }
     ],
     "permissions": {
@@ -31,10 +31,10 @@
         "event_id": "member_event",
         "title": "Member Event",
         "description": "Created by member",
-        "start_time": "2025-11-23T19:25:43.367599",
-        "end_time": "2025-11-23T20:25:43.367599",
+        "start_time": "2025-11-24T12:31:54.506619",
+        "end_time": "2025-11-24T13:31:54.506619",
         "created_by": "team_member",
-        "created_at": "2025-11-23T19:25:43.367599"
+        "created_at": "2025-11-24T12:31:54.506619"
       }
     ],
     "permissions": {
@@ -52,10 +52,10 @@
         "event_id": "sprint_planning",
         "title": "Sprint Planning",
         "description": "Plan next sprint",
-        "start_time": "2025-11-24T19:25:43.622163",
-        "end_time": "2025-11-24T21:25:43.622163",
+        "start_time": "2025-11-25T12:31:54.807228",
+        "end_time": "2025-11-25T14:31:54.807228",
         "created_by": "project_lead",
-        "created_at": "2025-11-23T19:25:43.623163"
+        "created_at": "2025-11-24T12:31:54.807228"
       }
     ],
     "permissions": {
@@ -73,37 +73,37 @@
         "event_id": "standup_mon",
         "title": "Daily Standup",
         "description": "Sprint Daily Standup",
-        "start_time": "2025-11-24T19:25:43.714148",
-        "end_time": "2025-11-24T19:40:43.714148",
+        "start_time": "2025-11-25T12:31:54.911131",
+        "end_time": "2025-11-25T12:46:54.911131",
         "created_by": "scrum_master",
-        "created_at": "2025-11-23T19:25:43.714148"
+        "created_at": "2025-11-24T12:31:54.911131"
       },
       {
         "event_id": "standup_tue",
         "title": "Daily Standup",
         "description": "Sprint Daily Standup",
-        "start_time": "2025-11-25T19:25:43.714148",
-        "end_time": "2025-11-25T19:40:43.714148",
+        "start_time": "2025-11-26T12:31:54.912130",
+        "end_time": "2025-11-26T12:46:54.912130",
         "created_by": "scrum_master",
-        "created_at": "2025-11-23T19:25:43.714148"
+        "created_at": "2025-11-24T12:31:54.912130"
       },
       {
         "event_id": "retro",
         "title": "Sprint Retrospective",
         "description": "Sprint Sprint Retrospective",
-        "start_time": "2025-12-07T19:25:43.715149",
-        "end_time": "2025-12-07T20:25:43.715149",
+        "start_time": "2025-12-08T12:31:54.913131",
+        "end_time": "2025-12-08T13:31:54.913131",
         "created_by": "scrum_master",
-        "created_at": "2025-11-23T19:25:43.715149"
+        "created_at": "2025-11-24T12:31:54.913131"
       },
       {
         "event_id": "review",
         "title": "Sprint Review",
         "description": "Sprint Sprint Review",
-        "start_time": "2025-12-07T19:25:43.715149",
-        "end_time": "2025-12-07T20:55:43.715149",
+        "start_time": "2025-12-08T12:31:54.914129",
+        "end_time": "2025-12-08T14:01:54.914129",
         "created_by": "scrum_master",
-        "created_at": "2025-11-23T19:25:43.715149"
+        "created_at": "2025-11-24T12:31:54.914129"
       }
     ],
     "permissions": {

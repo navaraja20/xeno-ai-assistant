@@ -1,0 +1,16 @@
+[
+  {
+    "timestamp": "2025-11-24T12:08:25.051326",
+    "query": "test query",
+    "response": "test response",
+    "context": "brief",
+    "feedback": null
+  },
+  {
+    "timestamp": "2025-11-24T12:09:03.727616",
+    "query": "test query",
+    "response": "test response",
+    "context": "brief",
+    "feedback": null
+  }
+]

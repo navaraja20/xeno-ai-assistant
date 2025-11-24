@@ -3769,6 +3769,760 @@
       "subject": "Subject 23",
       "time_since_received_seconds": 1380,
       "timestamp": "2025-11-23T19:26:03.809877"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_123",
+      "sender": "sender@test.com",
+      "subject": "Test Subject",
+      "time_since_received_seconds": 300,
+      "timestamp": "2025-11-24T11:52:36.519965"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_1",
+      "sender": "sender1@test.com",
+      "subject": "Subject 1",
+      "time_since_received_seconds": 100,
+      "timestamp": "2025-11-24T11:52:36.574060"
+    },
+    {
+      "event": "replied",
+      "email_id": "email_2",
+      "time_since_received_seconds": 200,
+      "response_length": 500,
+      "timestamp": "2025-11-24T11:52:36.607382"
+    },
+    {
+      "event": "archived",
+      "email_id": "email_3",
+      "timestamp": "2025-11-24T11:52:36.639033"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_1",
+      "sender": "test@test.com",
+      "subject": "Test",
+      "time_since_received_seconds": 100,
+      "timestamp": "2025-11-24T11:52:36.740912"
+    },
+    {
+      "event": "replied",
+      "email_id": "email_2",
+      "time_since_received_seconds": 200,
+      "response_length": 300,
+      "timestamp": "2025-11-24T11:52:36.769791"
+    },
+    {
+      "event": "starred",
+      "email_id": "email_3",
+      "timestamp": "2025-11-24T11:52:36.799062"
+    },
+    {
+      "event": "archived",
+      "email_id": "email_4",
+      "timestamp": "2025-11-24T11:52:36.825664"
+    },
+    {
+      "event": "opened",
+      "email_id": "test_email",
+      "sender": "sender@test.com",
+      "subject": "Test",
+      "time_since_received_seconds": 100,
+      "timestamp": "2025-11-24T11:52:36.876128"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_0",
+      "sender": "sender0@test.com",
+      "subject": "Subject 0",
+      "time_since_received_seconds": 0,
+      "timestamp": "2025-11-24T11:52:36.978703"
+    },
+    {
+      "event": "replied",
+      "email_id": "email_0",
+      "time_since_received_seconds": 0,
+      "response_length": 200,
+      "timestamp": "2025-11-24T11:52:37.015391"
+    },
+    {
+      "event": "starred",
+      "email_id": "email_0",
+      "timestamp": "2025-11-24T11:52:37.047254"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_1",
+      "sender": "sender1@test.com",
+      "subject": "Subject 1",
+      "time_since_received_seconds": 60,
+      "timestamp": "2025-11-24T11:52:37.115194"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_2",
+      "sender": "sender2@test.com",
+      "subject": "Subject 2",
+      "time_since_received_seconds": 120,
+      "timestamp": "2025-11-24T11:52:37.180219"
+    },
+    {
+      "event": "replied",
+      "email_id": "email_2",
+      "time_since_received_seconds": 120,
+      "response_length": 200,
+      "timestamp": "2025-11-24T11:52:37.211898"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_3",
+      "sender": "sender3@test.com",
+      "subject": "Subject 3",
+      "time_since_received_seconds": 180,
+      "timestamp": "2025-11-24T11:52:37.277131"
+    },
+    {
+      "event": "starred",
+      "email_id": "email_3",
+      "timestamp": "2025-11-24T11:52:37.310359"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_4",
+      "sender": "sender4@test.com",
+      "subject": "Subject 4",
+      "time_since_received_seconds": 240,
+      "timestamp": "2025-11-24T11:52:37.373918"
+    },
+    {
+      "event": "replied",
+      "email_id": "email_4",
+      "time_since_received_seconds": 240,
+      "response_length": 200,
+      "timestamp": "2025-11-24T11:52:37.407014"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_5",
+      "sender": "sender5@test.com",
+      "subject": "Subject 5",
+      "time_since_received_seconds": 300,
+      "timestamp": "2025-11-24T11:52:37.472343"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_6",
+      "sender": "sender6@test.com",
+      "subject": "Subject 6",
+      "time_since_received_seconds": 360,
+      "timestamp": "2025-11-24T11:52:37.538299"
+    },
+    {
+      "event": "replied",
+      "email_id": "email_6",
+      "time_since_received_seconds": 360,
+      "response_length": 200,
+      "timestamp": "2025-11-24T11:52:37.570073"
+    },
+    {
+      "event": "starred",
+      "email_id": "email_6",
+      "timestamp": "2025-11-24T11:52:37.604739"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_7",
+      "sender": "sender7@test.com",
+      "subject": "Subject 7",
+      "time_since_received_seconds": 420,
+      "timestamp": "2025-11-24T11:52:37.674273"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_8",
+      "sender": "sender8@test.com",
+      "subject": "Subject 8",
+      "time_since_received_seconds": 480,
+      "timestamp": "2025-11-24T11:52:37.744034"
+    },
+    {
+      "event": "replied",
+      "email_id": "email_8",
+      "time_since_received_seconds": 480,
+      "response_length": 200,
+      "timestamp": "2025-11-24T11:52:37.779796"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_9",
+      "sender": "sender9@test.com",
+      "subject": "Subject 9",
+      "time_since_received_seconds": 540,
+      "timestamp": "2025-11-24T11:52:37.847255"
+    },
+    {
+      "event": "starred",
+      "email_id": "email_9",
+      "timestamp": "2025-11-24T11:52:37.881575"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_10",
+      "sender": "sender10@test.com",
+      "subject": "Subject 10",
+      "time_since_received_seconds": 600,
+      "timestamp": "2025-11-24T11:52:37.948992"
+    },
+    {
+      "event": "replied",
+      "email_id": "email_10",
+      "time_since_received_seconds": 600,
+      "response_length": 200,
+      "timestamp": "2025-11-24T11:52:37.983466"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_11",
+      "sender": "sender11@test.com",
+      "subject": "Subject 11",
+      "time_since_received_seconds": 660,
+      "timestamp": "2025-11-24T11:52:38.049637"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_12",
+      "sender": "sender12@test.com",
+      "subject": "Subject 12",
+      "time_since_received_seconds": 720,
+      "timestamp": "2025-11-24T11:52:38.116598"
+    },
+    {
+      "event": "replied",
+      "email_id": "email_12",
+      "time_since_received_seconds": 720,
+      "response_length": 200,
+      "timestamp": "2025-11-24T11:52:38.148567"
+    },
+    {
+      "event": "starred",
+      "email_id": "email_12",
+      "timestamp": "2025-11-24T11:52:38.182803"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_13",
+      "sender": "sender13@test.com",
+      "subject": "Subject 13",
+      "time_since_received_seconds": 780,
+      "timestamp": "2025-11-24T11:52:38.250364"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_14",
+      "sender": "sender14@test.com",
+      "subject": "Subject 14",
+      "time_since_received_seconds": 840,
+      "timestamp": "2025-11-24T11:52:38.315643"
+    },
+    {
+      "event": "replied",
+      "email_id": "email_14",
+      "time_since_received_seconds": 840,
+      "response_length": 200,
+      "timestamp": "2025-11-24T11:52:38.351591"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_15",
+      "sender": "sender15@test.com",
+      "subject": "Subject 15",
+      "time_since_received_seconds": 900,
+      "timestamp": "2025-11-24T11:52:38.418770"
+    },
+    {
+      "event": "starred",
+      "email_id": "email_15",
+      "timestamp": "2025-11-24T11:52:38.453318"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_16",
+      "sender": "sender16@test.com",
+      "subject": "Subject 16",
+      "time_since_received_seconds": 960,
+      "timestamp": "2025-11-24T11:52:38.523521"
+    },
+    {
+      "event": "replied",
+      "email_id": "email_16",
+      "time_since_received_seconds": 960,
+      "response_length": 200,
+      "timestamp": "2025-11-24T11:52:38.559234"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_17",
+      "sender": "sender17@test.com",
+      "subject": "Subject 17",
+      "time_since_received_seconds": 1020,
+      "timestamp": "2025-11-24T11:52:38.641373"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_18",
+      "sender": "sender18@test.com",
+      "subject": "Subject 18",
+      "time_since_received_seconds": 1080,
+      "timestamp": "2025-11-24T11:52:38.710683"
+    },
+    {
+      "event": "replied",
+      "email_id": "email_18",
+      "time_since_received_seconds": 1080,
+      "response_length": 200,
+      "timestamp": "2025-11-24T11:52:38.741794"
+    },
+    {
+      "event": "starred",
+      "email_id": "email_18",
+      "timestamp": "2025-11-24T11:52:38.774981"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_19",
+      "sender": "sender19@test.com",
+      "subject": "Subject 19",
+      "time_since_received_seconds": 1140,
+      "timestamp": "2025-11-24T11:52:38.840542"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_20",
+      "sender": "sender20@test.com",
+      "subject": "Subject 20",
+      "time_since_received_seconds": 1200,
+      "timestamp": "2025-11-24T11:52:38.906024"
+    },
+    {
+      "event": "replied",
+      "email_id": "email_20",
+      "time_since_received_seconds": 1200,
+      "response_length": 200,
+      "timestamp": "2025-11-24T11:52:38.937184"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_21",
+      "sender": "sender21@test.com",
+      "subject": "Subject 21",
+      "time_since_received_seconds": 1260,
+      "timestamp": "2025-11-24T11:52:39.006028"
+    },
+    {
+      "event": "starred",
+      "email_id": "email_21",
+      "timestamp": "2025-11-24T11:52:39.038898"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_22",
+      "sender": "sender22@test.com",
+      "subject": "Subject 22",
+      "time_since_received_seconds": 1320,
+      "timestamp": "2025-11-24T11:52:39.109997"
+    },
+    {
+      "event": "replied",
+      "email_id": "email_22",
+      "time_since_received_seconds": 1320,
+      "response_length": 200,
+      "timestamp": "2025-11-24T11:52:39.143595"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_23",
+      "sender": "sender23@test.com",
+      "subject": "Subject 23",
+      "time_since_received_seconds": 1380,
+      "timestamp": "2025-11-24T11:52:39.214348"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_123",
+      "sender": "sender@test.com",
+      "subject": "Test Subject",
+      "time_since_received_seconds": 300,
+      "timestamp": "2025-11-24T12:32:16.301013"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_1",
+      "sender": "sender1@test.com",
+      "subject": "Subject 1",
+      "time_since_received_seconds": 100,
+      "timestamp": "2025-11-24T12:32:16.358501"
+    },
+    {
+      "event": "replied",
+      "email_id": "email_2",
+      "time_since_received_seconds": 200,
+      "response_length": 500,
+      "timestamp": "2025-11-24T12:32:16.395153"
+    },
+    {
+      "event": "archived",
+      "email_id": "email_3",
+      "timestamp": "2025-11-24T12:32:16.426999"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_1",
+      "sender": "test@test.com",
+      "subject": "Test",
+      "time_since_received_seconds": 100,
+      "timestamp": "2025-11-24T12:32:16.542902"
+    },
+    {
+      "event": "replied",
+      "email_id": "email_2",
+      "time_since_received_seconds": 200,
+      "response_length": 300,
+      "timestamp": "2025-11-24T12:32:16.574347"
+    },
+    {
+      "event": "starred",
+      "email_id": "email_3",
+      "timestamp": "2025-11-24T12:32:16.607817"
+    },
+    {
+      "event": "archived",
+      "email_id": "email_4",
+      "timestamp": "2025-11-24T12:32:16.639754"
+    },
+    {
+      "event": "opened",
+      "email_id": "test_email",
+      "sender": "sender@test.com",
+      "subject": "Test",
+      "time_since_received_seconds": 100,
+      "timestamp": "2025-11-24T12:32:16.698391"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_0",
+      "sender": "sender0@test.com",
+      "subject": "Subject 0",
+      "time_since_received_seconds": 0,
+      "timestamp": "2025-11-24T12:32:16.809826"
+    },
+    {
+      "event": "replied",
+      "email_id": "email_0",
+      "time_since_received_seconds": 0,
+      "response_length": 200,
+      "timestamp": "2025-11-24T12:32:16.842827"
+    },
+    {
+      "event": "starred",
+      "email_id": "email_0",
+      "timestamp": "2025-11-24T12:32:16.875987"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_1",
+      "sender": "sender1@test.com",
+      "subject": "Subject 1",
+      "time_since_received_seconds": 60,
+      "timestamp": "2025-11-24T12:32:16.943018"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_2",
+      "sender": "sender2@test.com",
+      "subject": "Subject 2",
+      "time_since_received_seconds": 120,
+      "timestamp": "2025-11-24T12:32:17.009887"
+    },
+    {
+      "event": "replied",
+      "email_id": "email_2",
+      "time_since_received_seconds": 120,
+      "response_length": 200,
+      "timestamp": "2025-11-24T12:32:17.040538"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_3",
+      "sender": "sender3@test.com",
+      "subject": "Subject 3",
+      "time_since_received_seconds": 180,
+      "timestamp": "2025-11-24T12:32:17.103173"
+    },
+    {
+      "event": "starred",
+      "email_id": "email_3",
+      "timestamp": "2025-11-24T12:32:17.136859"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_4",
+      "sender": "sender4@test.com",
+      "subject": "Subject 4",
+      "time_since_received_seconds": 240,
+      "timestamp": "2025-11-24T12:32:17.205219"
+    },
+    {
+      "event": "replied",
+      "email_id": "email_4",
+      "time_since_received_seconds": 240,
+      "response_length": 200,
+      "timestamp": "2025-11-24T12:32:17.238266"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_5",
+      "sender": "sender5@test.com",
+      "subject": "Subject 5",
+      "time_since_received_seconds": 300,
+      "timestamp": "2025-11-24T12:32:17.301644"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_6",
+      "sender": "sender6@test.com",
+      "subject": "Subject 6",
+      "time_since_received_seconds": 360,
+      "timestamp": "2025-11-24T12:32:17.366385"
+    },
+    {
+      "event": "replied",
+      "email_id": "email_6",
+      "time_since_received_seconds": 360,
+      "response_length": 200,
+      "timestamp": "2025-11-24T12:32:17.399828"
+    },
+    {
+      "event": "starred",
+      "email_id": "email_6",
+      "timestamp": "2025-11-24T12:32:17.434773"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_7",
+      "sender": "sender7@test.com",
+      "subject": "Subject 7",
+      "time_since_received_seconds": 420,
+      "timestamp": "2025-11-24T12:32:17.502509"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_8",
+      "sender": "sender8@test.com",
+      "subject": "Subject 8",
+      "time_since_received_seconds": 480,
+      "timestamp": "2025-11-24T12:32:17.571820"
+    },
+    {
+      "event": "replied",
+      "email_id": "email_8",
+      "time_since_received_seconds": 480,
+      "response_length": 200,
+      "timestamp": "2025-11-24T12:32:17.604895"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_9",
+      "sender": "sender9@test.com",
+      "subject": "Subject 9",
+      "time_since_received_seconds": 540,
+      "timestamp": "2025-11-24T12:32:17.677265"
+    },
+    {
+      "event": "starred",
+      "email_id": "email_9",
+      "timestamp": "2025-11-24T12:32:17.712275"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_10",
+      "sender": "sender10@test.com",
+      "subject": "Subject 10",
+      "time_since_received_seconds": 600,
+      "timestamp": "2025-11-24T12:32:17.777366"
+    },
+    {
+      "event": "replied",
+      "email_id": "email_10",
+      "time_since_received_seconds": 600,
+      "response_length": 200,
+      "timestamp": "2025-11-24T12:32:17.809431"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_11",
+      "sender": "sender11@test.com",
+      "subject": "Subject 11",
+      "time_since_received_seconds": 660,
+      "timestamp": "2025-11-24T12:32:17.877491"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_12",
+      "sender": "sender12@test.com",
+      "subject": "Subject 12",
+      "time_since_received_seconds": 720,
+      "timestamp": "2025-11-24T12:32:17.943311"
+    },
+    {
+      "event": "replied",
+      "email_id": "email_12",
+      "time_since_received_seconds": 720,
+      "response_length": 200,
+      "timestamp": "2025-11-24T12:32:17.976771"
+    },
+    {
+      "event": "starred",
+      "email_id": "email_12",
+      "timestamp": "2025-11-24T12:32:18.017684"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_13",
+      "sender": "sender13@test.com",
+      "subject": "Subject 13",
+      "time_since_received_seconds": 780,
+      "timestamp": "2025-11-24T12:32:18.101837"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_14",
+      "sender": "sender14@test.com",
+      "subject": "Subject 14",
+      "time_since_received_seconds": 840,
+      "timestamp": "2025-11-24T12:32:18.171947"
+    },
+    {
+      "event": "replied",
+      "email_id": "email_14",
+      "time_since_received_seconds": 840,
+      "response_length": 200,
+      "timestamp": "2025-11-24T12:32:18.208352"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_15",
+      "sender": "sender15@test.com",
+      "subject": "Subject 15",
+      "time_since_received_seconds": 900,
+      "timestamp": "2025-11-24T12:32:18.276326"
+    },
+    {
+      "event": "starred",
+      "email_id": "email_15",
+      "timestamp": "2025-11-24T12:32:18.310147"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_16",
+      "sender": "sender16@test.com",
+      "subject": "Subject 16",
+      "time_since_received_seconds": 960,
+      "timestamp": "2025-11-24T12:32:18.375677"
+    },
+    {
+      "event": "replied",
+      "email_id": "email_16",
+      "time_since_received_seconds": 960,
+      "response_length": 200,
+      "timestamp": "2025-11-24T12:32:18.409689"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_17",
+      "sender": "sender17@test.com",
+      "subject": "Subject 17",
+      "time_since_received_seconds": 1020,
+      "timestamp": "2025-11-24T12:32:18.476186"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_18",
+      "sender": "sender18@test.com",
+      "subject": "Subject 18",
+      "time_since_received_seconds": 1080,
+      "timestamp": "2025-11-24T12:32:18.545374"
+    },
+    {
+      "event": "replied",
+      "email_id": "email_18",
+      "time_since_received_seconds": 1080,
+      "response_length": 200,
+      "timestamp": "2025-11-24T12:32:18.576314"
+    },
+    {
+      "event": "starred",
+      "email_id": "email_18",
+      "timestamp": "2025-11-24T12:32:18.608782"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_19",
+      "sender": "sender19@test.com",
+      "subject": "Subject 19",
+      "time_since_received_seconds": 1140,
+      "timestamp": "2025-11-24T12:32:18.682628"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_20",
+      "sender": "sender20@test.com",
+      "subject": "Subject 20",
+      "time_since_received_seconds": 1200,
+      "timestamp": "2025-11-24T12:32:18.750746"
+    },
+    {
+      "event": "replied",
+      "email_id": "email_20",
+      "time_since_received_seconds": 1200,
+      "response_length": 200,
+      "timestamp": "2025-11-24T12:32:18.783650"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_21",
+      "sender": "sender21@test.com",
+      "subject": "Subject 21",
+      "time_since_received_seconds": 1260,
+      "timestamp": "2025-11-24T12:32:18.851068"
+    },
+    {
+      "event": "starred",
+      "email_id": "email_21",
+      "timestamp": "2025-11-24T12:32:18.884791"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_22",
+      "sender": "sender22@test.com",
+      "subject": "Subject 22",
+      "time_since_received_seconds": 1320,
+      "timestamp": "2025-11-24T12:32:18.953532"
+    },
+    {
+      "event": "replied",
+      "email_id": "email_22",
+      "time_since_received_seconds": 1320,
+      "response_length": 200,
+      "timestamp": "2025-11-24T12:32:18.990419"
+    },
+    {
+      "event": "opened",
+      "email_id": "email_23",
+      "sender": "sender23@test.com",
+      "subject": "Subject 23",
+      "time_since_received_seconds": 1380,
+      "timestamp": "2025-11-24T12:32:19.058282"
     }
   ],
   "job_activities": [
@@ -5851,6 +6605,422 @@
       "company": "Company 23",
       "dwell_time_seconds": 115,
       "timestamp": "2025-11-23T19:26:03.834213"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_123",
+      "title": "Software Engineer",
+      "company": "Tech Corp",
+      "dwell_time_seconds": 45,
+      "timestamp": "2025-11-24T11:52:36.690577"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_123",
+      "title": "Engineer",
+      "company": "Company",
+      "dwell_time_seconds": 30,
+      "timestamp": "2025-11-24T11:52:36.928267"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_0",
+      "title": "Position 0",
+      "company": "Company 0",
+      "dwell_time_seconds": 0,
+      "timestamp": "2025-11-24T11:52:37.080170"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_1",
+      "title": "Position 1",
+      "company": "Company 1",
+      "dwell_time_seconds": 5,
+      "timestamp": "2025-11-24T11:52:37.146901"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_2",
+      "title": "Position 2",
+      "company": "Company 2",
+      "dwell_time_seconds": 10,
+      "timestamp": "2025-11-24T11:52:37.244936"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_3",
+      "title": "Position 3",
+      "company": "Company 3",
+      "dwell_time_seconds": 15,
+      "timestamp": "2025-11-24T11:52:37.342039"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_4",
+      "title": "Position 4",
+      "company": "Company 4",
+      "dwell_time_seconds": 20,
+      "timestamp": "2025-11-24T11:52:37.438765"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_5",
+      "title": "Position 5",
+      "company": "Company 5",
+      "dwell_time_seconds": 25,
+      "timestamp": "2025-11-24T11:52:37.504736"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_6",
+      "title": "Position 6",
+      "company": "Company 6",
+      "dwell_time_seconds": 30,
+      "timestamp": "2025-11-24T11:52:37.639236"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_7",
+      "title": "Position 7",
+      "company": "Company 7",
+      "dwell_time_seconds": 35,
+      "timestamp": "2025-11-24T11:52:37.709020"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_8",
+      "title": "Position 8",
+      "company": "Company 8",
+      "dwell_time_seconds": 40,
+      "timestamp": "2025-11-24T11:52:37.813466"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_9",
+      "title": "Position 9",
+      "company": "Company 9",
+      "dwell_time_seconds": 45,
+      "timestamp": "2025-11-24T11:52:37.914737"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_10",
+      "title": "Position 10",
+      "company": "Company 10",
+      "dwell_time_seconds": 50,
+      "timestamp": "2025-11-24T11:52:38.016072"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_11",
+      "title": "Position 11",
+      "company": "Company 11",
+      "dwell_time_seconds": 55,
+      "timestamp": "2025-11-24T11:52:38.083025"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_12",
+      "title": "Position 12",
+      "company": "Company 12",
+      "dwell_time_seconds": 60,
+      "timestamp": "2025-11-24T11:52:38.215160"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_13",
+      "title": "Position 13",
+      "company": "Company 13",
+      "dwell_time_seconds": 65,
+      "timestamp": "2025-11-24T11:52:38.283200"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_14",
+      "title": "Position 14",
+      "company": "Company 14",
+      "dwell_time_seconds": 70,
+      "timestamp": "2025-11-24T11:52:38.385389"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_15",
+      "title": "Position 15",
+      "company": "Company 15",
+      "dwell_time_seconds": 75,
+      "timestamp": "2025-11-24T11:52:38.487304"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_16",
+      "title": "Position 16",
+      "company": "Company 16",
+      "dwell_time_seconds": 80,
+      "timestamp": "2025-11-24T11:52:38.600940"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_17",
+      "title": "Position 17",
+      "company": "Company 17",
+      "dwell_time_seconds": 85,
+      "timestamp": "2025-11-24T11:52:38.677580"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_18",
+      "title": "Position 18",
+      "company": "Company 18",
+      "dwell_time_seconds": 90,
+      "timestamp": "2025-11-24T11:52:38.808369"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_19",
+      "title": "Position 19",
+      "company": "Company 19",
+      "dwell_time_seconds": 95,
+      "timestamp": "2025-11-24T11:52:38.873076"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_20",
+      "title": "Position 20",
+      "company": "Company 20",
+      "dwell_time_seconds": 100,
+      "timestamp": "2025-11-24T11:52:38.973053"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_21",
+      "title": "Position 21",
+      "company": "Company 21",
+      "dwell_time_seconds": 105,
+      "timestamp": "2025-11-24T11:52:39.073971"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_22",
+      "title": "Position 22",
+      "company": "Company 22",
+      "dwell_time_seconds": 110,
+      "timestamp": "2025-11-24T11:52:39.178086"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_23",
+      "title": "Position 23",
+      "company": "Company 23",
+      "dwell_time_seconds": 115,
+      "timestamp": "2025-11-24T11:52:39.248617"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_123",
+      "title": "Software Engineer",
+      "company": "Tech Corp",
+      "dwell_time_seconds": 45,
+      "timestamp": "2025-11-24T12:32:16.485393"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_123",
+      "title": "Engineer",
+      "company": "Company",
+      "dwell_time_seconds": 30,
+      "timestamp": "2025-11-24T12:32:16.753017"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_0",
+      "title": "Position 0",
+      "company": "Company 0",
+      "dwell_time_seconds": 0,
+      "timestamp": "2025-11-24T12:32:16.910563"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_1",
+      "title": "Position 1",
+      "company": "Company 1",
+      "dwell_time_seconds": 5,
+      "timestamp": "2025-11-24T12:32:16.975808"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_2",
+      "title": "Position 2",
+      "company": "Company 2",
+      "dwell_time_seconds": 10,
+      "timestamp": "2025-11-24T12:32:17.071042"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_3",
+      "title": "Position 3",
+      "company": "Company 3",
+      "dwell_time_seconds": 15,
+      "timestamp": "2025-11-24T12:32:17.169880"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_4",
+      "title": "Position 4",
+      "company": "Company 4",
+      "dwell_time_seconds": 20,
+      "timestamp": "2025-11-24T12:32:17.269706"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_5",
+      "title": "Position 5",
+      "company": "Company 5",
+      "dwell_time_seconds": 25,
+      "timestamp": "2025-11-24T12:32:17.333942"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_6",
+      "title": "Position 6",
+      "company": "Company 6",
+      "dwell_time_seconds": 30,
+      "timestamp": "2025-11-24T12:32:17.469519"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_7",
+      "title": "Position 7",
+      "company": "Company 7",
+      "dwell_time_seconds": 35,
+      "timestamp": "2025-11-24T12:32:17.536478"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_8",
+      "title": "Position 8",
+      "company": "Company 8",
+      "dwell_time_seconds": 40,
+      "timestamp": "2025-11-24T12:32:17.641038"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_9",
+      "title": "Position 9",
+      "company": "Company 9",
+      "dwell_time_seconds": 45,
+      "timestamp": "2025-11-24T12:32:17.745255"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_10",
+      "title": "Position 10",
+      "company": "Company 10",
+      "dwell_time_seconds": 50,
+      "timestamp": "2025-11-24T12:32:17.842623"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_11",
+      "title": "Position 11",
+      "company": "Company 11",
+      "dwell_time_seconds": 55,
+      "timestamp": "2025-11-24T12:32:17.910457"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_12",
+      "title": "Position 12",
+      "company": "Company 12",
+      "dwell_time_seconds": 60,
+      "timestamp": "2025-11-24T12:32:18.059672"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_13",
+      "title": "Position 13",
+      "company": "Company 13",
+      "dwell_time_seconds": 65,
+      "timestamp": "2025-11-24T12:32:18.138180"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_14",
+      "title": "Position 14",
+      "company": "Company 14",
+      "dwell_time_seconds": 70,
+      "timestamp": "2025-11-24T12:32:18.241848"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_15",
+      "title": "Position 15",
+      "company": "Company 15",
+      "dwell_time_seconds": 75,
+      "timestamp": "2025-11-24T12:32:18.342452"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_16",
+      "title": "Position 16",
+      "company": "Company 16",
+      "dwell_time_seconds": 80,
+      "timestamp": "2025-11-24T12:32:18.442023"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_17",
+      "title": "Position 17",
+      "company": "Company 17",
+      "dwell_time_seconds": 85,
+      "timestamp": "2025-11-24T12:32:18.510888"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_18",
+      "title": "Position 18",
+      "company": "Company 18",
+      "dwell_time_seconds": 90,
+      "timestamp": "2025-11-24T12:32:18.646690"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_19",
+      "title": "Position 19",
+      "company": "Company 19",
+      "dwell_time_seconds": 95,
+      "timestamp": "2025-11-24T12:32:18.717230"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_20",
+      "title": "Position 20",
+      "company": "Company 20",
+      "dwell_time_seconds": 100,
+      "timestamp": "2025-11-24T12:32:18.818625"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_21",
+      "title": "Position 21",
+      "company": "Company 21",
+      "dwell_time_seconds": 105,
+      "timestamp": "2025-11-24T12:32:18.918198"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_22",
+      "title": "Position 22",
+      "company": "Company 22",
+      "dwell_time_seconds": 110,
+      "timestamp": "2025-11-24T12:32:19.025694"
+    },
+    {
+      "event": "viewed",
+      "job_id": "job_23",
+      "title": "Position 23",
+      "company": "Company 23",
+      "dwell_time_seconds": 115,
+      "timestamp": "2025-11-24T12:32:19.094627"
     }
   ],
   "github_activities": [],
