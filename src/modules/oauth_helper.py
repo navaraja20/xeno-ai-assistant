@@ -1,4 +1,4 @@
-"""
+﻿"""
 OAuth2 authentication helper for XENO AI Assistant.
 Handles OAuth flows for Gmail, GitHub, and other services.
 """

@@ -1,4 +1,4 @@
-"""
+﻿"""
 Comprehensive Integration Tests for XENO
 Tests real-world workflows across multiple features
 """

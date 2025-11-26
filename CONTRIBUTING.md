@@ -1,4 +1,4 @@
-# Contributing to XENO AI Assistant
+﻿# Contributing to XENO AI Assistant
 
 Thank you for your interest in contributing to XENO! This document provides guidelines and instructions for contributing.
 
@@ -16,8 +16,8 @@ Thank you for your interest in contributing to XENO! This document provides guid
 ```bash
 # Fork the repository on GitHub
 # Then clone your fork
-git clone https://github.com/YOUR_USERNAME/xeno-ai-assistant.git
-cd xeno-ai-assistant
+git clone https://github.com/YOUR_USERNAME/XENO-ai-assistant.git
+cd XENO-ai-assistant
 ```
 
 ### 2. Set Up Development Environment
@@ -264,7 +264,7 @@ Any other relevant information
 ## 📂 Project Structure
 
 ```
-xeno-ai-assistant/
+XENO-ai-assistant/
 ├── src/                    # Source code
 │   ├── collaboration/      # Team features
 │   ├── iot/               # Smart home integration
@@ -317,7 +317,7 @@ Contributors will be recognized in:
 
 - **Questions**: Open a GitHub Discussion
 - **Chat**: Join our Discord (coming soon)
-- **Email**: dev@xeno-ai.com
+- **Email**: dev@XENO-ai.com
 
 ---
 

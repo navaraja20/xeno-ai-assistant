@@ -1,4 +1,4 @@
-"""
+﻿"""
 Manually create XENO desktop shortcut
 Run this script to create a desktop shortcut with icon
 """
@@ -19,7 +19,7 @@ try:
         # Get paths
         python_exe = sys.executable
         jarvis_path = Path(__file__).parent / "src" / "jarvis.py"
-        icon_path = Path(__file__).parent / "assets" / "xeno.ico"
+        icon_path = Path(__file__).parent / "assets" / "XENO.ico"
         working_dir = Path(__file__).parent
         
         # Create shortcut
@@ -73,4 +73,4 @@ except Exception as e:
     print("1. Right-click Desktop → New → Shortcut")
     print(f"2. Location: {sys.executable} \"{Path(__file__).parent / 'src' / 'jarvis.py'}\"")
     print(f"3. Name: XENO")
-    print(f"4. Right-click shortcut → Properties → Change Icon → Browse to: {Path(__file__).parent / 'assets' / 'xeno.ico'}")
+    print(f"4. Right-click shortcut → Properties → Change Icon → Browse to: {Path(__file__).parent / 'assets' / 'XENO.ico'}")

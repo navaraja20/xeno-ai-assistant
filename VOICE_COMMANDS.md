@@ -1,4 +1,4 @@
-# XENO Voice Commands & UI Updates
+﻿# XENO Voice Commands & UI Updates
 
 ## 🎤 Voice Commands System (NEW!)
 

@@ -1,4 +1,4 @@
-"""
+﻿"""
 Quick setup script for FREE Google Gemini AI
 Run this to test Gemini without editing files manually
 """
@@ -12,7 +12,7 @@ print("="*60)
 print()
 
 # Check if Gemini is already configured
-env_file = os.path.expanduser("~/.xeno/.env")
+env_file = os.path.expanduser("~/.XENO/.env")
 has_gemini = False
 
 if os.path.exists(env_file):
@@ -67,9 +67,9 @@ else:
     api_key = input("Paste your Gemini API key here: ").strip()
     
     if api_key and api_key.startswith("AIza"):
-        # Create .xeno directory if needed
-        xeno_dir = os.path.expanduser("~/.xeno")
-        os.makedirs(xeno_dir, exist_ok=True)
+        # Create .XENO directory if needed
+        XENO_dir = os.path.expanduser("~/.XENO")
+        os.makedirs(XENO_dir, exist_ok=True)
         
         # Read existing .env or create new
         env_content = ""

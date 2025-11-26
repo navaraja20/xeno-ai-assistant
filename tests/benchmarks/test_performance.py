@@ -1,4 +1,4 @@
-"""
+﻿"""
 Performance Benchmark Tests for XENO
 Uses pytest-benchmark for consistent performance testing
 Run with: pytest tests/benchmarks/ -v --benchmark-only

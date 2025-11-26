@@ -1,4 +1,4 @@
-"""
+﻿"""
 Job application automation module for XENO AI Assistant.
 Handles job searching on LinkedIn and Indeed, tracking applications.
 """

@@ -1,4 +1,4 @@
-"""
+﻿"""
 Create XENO desktop shortcut using VBScript (works on all Windows)
 """
 import subprocess
@@ -9,7 +9,7 @@ import tempfile
 # Get paths
 python_exe = sys.executable.replace('\\', '\\\\')
 jarvis_path = str(Path(__file__).parent / "src" / "jarvis.py").replace('\\', '\\\\')
-icon_path = str(Path(__file__).parent / "assets" / "xeno.ico").replace('\\', '\\\\')
+icon_path = str(Path(__file__).parent / "assets" / "XENO.ico").replace('\\', '\\\\')
 desktop = str(Path.home() / "Desktop").replace('\\', '\\\\')
 working_dir = str(Path(__file__).parent).replace('\\', '\\\\')
 
@@ -35,7 +35,7 @@ try:
     subprocess.run(['cscript', '//Nologo', vbs_path], check=True)
     print("✓ Desktop shortcut created successfully!")
     print(f"  Location: {Path.home() / 'Desktop' / 'XENO.lnk'}")
-    print(f"  Icon: {Path(__file__).parent / 'assets' / 'xeno.ico'}")
+    print(f"  Icon: {Path(__file__).parent / 'assets' / 'XENO.ico'}")
     
     # Clean up temp file
     Path(vbs_path).unlink()

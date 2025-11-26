@@ -1,4 +1,4 @@
-"""
+﻿"""
 Security Configuration and Best Practices for XENO
 Centralizes security settings and provides helper functions
 """

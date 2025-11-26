@@ -1,4 +1,4 @@
-{
+﻿{
   "workflow_id": "email-to-tasks",
   "name": "Important Email to Tasks",
   "description": "Convert high-priority emails into actionable tasks in Notion and Todoist",
@@ -54,7 +54,7 @@
     {
       "action_id": "send-notification",
       "action_type": "notification",
-      "service": "xeno",
+      "service": "XENO",
       "operation": "send_desktop_notification",
       "parameters": {
         "title": "Important Email Received",

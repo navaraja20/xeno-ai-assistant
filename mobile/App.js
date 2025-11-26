@@ -1,4 +1,4 @@
-/**
+﻿/**
  * XENO Mobile App
  * Main application component
  */

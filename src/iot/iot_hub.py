@@ -1,4 +1,4 @@
-"""
+﻿"""
 Wearable & IoT Integration for XENO
 Support for smartwatches, fitness trackers, smart home devices, and IoT sensors
 """

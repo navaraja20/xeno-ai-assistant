@@ -1,4 +1,4 @@
-"""
+﻿"""
 GitHub automation module for XENO AI Assistant.
 Handles repository management, README updates, issues, and more.
 """
@@ -35,7 +35,8 @@ class GitHubManager:
             logger.info(f"Connected to GitHub as {self.user.login}")
             return True
         except GithubException as e:
-            logger.error(f"Failed to connect to GitHub: {e}")
+            # Only log debug-level to avoid noisy startup when credentials not configured
+            logger.debug(f"Failed to connect to GitHub: {e}")
             return False
     
     def get_repositories(self, include_private: bool = True) -> List[Dict]:
@@ -74,7 +75,8 @@ class GitHubManager:
             return repos
             
         except GithubException as e:
-            logger.error(f"Error getting repositories: {e}")
+            # Silently fail if not authenticated
+            logger.debug(f"Error getting repositories: {e}")
             return []
     
     def create_repository(self, name: str, description: str = '', 

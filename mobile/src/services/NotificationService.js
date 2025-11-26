@@ -1,11 +1,11 @@
-/**
+﻿/**
  * Notification Service
  * Handles push notifications setup and management
  */
 
 import messaging from '@react-native-firebase/messaging';
 import PushNotification from 'react-native-push-notification';
-import XenoAPI from './XenoAPI';
+import XENOAPI from './XENOAPI';
 
 export const setupNotifications = async () => {
   // Configure local notifications
@@ -14,7 +14,7 @@ export const setupNotifications = async () => {
       console.log('FCM Token:', token.token);
       // Register token with backend
       try {
-        await XenoAPI.registerPushToken(token.token);
+        await XENOAPI.registerPushToken(token.token);
       } catch (error) {
         console.error('Failed to register push token:', error);
       }
@@ -37,7 +37,7 @@ export const setupNotifications = async () => {
   // Create notification channel for Android
   PushNotification.createChannel(
     {
-      channelId: 'xeno-default',
+      channelId: 'XENO-default',
       channelName: 'XENO Notifications',
       channelDescription: 'Default notification channel for XENO',
       playSound: true,
@@ -57,7 +57,7 @@ export const setupNotifications = async () => {
 
 export const showLocalNotification = message => {
   PushNotification.localNotification({
-    channelId: 'xeno-default',
+    channelId: 'XENO-default',
     title: message.notification?.title || 'XENO',
     message: message.notification?.body || 'New notification',
     playSound: true,
@@ -70,7 +70,7 @@ export const showLocalNotification = message => {
 
 export const scheduleNotification = (title, message, date) => {
   PushNotification.localNotificationSchedule({
-    channelId: 'xeno-default',
+    channelId: 'XENO-default',
     title,
     message,
     date,

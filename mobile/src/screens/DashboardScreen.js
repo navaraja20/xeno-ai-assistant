@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Dashboard Screen
  * Main screen showing overview of XENO activity
  */
@@ -14,7 +14,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import XenoAPI from '../services/XenoAPI';
+import XENOAPI from '../services/XENOAPI';
 
 const DashboardScreen = ({navigation}) => {
   const [loading, setLoading] = useState(true);
@@ -29,8 +29,8 @@ const DashboardScreen = ({navigation}) => {
   const loadDashboard = async () => {
     try {
       const [dashboardData, timelineData] = await Promise.all([
-        XenoAPI.getDashboard(),
-        XenoAPI.getTimeline(10),
+        XENOAPI.getDashboard(),
+        XENOAPI.getTimeline(10),
       ]);
       setDashboard(dashboardData);
       setTimeline(timelineData);

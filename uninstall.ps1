@@ -1,4 +1,4 @@
-# XENO Uninstaller
+﻿# XENO Uninstaller
 # Removes shortcuts and auto-start entries
 
 Write-Host ""
@@ -34,9 +34,9 @@ if (Test-Path $BatchFile) {
 # Remove Start Menu folder
 $StartMenuPath = [Environment]::GetFolderPath("StartMenu")
 $ProgramsPath = Join-Path $StartMenuPath "Programs"
-$XenoFolder = Join-Path $ProgramsPath "XENO"
-if (Test-Path $XenoFolder) {
-    Remove-Item $XenoFolder -Recurse -Force
+$XENOFolder = Join-Path $ProgramsPath "XENO"
+if (Test-Path $XENOFolder) {
+    Remove-Item $XENOFolder -Recurse -Force
     Write-Host "[OK] Removed Start Menu folder" -ForegroundColor Green
 }
 
@@ -57,7 +57,7 @@ Write-Host ""
 Write-Host "XENO shortcuts and auto-start have been removed." -ForegroundColor Green
 Write-Host ""
 Write-Host "Note: Your data and configuration are preserved at:" -ForegroundColor Yellow
-Write-Host "  $env:USERPROFILE\.xeno\" -ForegroundColor White
+Write-Host "  $env:USERPROFILE\.XENO\" -ForegroundColor White
 Write-Host ""
 Write-Host "To completely remove all data, delete that folder manually." -ForegroundColor Yellow
 Write-Host "To remove the application files, delete:" -ForegroundColor Yellow

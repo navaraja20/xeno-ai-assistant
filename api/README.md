@@ -1,4 +1,4 @@
-# XENO Mobile API Server
+﻿# XENO Mobile API Server
 
 Flask-based REST API server for XENO mobile app communication.
 
@@ -67,7 +67,7 @@ Authorization: Bearer <your-token>
 ## Mobile App Configuration
 
 Update the server URL in the mobile app:
-1. Open `mobile/src/services/XenoAPI.js`
+1. Open `mobile/src/services/XENOAPI.js`
 2. Change `API_BASE_URL` to your server's IP address
 3. Example: `http://192.168.1.100:5000/api`
 

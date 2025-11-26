@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Notifications Screen
  * Display and manage XENO notifications
  */
@@ -14,7 +14,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import XenoAPI from '../services/XenoAPI';
+import XENOAPI from '../services/XENOAPI';
 
 const NotificationsScreen = () => {
   const [loading, setLoading] = useState(true);
@@ -28,7 +28,7 @@ const NotificationsScreen = () => {
 
   const loadNotifications = async () => {
     try {
-      const data = await XenoAPI.getNotifications(filter === 'unread');
+      const data = await XENOAPI.getNotifications(filter === 'unread');
       setNotifications(data);
     } catch (error) {
       console.error('Failed to load notifications:', error);
@@ -45,7 +45,7 @@ const NotificationsScreen = () => {
 
   const markAsRead = async notificationId => {
     try {
-      await XenoAPI.markNotificationRead(notificationId);
+      await XENOAPI.markNotificationRead(notificationId);
       loadNotifications();
     } catch (error) {
       console.error('Failed to mark as read:', error);

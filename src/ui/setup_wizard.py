@@ -1,4 +1,4 @@
-"""
+﻿"""
 Setup Wizard for first-time XENO configuration
 """
 from PyQt6.QtWidgets import (
@@ -56,7 +56,7 @@ class WelcomePage(QWizardPage):
         """Validate before moving to next page"""
         name = self.name_input.text().strip()
         if name:
-            # Speak greeting - pronounce XENO as "Zeeno"
+            # Speak greeting - pronounce XENO as "XENOo"
             try:
                 engine = pyttsx3.init()
                 engine.say(f"Welcome, Master {name}. It's a pleasure to meet you.")
@@ -376,7 +376,7 @@ class CompletePage(QWizardPage):
             "<p><br><b>Quick tips:</b></p>"
             "<ul>"
             "<li>Right-click the tray icon for quick actions</li>"
-            "<li>Say 'Hey Xeno' to activate voice commands (if enabled)</li>"
+            "<li>Say 'Hey XENO' to activate voice commands (if enabled)</li>"
             "<li>Access settings anytime from the tray menu</li>"
             "<li>I'll notify you of important events and tasks</li>"
             "</ul>"
@@ -505,10 +505,10 @@ class SetupWizard(QWizard):
         except Exception as e:
             print(f"Could not create desktop shortcut: {e}")
         
-        # Speak completion message - pronounce XENO as "Zeeno"
+        # Speak completion message - pronounce XENO as "XENOo"
         try:
             engine = pyttsx3.init()
-            engine.say("Setup complete. Zeeno is now online and at your service.")
+            engine.say("Setup complete. XENOo is now online and at your service.")
             engine.runAndWait()
         except:
             pass

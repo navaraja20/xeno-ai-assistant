@@ -1,4 +1,4 @@
-"""
+﻿"""
 Email automation module for XENO AI Assistant.
 Handles email reading, sending, auto-replies, and filtering.
 """
@@ -72,7 +72,8 @@ class EmailHandler:
             logger.info("Successfully connected to IMAP server")
             return True
         except Exception as e:
-            logger.error(f"Failed to connect to email: {e}")
+            # Only log debug-level to avoid noisy startup when credentials not configured
+            logger.debug(f"Failed to connect to email: {e}")
             return False
     
     def disconnect(self):
@@ -102,7 +103,8 @@ class EmailHandler:
                 return count
             return 0
         except Exception as e:
-            logger.error(f"Error getting unread count: {e}")
+            # Silently fail if not authenticated
+            logger.debug(f"Error getting unread count: {e}")
             return 0
     
     def get_recent_emails(self, count: int = 10, only_unread: bool = False) -> List[Dict]:
@@ -142,7 +144,8 @@ class EmailHandler:
             return emails
             
         except Exception as e:
-            logger.error(f"Error getting recent emails: {e}")
+            # Silently fail if not authenticated
+            logger.debug(f"Error getting recent emails: {e}")
             return []
     
     def _fetch_email(self, email_id: bytes) -> Optional[Dict]:

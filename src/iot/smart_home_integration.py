@@ -1,4 +1,4 @@
-"""
+﻿"""
 Smart Home Integration for XENO
 Support for smart home devices and home automation
 """

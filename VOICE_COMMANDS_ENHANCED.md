@@ -1,4 +1,4 @@
-# 🎤 XENO Voice Commands - Complete Guide
+﻿# 🎤 XENO Voice Commands - Complete Guide
 
 XENO now supports **advanced voice commands with spoken feedback**! Simply say "**Hey XENO**" followed by any command below.
 
@@ -277,7 +277,7 @@ XENO: "It's 2:30 PM."
 **XENO doesn't respond to wake word:**
 - Check microphone permissions
 - Speak louder or closer to microphone
-- Try variations: "Hey Zeno", "Xeno"
+- Try variations: "Hey Zeno", "XENO"
 
 **Commands not understood:**
 - Speak more clearly

@@ -1,12 +1,12 @@
-# XENO Assets
+﻿# XENO Assets
 
 This folder contains icon and image assets for XENO.
 
 ## Icons Needed
 
-- `xeno.ico` - Windows icon file (for desktop shortcut and taskbar)
-- `xeno.png` - PNG icon (for Linux desktop file)
-- `xeno.icns` - macOS icon file (for app bundle)
+- `XENO.ico` - Windows icon file (for desktop shortcut and taskbar)
+- `XENO.png` - PNG icon (for Linux desktop file)
+- `XENO.icns` - macOS icon file (for app bundle)
 
 ## Creating Icons
 

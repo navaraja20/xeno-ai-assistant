@@ -1,4 +1,4 @@
-"""
+﻿"""
 Database models for XENO
 SQLAlchemy ORM models for persistent storage
 """
@@ -141,7 +141,7 @@ class Settings(Base):
 def init_database(db_path: str = None):
     """Initialize database"""
     if db_path is None:
-        db_path = str(Path.home() / ".xeno" / "data" / "xeno.db")
+        db_path = str(Path.home() / ".XENO" / "data" / "XENO.db")
     
     # Create directory if not exists
     Path(db_path).parent.mkdir(parents=True, exist_ok=True)

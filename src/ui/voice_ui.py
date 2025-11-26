@@ -1,4 +1,4 @@
-"""
+﻿"""
 Voice UI for XENO - PyQt6 Interface
 Visual interface for voice interactions with waveform visualization
 """
@@ -12,7 +12,7 @@ from PyQt6.QtCore import Qt, QTimer, pyqtSignal, QThread
 from PyQt6.QtGui import QPainter, QColor, QPen, QFont
 import numpy as np
 from typing import Optional
-from .advanced_voice_engine import Language, Emotion
+from src.voice.advanced_voice_engine import Language, Emotion
 
 
 class WaveformVisualizer(QWidget):

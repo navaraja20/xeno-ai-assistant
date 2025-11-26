@@ -1,4 +1,4 @@
-"""
+﻿"""
 Advanced Voice Engine for XENO
 Features: Custom wake words, multi-language support, emotion analysis, voice biometrics
 """
@@ -84,9 +84,9 @@ class WakeWordDetector:
     
     def __init__(self):
         self.wake_words = {
-            "xeno": self._create_pattern("xeno"),
-            "hey xeno": self._create_pattern("hey xeno"),
-            "ok xeno": self._create_pattern("ok xeno"),
+            "XENO": self._create_pattern("XENO"),
+            "hey XENO": self._create_pattern("hey XENO"),
+            "ok XENO": self._create_pattern("ok XENO"),
             "computer": self._create_pattern("computer")
         }
         self.sensitivity = 0.7
@@ -107,7 +107,7 @@ class WakeWordDetector:
         """Convert text to phonemes (simplified)"""
         # In production, use a proper phoneme library
         phoneme_map = {
-            'xeno': ['Z', 'IY', 'N', 'OW'],
+            'XENO': ['Z', 'IY', 'N', 'OW'],
             'hey': ['HH', 'EY'],
             'ok': ['OW', 'K'],
             'computer': ['K', 'AH', 'M', 'P', 'Y', 'UW', 'T', 'ER']

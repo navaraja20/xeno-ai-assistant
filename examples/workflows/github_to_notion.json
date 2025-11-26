@@ -1,4 +1,4 @@
-{
+﻿{
   "workflow_id": "github-to-notion",
   "name": "GitHub Issues to Notion",
   "description": "Sync GitHub issues and PRs to Notion database for tracking",
@@ -16,7 +16,7 @@
     {
       "action_id": "check-issue-type",
       "action_type": "condition",
-      "service": "xeno",
+      "service": "XENO",
       "operation": "evaluate_condition",
       "parameters": {
         "field": "{{webhook_data.action}}",

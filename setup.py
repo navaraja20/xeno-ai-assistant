@@ -1,4 +1,4 @@
-"""
+﻿"""
 XENO AI Assistant - Setup Configuration
 """
 
@@ -10,18 +10,18 @@ this_directory = Path(__file__).parent
 long_description = (this_directory / "README.md").read_text(encoding="utf-8")
 
 setup(
-    name="xeno-ai-assistant",
+    name="XENO-ai-assistant",
     version="1.0.0",
     author="XENO Development Team",
-    author_email="dev@xeno-ai.com",
+    author_email="dev@XENO-ai.com",
     description="A fully-featured, Iron Man-inspired personal AI assistant with enterprise capabilities",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/navaraja20/xeno-ai-assistant",
+    url="https://github.com/navaraja20/XENO-ai-assistant",
     project_urls={
-        "Bug Reports": "https://github.com/navaraja20/xeno-ai-assistant/issues",
-        "Source": "https://github.com/navaraja20/xeno-ai-assistant",
-        "Documentation": "https://navaraja20.github.io/xeno-ai-assistant",
+        "Bug Reports": "https://github.com/navaraja20/XENO-ai-assistant/issues",
+        "Source": "https://github.com/navaraja20/XENO-ai-assistant",
+        "Documentation": "https://navaraja20.github.io/XENO-ai-assistant",
     },
     packages=find_packages(include=["src", "src.*"]),
     classifiers=[
@@ -72,7 +72,7 @@ setup(
     },
     entry_points={
         "console_scripts": [
-            "xeno=src.jarvis:main",
+            "XENO=src.jarvis:main",
         ],
     },
     include_package_data=True,

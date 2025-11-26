@@ -1,4 +1,4 @@
-# XENO Mobile Companion App
+﻿# XENO Mobile Companion App
 
 React Native mobile application for XENO AI Personal Assistant.
 
@@ -57,7 +57,7 @@ cd ios && pod install && cd ..
 ### Configuration
 
 1. **Update Server URL**:
-   - Open `src/services/XenoAPI.js`
+   - Open `src/services/XENOAPI.js`
    - Change `API_BASE_URL` to your XENO server IP
    - Example: `http://192.168.1.100:5000/api`
 
@@ -72,7 +72,7 @@ cd ios && pod install && cd ..
    - Update `android/app/build.gradle` if needed
 
 4. **iOS Configuration**:
-   - Place `GoogleService-Info.plist` in `ios/XenoMobile/`
+   - Place `GoogleService-Info.plist` in `ios/XENOMobile/`
    - Update push notification capabilities in Xcode
 
 ### Running the App
@@ -104,7 +104,7 @@ mobile/
 │   │   ├── QuickActionsScreen.js
 │   │   └── SettingsScreen.js
 │   ├── services/          # API and services
-│   │   ├── XenoAPI.js
+│   │   ├── XENOAPI.js
 │   │   └── NotificationService.js
 │   ├── components/        # Reusable components
 │   └── utils/            # Utility functions
@@ -120,27 +120,27 @@ The mobile app communicates with the XENO backend via REST API.
 ### Authentication
 Login to get JWT token:
 ```javascript
-const response = await XenoAPI.login(email, password);
+const response = await XENOAPI.login(email, password);
 ```
 
 ### Dashboard Data
 ```javascript
-const dashboard = await XenoAPI.getDashboard();
+const dashboard = await XENOAPI.getDashboard();
 ```
 
 ### Send Email
 ```javascript
-await XenoAPI.sendEmail(to, subject, body);
+await XENOAPI.sendEmail(to, subject, body);
 ```
 
 ### Calendar Events
 ```javascript
-const events = await XenoAPI.getCalendarEvents(7);
+const events = await XENOAPI.getCalendarEvents(7);
 ```
 
 ### Voice Commands
 ```javascript
-const result = await XenoAPI.executeVoiceCommand(command);
+const result = await XENOAPI.executeVoiceCommand(command);
 ```
 
 ## Push Notifications
@@ -182,7 +182,7 @@ cd android
 APK will be in `android/app/build/outputs/apk/release/`
 
 ### iOS IPA
-1. Open `ios/XenoMobile.xcworkspace` in Xcode
+1. Open `ios/XENOMobile.xcworkspace` in Xcode
 2. Select "Any iOS Device"
 3. Product → Archive
 4. Distribute App

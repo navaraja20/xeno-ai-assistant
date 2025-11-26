@@ -1,4 +1,4 @@
-"""
+﻿"""
 Voice Command Processor with Natural Language Understanding
 Handles complex voice commands with context awareness
 """
@@ -493,14 +493,14 @@ class NaturalLanguageProcessor:
 class VoiceCommandExecutor:
     """Execute parsed voice commands"""
     
-    def __init__(self, xeno_app):
+    def __init__(self, XENO_app):
         """
         Initialize with reference to main XENO application
         
         Args:
-            xeno_app: Main XENO application instance
+            XENO_app: Main XENO application instance
         """
-        self.app = xeno_app
+        self.app = XENO_app
         self.nlp = NaturalLanguageProcessor()
     
     async def execute(self, command: VoiceCommand) -> Dict[str, Any]:

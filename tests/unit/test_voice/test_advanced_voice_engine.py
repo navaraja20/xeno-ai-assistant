@@ -1,4 +1,4 @@
-"""
+﻿"""
 Unit tests for Advanced Voice Engine
 Tests voice recognition, TTS, emotion analysis, and conversation management
 """
@@ -312,7 +312,7 @@ def test_wake_word_detector_default_words():
     """Test default wake word detection"""
     detector = WakeWordDetector()
     
-    detected, word = detector.detect("Hey Xeno, what's the weather?")
+    detected, word = detector.detect("Hey XENO, what's the weather?")
     
     assert detected
     assert word in detector.wake_words
@@ -409,9 +409,9 @@ async def test_voice_engine_process_audio_mock():
     ).tobytes()
     
     # Mock the STT recognize method
-    with patch.object(engine.stt, 'recognize', return_value=("Hello Xeno", Language.ENGLISH_US, 0.9)):
+    with patch.object(engine.stt, 'recognize', return_value=("Hello XENO", Language.ENGLISH_US, 0.9)):
         result = await engine.process_audio(mock_audio)
     
     assert result['success']
-    assert result['text'] == "Hello Xeno"
+    assert result['text'] == "Hello XENO"
     assert result['language'] == Language.ENGLISH_US

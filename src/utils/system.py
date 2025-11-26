@@ -1,4 +1,4 @@
-"""
+﻿"""
 System utilities for XENO
 """
 import os
@@ -17,7 +17,7 @@ def get_platform() -> str:
 
 def is_first_run() -> bool:
     """Check if this is the first run of XENO"""
-    config_dir = Path.home() / ".xeno"
+    config_dir = Path.home() / ".XENO"
     config_file = config_dir / "config.yaml"
     first_run_marker = config_dir / ".first_run_complete"
     
@@ -26,7 +26,7 @@ def is_first_run() -> bool:
 
 def mark_first_run_complete():
     """Mark first run as complete"""
-    config_dir = Path.home() / ".xeno"
+    config_dir = Path.home() / ".XENO"
     config_dir.mkdir(parents=True, exist_ok=True)
     
     first_run_marker = config_dir / ".first_run_complete"
@@ -35,7 +35,7 @@ def mark_first_run_complete():
 
 def create_directories():
     """Create necessary application directories"""
-    base_dir = Path.home() / ".xeno"
+    base_dir = Path.home() / ".XENO"
     
     directories = [
         base_dir,
@@ -65,8 +65,8 @@ def get_app_data_dir() -> Path:
         # macOS: ~/Library/Application Support/XENO
         return Path.home() / "Library" / "Application Support" / "XENO"
     
-    # Linux and fallback: ~/.xeno
-    return Path.home() / ".xeno"
+    # Linux and fallback: ~/.XENO
+    return Path.home() / ".XENO"
 
 
 def get_startup_command() -> str:
@@ -166,14 +166,14 @@ def _enable_autostart_macos() -> bool:
     """Enable autostart on macOS using LaunchAgent"""
     import plistlib
     
-    plist_path = Path.home() / "Library" / "LaunchAgents" / "com.xeno.assistant.plist"
+    plist_path = Path.home() / "Library" / "LaunchAgents" / "com.XENO.assistant.plist"
     plist_path.parent.mkdir(parents=True, exist_ok=True)
     
     command = get_startup_command()
     python_exe, jarvis_script = command.strip('"').split('" "')
     
     plist_content = {
-        "Label": "com.xeno.assistant",
+        "Label": "com.XENO.assistant",
         "ProgramArguments": [python_exe, jarvis_script],
         "RunAtLoad": True,
         "KeepAlive": False,
@@ -194,7 +194,7 @@ def _enable_autostart_macos() -> bool:
 def _disable_autostart_macos() -> bool:
     """Disable autostart on macOS"""
     import subprocess
-    plist_path = Path.home() / "Library" / "LaunchAgents" / "com.xeno.assistant.plist"
+    plist_path = Path.home() / "Library" / "LaunchAgents" / "com.XENO.assistant.plist"
     
     if plist_path.exists():
         try:
@@ -211,7 +211,7 @@ def _enable_autostart_linux() -> bool:
     autostart_dir = Path.home() / ".config" / "autostart"
     autostart_dir.mkdir(parents=True, exist_ok=True)
     
-    desktop_file = autostart_dir / "xeno.desktop"
+    desktop_file = autostart_dir / "XENO.desktop"
     command = get_startup_command()
     
     desktop_content = f"""[Desktop Entry]
@@ -234,7 +234,7 @@ X-GNOME-Autostart-enabled=true
 
 def _disable_autostart_linux() -> bool:
     """Disable autostart on Linux"""
-    desktop_file = Path.home() / ".config" / "autostart" / "xeno.desktop"
+    desktop_file = Path.home() / ".config" / "autostart" / "XENO.desktop"
     
     if desktop_file.exists():
         desktop_file.unlink()
@@ -277,7 +277,7 @@ def _create_desktop_shortcut_windows() -> bool:
         import sys
         python_exe = sys.executable
         jarvis_path = Path(__file__).parent.parent / "jarvis.py"
-        icon_path = Path(__file__).parent.parent.parent / "assets" / "xeno.ico"
+        icon_path = Path(__file__).parent.parent.parent / "assets" / "XENO.ico"
         working_dir = Path(__file__).parent.parent.parent
         
         # Create PowerShell script
@@ -349,7 +349,7 @@ def _create_desktop_shortcut_linux() -> bool:
         
         python_exe = sys.executable
         jarvis_path = Path(__file__).parent.parent / "jarvis.py"
-        icon_path = Path(__file__).parent.parent.parent / "assets" / "xeno.png"
+        icon_path = Path(__file__).parent.parent.parent / "assets" / "XENO.png"
         
         desktop_content = f"""[Desktop Entry]
 Type=Application

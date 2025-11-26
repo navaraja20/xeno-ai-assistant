@@ -1,4 +1,4 @@
-// XENO Browser Extension - GitHub Integration Content Script
+﻿// XENO Browser Extension - GitHub Integration Content Script
 
 (function() {
   'use strict';
@@ -88,11 +88,11 @@
 
     addQuickActionsPanel() {
       // Check if panel already exists
-      if (document.querySelector('.xeno-github-panel')) return;
+      if (document.querySelector('.XENO-github-panel')) return;
 
       // Create XENO panel
       const panel = document.createElement('div');
-      panel.className = 'xeno-github-panel';
+      panel.className = 'XENO-github-panel';
       panel.style.cssText = `
         position: fixed;
         bottom: 20px;
@@ -110,20 +110,20 @@
         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
           <span style="font-size: 16px;">⚡</span>
           <strong style="color: #5865F2; font-size: 14px;">XENO Actions</strong>
-          <button id="xeno-panel-close" style="margin-left: auto; background: none; border: none; color: #b5bac1; cursor: pointer; font-size: 18px;">&times;</button>
+          <button id="XENO-panel-close" style="margin-left: auto; background: none; border: none; color: #b5bac1; cursor: pointer; font-size: 18px;">&times;</button>
         </div>
         <div style="display: flex; flex-direction: column; gap: 6px;">
-          <button id="xeno-save-repo" class="xeno-action-btn">💾 Save to XENO</button>
-          <button id="xeno-create-task" class="xeno-action-btn">✅ Create Task</button>
-          <button id="xeno-copy-info" class="xeno-action-btn">📋 Copy Info</button>
-          <button id="xeno-analyze" class="xeno-action-btn">🔍 Analyze Repo</button>
+          <button id="XENO-save-repo" class="XENO-action-btn">💾 Save to XENO</button>
+          <button id="XENO-create-task" class="XENO-action-btn">✅ Create Task</button>
+          <button id="XENO-copy-info" class="XENO-action-btn">📋 Copy Info</button>
+          <button id="XENO-analyze" class="XENO-action-btn">🔍 Analyze Repo</button>
         </div>
       `;
 
       // Add styles for buttons
       const style = document.createElement('style');
       style.textContent = `
-        .xeno-action-btn {
+        .XENO-action-btn {
           background: #313338;
           border: 1px solid #40444b;
           color: #ffffff;
@@ -134,7 +134,7 @@
           text-align: left;
           transition: all 0.2s;
         }
-        .xeno-action-btn:hover {
+        .XENO-action-btn:hover {
           background: #404249;
           border-color: #5865F2;
         }
@@ -144,23 +144,23 @@
       document.body.appendChild(panel);
 
       // Add event listeners
-      document.getElementById('xeno-panel-close').addEventListener('click', () => {
+      document.getElementById('XENO-panel-close').addEventListener('click', () => {
         panel.remove();
       });
 
-      document.getElementById('xeno-save-repo').addEventListener('click', () => {
-        this.saveRepositoryToXeno();
+      document.getElementById('XENO-save-repo').addEventListener('click', () => {
+        this.saveRepositoryToXENO();
       });
 
-      document.getElementById('xeno-create-task').addEventListener('click', () => {
+      document.getElementById('XENO-create-task').addEventListener('click', () => {
         this.createTaskFromRepo();
       });
 
-      document.getElementById('xeno-copy-info').addEventListener('click', () => {
+      document.getElementById('XENO-copy-info').addEventListener('click', () => {
         this.copyRepositoryInfo();
       });
 
-      document.getElementById('xeno-analyze').addEventListener('click', () => {
+      document.getElementById('XENO-analyze').addEventListener('click', () => {
         this.analyzeRepository();
       });
     }
@@ -174,9 +174,9 @@
       fileLinks.forEach(link => {
         const filename = link.textContent.trim();
         
-        if (importantFiles.includes(filename) && !link.querySelector('.xeno-badge')) {
+        if (importantFiles.includes(filename) && !link.querySelector('.XENO-badge')) {
           const badge = document.createElement('span');
-          badge.className = 'xeno-badge';
+          badge.className = 'XENO-badge';
           badge.textContent = '⚡';
           badge.style.cssText = 'margin-left: 6px; color: #5865F2;';
           link.appendChild(badge);
@@ -288,12 +288,12 @@
       return match ? parseInt(match[0].replace(/,/g, '')) : 0;
     }
 
-    async saveRepositoryToXeno() {
+    async saveRepositoryToXENO() {
       try {
         const info = await this.getRepositoryInfo();
         
         chrome.runtime.sendMessage({
-          type: 'save_to_xeno',
+          type: 'save_to_XENO',
           data: {
             type: 'github-repo',
             title: info.fullName,
@@ -380,9 +380,9 @@
       toast.textContent = message;
       
       // Add animation
-      if (!document.getElementById('xeno-github-animations')) {
+      if (!document.getElementById('XENO-github-animations')) {
         const style = document.createElement('style');
-        style.id = 'xeno-github-animations';
+        style.id = 'XENO-github-animations';
         style.textContent = `
           @keyframes slideIn {
             from {

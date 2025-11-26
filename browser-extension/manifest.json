@@ -1,4 +1,4 @@
-{
+﻿{
   "manifest_version": 3,
   "name": "XENO Assistant",
   "version": "1.0.0",
@@ -74,7 +74,7 @@
       },
       "description": "Quick add calendar event"
     },
-    "open-xeno": {
+    "open-XENO": {
       "suggested_key": {
         "default": "Ctrl+Shift+X",
         "mac": "Command+Shift+X"

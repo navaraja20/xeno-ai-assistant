@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Voice Command Screen
  * Voice-activated XENO commands
  */
@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Voice from '@react-native-voice/voice';
-import XenoAPI from '../services/XenoAPI';
+import XENOAPI from '../services/XENOAPI';
 
 const VoiceCommandScreen = () => {
   const [isListening, setIsListening] = useState(false);
@@ -77,7 +77,7 @@ const VoiceCommandScreen = () => {
   const executeCommand = async command => {
     setLoading(true);
     try {
-      const response = await XenoAPI.executeVoiceCommand(command);
+      const response = await XENOAPI.executeVoiceCommand(command);
       setResult(response.result || 'Command executed');
     } catch (error) {
       setResult(`Error: ${error.message}`);

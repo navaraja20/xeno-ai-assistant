@@ -1,6 +1,6 @@
-// XENO Browser Extension - Popup Script
+﻿// XENO Browser Extension - Popup Script
 
-class XenoPopup {
+class XENOPopup {
   constructor() {
     this.ws = null;
     this.connected = false;
@@ -579,5 +579,5 @@ class XenoPopup {
 
 // Initialize popup when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-  new XenoPopup();
+  new XENOPopup();
 });

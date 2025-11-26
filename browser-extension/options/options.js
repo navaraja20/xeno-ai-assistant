@@ -1,4 +1,4 @@
-// XENO Browser Extension - Options Page Script
+﻿// XENO Browser Extension - Options Page Script
 
 class OptionsPage {
   constructor() {

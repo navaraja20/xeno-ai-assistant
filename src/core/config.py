@@ -1,4 +1,4 @@
-"""
+﻿"""
 Configuration Manager for XENO
 Handles loading, saving, and accessing configuration
 """
@@ -143,9 +143,9 @@ class Config(BaseSettings):
     ai: AIConfig = Field(default_factory=AIConfig)
     
     # Paths
-    config_dir: Path = Field(default_factory=lambda: Path.home() / ".xeno")
-    data_dir: Path = Field(default_factory=lambda: Path.home() / ".xeno" / "data")
-    log_dir: Path = Field(default_factory=lambda: Path.home() / ".xeno" / "logs")
+    config_dir: Path = Field(default_factory=lambda: Path.home() / ".XENO")
+    data_dir: Path = Field(default_factory=lambda: Path.home() / ".XENO" / "data")
+    log_dir: Path = Field(default_factory=lambda: Path.home() / ".XENO" / "logs")
     
     def __init__(self, config_path: Optional[str] = None):
         """Initialize configuration"""

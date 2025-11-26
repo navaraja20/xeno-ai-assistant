@@ -1,4 +1,4 @@
-# XENO Browser Extension 🌐
+﻿# XENO Browser Extension 🌐
 
 A powerful Chrome/Edge browser extension that extends XENO's personal assistant capabilities directly into your browser workflow.
 

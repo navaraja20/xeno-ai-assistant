@@ -1,4 +1,4 @@
-"""
+﻿"""
 Voice Command Processor for XENO
 Processes voice commands and triggers actions
 """

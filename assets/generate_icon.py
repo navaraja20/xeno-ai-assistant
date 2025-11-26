@@ -1,4 +1,4 @@
-"""
+﻿"""
 Generate XENO icon programmatically using PIL
 Run this to create icon files if you don't have custom ones
 """
@@ -7,7 +7,7 @@ try:
     import os
     from pathlib import Path
     
-    def create_xeno_icon():
+    def create_XENO_icon():
         """Create a simple XENO icon"""
         # Create a 256x256 image with transparency
         size = 256
@@ -56,7 +56,7 @@ try:
         
         # Save as PNG
         assets_dir = Path(__file__).parent
-        png_path = assets_dir / "xeno.png"
+        png_path = assets_dir / "XENO.png"
         img.save(png_path, "PNG")
         print(f"✓ Created {png_path}")
         
@@ -69,21 +69,21 @@ try:
                 icon_img = img.resize(ico_size, Image.Resampling.LANCZOS)
                 icons.append(icon_img)
             
-            ico_path = assets_dir / "xeno.ico"
+            ico_path = assets_dir / "XENO.ico"
             icons[0].save(ico_path, format='ICO', sizes=[(s[0], s[1]) for s in sizes])
             print(f"✓ Created {ico_path}")
         except Exception as e:
             print(f"⚠ Could not create .ico file: {e}")
-            print("  You can convert xeno.png to .ico online at: https://convertio.co/png-ico/")
+            print("  You can convert XENO.png to .ico online at: https://convertio.co/png-ico/")
         
         return png_path
     
     if __name__ == "__main__":
         print("Generating XENO icon...")
-        create_xeno_icon()
+        create_XENO_icon()
         print("\n✓ Icon generation complete!")
         print("  You can now use these icons for desktop shortcuts.")
         
 except ImportError:
     print("PIL/Pillow not installed. Install with: pip install pillow")
-    print("Or create your own icon and save as assets/xeno.png and assets/xeno.ico")
+    print("Or create your own icon and save as assets/XENO.png and assets/XENO.ico")

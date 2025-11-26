@@ -1,4 +1,4 @@
-# XENO - Complete Feature List
+﻿# XENO - Complete Feature List
 
 ## 🎮 Discord-Style Gaming UI
 
@@ -115,14 +115,14 @@ If automatic creation fails, you can create manually:
 1. Right-click Desktop → New → Shortcut
 2. Target: `"C:\Path\To\python.exe" "E:\Personal assistant\src\jarvis.py"`
 3. Name: XENO
-4. Change Icon → Browse to `E:\Personal assistant\assets\xeno.ico`
+4. Change Icon → Browse to `E:\Personal assistant\assets\XENO.ico`
 
 ---
 
 ## 🎤 Voice Features
 
 ### Natural Pronunciation
-- XENO now says its name as "Zeeno" (natural word)
+- XENO now says its name as "XENOo" (natural word)
 - No more letter-by-letter spelling (X-E-N-O)
 - Smooth, professional voice output
 
@@ -135,10 +135,10 @@ If automatic creation fails, you can create manually:
 
 ### Voice Greetings
 XENO greets you based on time of day:
-- **Morning** (5am-12pm): "Good morning, Master [Name]. Zeeno is online and ready."
-- **Afternoon** (12pm-6pm): "Good afternoon, Master [Name]. Zeeno is at your service."
-- **Evening** (6pm-9pm): "Good evening, Master [Name]. Zeeno is here to assist."
-- **Night** (9pm-5am): "Greetings, Master [Name]. Zeeno is operational."
+- **Morning** (5am-12pm): "Good morning, Master [Name]. XENOo is online and ready."
+- **Afternoon** (12pm-6pm): "Good afternoon, Master [Name]. XENOo is at your service."
+- **Evening** (6pm-9pm): "Good evening, Master [Name]. XENOo is here to assist."
+- **Night** (9pm-5am): "Greetings, Master [Name]. XENOo is operational."
 
 ---
 
@@ -159,7 +159,7 @@ disable_autostart()
 
 ### First Run Detection
 - XENO detects first run and shows setup wizard
-- Creates `~/.xeno/.first_run_complete` marker file
+- Creates `~/.XENO/.first_run_complete` marker file
 - Subsequent runs skip wizard and go straight to main UI
 
 ---
@@ -169,8 +169,8 @@ disable_autostart()
 ```
 E:\Personal assistant\
 ├── assets/
-│   ├── xeno.ico          # Windows icon (auto-generated)
-│   ├── xeno.png          # PNG icon (auto-generated)
+│   ├── XENO.ico          # Windows icon (auto-generated)
+│   ├── XENO.png          # PNG icon (auto-generated)
 │   ├── generate_icon.py  # Icon generator script
 │   └── README.md         # Icon documentation
 │
@@ -240,7 +240,7 @@ python src\jarvis.py --debug --no-ui
 
 ## 🔧 Configuration Files
 
-### Main Config: `~/.xeno/config.yaml`
+### Main Config: `~/.XENO/config.yaml`
 ```yaml
 app_name: XENO
 app_version: 0.1.0
@@ -277,7 +277,7 @@ GOOGLE_CLIENT_ID=...
 GOOGLE_CLIENT_SECRET=...
 ```
 
-### Database: `~/.xeno/data/xeno.db`
+### Database: `~/.XENO/data/XENO.db`
 SQLite database storing:
 - User profile
 - Conversation history
@@ -314,7 +314,7 @@ self.voice_engine.setProperty('volume', 0.9)  # Volume
 ```
 
 ### Icon
-Replace `assets/xeno.ico` and `assets/xeno.png` with your own designs!
+Replace `assets/XENO.ico` and `assets/XENO.png` with your own designs!
 
 ---
 
@@ -333,7 +333,7 @@ Replace `assets/xeno.ico` and `assets/xeno.png` with your own designs!
 ### Desktop Shortcut Missing?
 1. Run: `python src\jarvis.py --setup`
 2. Or manually create shortcut (see instructions above)
-3. Ensure `assets/xeno.ico` exists
+3. Ensure `assets/XENO.ico` exists
 
 ### Icons Not Showing?
 1. Run: `python assets\generate_icon.py`
@@ -353,7 +353,7 @@ Replace `assets/xeno.ico` and `assets/xeno.png` with your own designs!
 ✅ **System tray integration** with context menu
 ✅ **Desktop shortcut** auto-creation
 ✅ **Custom icons** (auto-generated)
-✅ **Voice greetings** with natural pronunciation ("Zeeno")
+✅ **Voice greetings** with natural pronunciation ("XENOo")
 ✅ **Auto-start on boot**
 ✅ **First-run setup wizard**
 ✅ **Configuration management**

@@ -1,16 +1,21 @@
-"""
+﻿"""
 XENO - Personal AI Assistant
 Main entry point for the application
 """
 import sys
 import os
+import warnings
 import argparse
 from pathlib import Path
+
+# Suppress non-critical warnings for cleaner startup
+warnings.filterwarnings("ignore", category=FutureWarning, module="google.api_core")
+warnings.filterwarnings("ignore", message=".*packages_distributions.*")
 
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from core.daemon import XenoDaemon
+from core.daemon import XENODaemon
 from core.config import Config
 from core.logger import setup_logger
 from ui.setup_wizard import SetupWizard
@@ -59,7 +64,7 @@ def main():
     
     # Start the daemon
     try:
-        daemon = XenoDaemon(config=config, ui_enabled=not args.no_ui)
+        daemon = XENODaemon(config=config, ui_enabled=not args.no_ui)
         return daemon.run()
     except KeyboardInterrupt:
         logger.info("Received interrupt signal, shutting down...")

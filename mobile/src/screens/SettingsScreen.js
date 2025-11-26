@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Settings Screen
  * Configure XENO mobile app settings
  */
@@ -16,7 +16,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import XenoAPI from '../services/XenoAPI';
+import XENOAPI from '../services/XENOAPI';
 
 const SettingsScreen = () => {
   const [pushEnabled, setPushEnabled] = useState(true);
@@ -40,7 +40,7 @@ const SettingsScreen = () => {
         text: 'Logout',
         style: 'destructive',
         onPress: async () => {
-          await XenoAPI.logout();
+          await XENOAPI.logout();
           // Navigation reset would happen here
           Alert.alert('Success', 'Logged out successfully');
         },

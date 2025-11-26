@@ -1,4 +1,4 @@
-# XENO AI Assistant 🤖
+﻿# XENO AI Assistant 🤖
 
 > *A fully-featured, Iron Man-inspired personal AI assistant with Discord-style gaming UI*
 
@@ -32,9 +32,11 @@
 ### 🚀 Advanced Features
 
 - **🔒 Enterprise Security** - MFA, session management, audit logging, input sanitization
+- **🎤 Continuous Voice Mode** - Say "Hey XENO" once, then give multiple commands naturally (NEW!)
+- **📧 Smart Email Reading** - Read emails one-by-one with full details, draft & send replies by voice
 - **👥 Team Collaboration** - Team management, shared calendars, task delegation
 - **🏠 Smart Home Integration** - IoT device control, scenes, automation
-- **🎤 Voice Control** - Advanced voice engine with emotion detection, multi-language support
+- **🎙️ Voice Control** - Advanced voice engine with emotion detection, multi-language support
 - **📊 AI Personalization** - Learns from interactions, adapts to user preferences
 - **📈 Predictive Analytics** - ML-powered insights and recommendations
 - **⚡ High Performance** - 99% operations <100ms, optimized for speed
@@ -62,8 +64,8 @@
 
 ```powershell
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/xeno-ai-assistant.git
-cd xeno-ai-assistant
+git clone https://github.com/YOUR_USERNAME/XENO-ai-assistant.git
+cd XENO-ai-assistant
 
 # Create virtual environment (recommended)
 python -m venv .venv
@@ -114,7 +116,7 @@ This automated script will:
 2. Sign in with Google (free)
 3. Click "Create API key"
 4. Copy key (starts with `AIzaSy...`)
-5. Add to `C:\Users\YOUR_USERNAME\.xeno\.env`:
+5. Add to `C:\Users\YOUR_USERNAME\.XENO\.env`:
    ```
    GEMINI_API_KEY=AIzaSy...your_key_here
    ```
@@ -137,6 +139,22 @@ Navigate between pages using the sidebar:
 
 ### Email Automation
 
+**Interactive Voice Commands:**
+```
+You: "Hey XENO"
+You: "Open my Gmail"
+You: "Read my emails"
+XENO: "Email 1 of 5. From John Smith. Subject: Project Update. 
+       Received on November 26 at 9:30 AM. The email says..."
+You: "Next email"
+XENO: "Email 2 of 5. From Sarah..."
+You: "Draft a reply"
+XENO: "I've drafted a reply: Thank you for your email..."
+You: "Send reply"
+XENO: "Reply sent successfully."
+```
+
+**Chat Commands:**
 ```python
 # In Chat, ask XENO:
 "Check my emails"
@@ -145,6 +163,8 @@ Navigate between pages using the sidebar:
 ```
 
 Or use the Email page to browse emails directly.
+
+**See [CONTINUOUS_MODE.md](CONTINUOUS_MODE.md) for complete voice command guide.**
 
 ### Job Search
 
@@ -167,7 +187,7 @@ Or use the Email page to browse emails directly.
 
 ### Environment Variables
 
-Create/edit `C:\Users\YOUR_USERNAME\.xeno\.env`:
+Create/edit `C:\Users\YOUR_USERNAME\.XENO\.env`:
 
 ```bash
 # AI Provider (choose one - Gemini is FREE!)
@@ -202,7 +222,7 @@ Enable/disable modules in Settings or during setup wizard:
 ## 📁 Project Structure
 
 ```
-xeno-ai-assistant/
+XENO-ai-assistant/
 ├── src/
 │   ├── modules/           # Automation modules
 │   │   ├── ai_chat.py          # AI chat (Gemini/OpenAI)
@@ -304,7 +324,7 @@ XENO implements **enterprise-grade security** with comprehensive protection mech
 
 ### 🔒 Data Protection
 
-- **Credentials stored locally** in `~/.xeno/.env` (never transmitted)
+- **Credentials stored locally** in `~/.XENO/.env` (never transmitted)
 - **No data sent** to third parties (except chosen AI provider)
 - **OAuth support** for secure authentication (no password storage)
 - **Encrypted storage** for sensitive data
@@ -408,8 +428,8 @@ Your exceptional executive assistant for everything! 🚀
 
 ## 📞 Contact & Support
 
-- **Issues**: [GitHub Issues](https://github.com/YOUR_USERNAME/xeno-ai-assistant/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/YOUR_USERNAME/xeno-ai-assistant/discussions)
+- **Issues**: [GitHub Issues](https://github.com/YOUR_USERNAME/XENO-ai-assistant/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/YOUR_USERNAME/XENO-ai-assistant/discussions)
 
 ---
 

@@ -1,4 +1,4 @@
-"""
+﻿"""
 Voice system for XENO
 Speech recognition and text-to-speech
 """

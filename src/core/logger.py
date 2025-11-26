@@ -1,4 +1,4 @@
-"""
+﻿"""
 Logging setup for XENO
 """
 import logging
@@ -31,7 +31,7 @@ class ColoredFormatter(logging.Formatter):
         return super().format(record)
 
 
-def setup_logger(name: str = "xeno", debug: bool = False) -> logging.Logger:
+def setup_logger(name: str = "XENO", debug: bool = False) -> logging.Logger:
     """
     Setup logger with console and file handlers
     
@@ -67,10 +67,10 @@ def setup_logger(name: str = "xeno", debug: bool = False) -> logging.Logger:
     logger.addHandler(console_handler)
     
     # File handler with rotation
-    log_dir = Path.home() / ".xeno" / "logs"
+    log_dir = Path.home() / ".XENO" / "logs"
     log_dir.mkdir(parents=True, exist_ok=True)
     
-    log_file = log_dir / f"xeno_{datetime.now().strftime('%Y%m%d')}.log"
+    log_file = log_dir / f"XENO_{datetime.now().strftime('%Y%m%d')}.log"
     file_handler = RotatingFileHandler(
         log_file,
         maxBytes=10 * 1024 * 1024,  # 10 MB

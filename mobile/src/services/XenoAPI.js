@@ -1,4 +1,4 @@
-/**
+﻿/**
  * XENO API Service
  * Handles communication with XENO desktop backend
  */
@@ -8,7 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const API_BASE_URL = 'http://localhost:5000/api'; // Update with your server IP
 
-class XenoAPI {
+class XENOAPI {
   constructor() {
     this.client = axios.create({
       baseURL: API_BASE_URL,
@@ -215,4 +215,4 @@ class XenoAPI {
   }
 }
 
-export default new XenoAPI();
+export default new XENOAPI();

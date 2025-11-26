@@ -1,4 +1,4 @@
-"""
+﻿"""
 Main XENO Dashboard Window - Discord-inspired Gaming UI
 """
 import os
@@ -12,7 +12,7 @@ from dotenv import load_dotenv, set_key
 # CRITICAL: Import QWebEngine BEFORE any QApplication is created
 try:
     from PyQt6.QtWebEngineWidgets import QWebEngineView
-    from PyQt6.QtWebEngineCore import QWebEngineProfile, QWebEngineSettings
+    from PyQt6.QtWebEngineCore import QWebEngineProfile, QWebEngineSettings, QWebEnginePage
     WEBENGINE_AVAILABLE = True
 except ImportError:
     WEBENGINE_AVAILABLE = False
@@ -40,7 +40,7 @@ from PyQt6.QtWidgets import (
 )
 
 
-class XenoMainWindow(QMainWindow):
+class XENOMainWindow(QMainWindow):
     """Modern gradient UI with glassmorphism for XENO"""
 
     # Modern gradient color scheme with vibrant accents
@@ -263,25 +263,31 @@ class XenoMainWindow(QMainWindow):
             # Check if it's wake word detection signal
             if command == "__WAKE_WORD_DETECTED__":
                 print("🎤 Wake word detected!")
-                # Respond to wake word
+                # Respond to wake word in separate thread to avoid blocking
                 if self.config.user.voice_enabled and self.voice_command_handler:
-                    self.voice_command_handler.speak("Yes Master, how can I help you?")
+                    import threading
+                    threading.Thread(
+                        target=self.voice_command_handler.speak,
+                        args=("Yes Master, how can I help you?",),
+                        daemon=True
+                    ).start()
                 return
 
             print(f"🎤 Voice command: {command}")
 
-            # Process command with enhanced handler
+            # Process command with enhanced handler in separate thread
             if self.voice_command_handler:
-                response = self.voice_command_handler.process_command(command)
-
-                if response:
-                    print(f"🔊 Response: {response}")
-
-                    # Add to activity timeline if dashboard exists
-                    if hasattr(self, "_add_timeline_activity"):
-                        from datetime import datetime
-
-                        self._add_timeline_activity(f"🎤 Voice: {command[:30]}...", datetime.now())
+                import threading
+                def process_and_respond():
+                    response = self.voice_command_handler.process_command(command)
+                    if response:
+                        print(f"🔊 Response: {response}")
+                        # Add to activity timeline if dashboard exists
+                        if hasattr(self, "_add_timeline_activity"):
+                            from datetime import datetime
+                            self._add_timeline_activity(f"🎤 Voice: {command[:30]}...", datetime.now())
+                
+                threading.Thread(target=process_and_respond, daemon=True).start()
 
     def _speak(self, text):
         """Speak text using TTS (deprecated - use voice_command_handler.speak)"""
@@ -1192,11 +1198,13 @@ Keep it under 100 words, friendly and energetic."""
         try:
             if not self.email_handler:
                 return 0
+            # Defer email connection - will be attempted when needed
             emails = self.email_handler.get_recent_emails(max_results=50)
             today = datetime.now().date()
             count = sum(1 for e in emails if e.get("date") and e["date"].date() == today)
             return count
-        except:
+        except Exception:
+            # Silently fail if credentials not configured or connection fails
             return 0
 
     def _get_emails_week(self):
@@ -1204,9 +1212,11 @@ Keep it under 100 words, friendly and energetic."""
         try:
             if not self.email_handler:
                 return 0
+            # Defer email connection - will be attempted when needed
             emails = self.email_handler.get_recent_emails(max_results=100)
             return min(len(emails), 100)
-        except:
+        except Exception:
+            # Silently fail if credentials not configured or connection fails
             return 0
 
     def _get_github_stars(self):
@@ -1214,9 +1224,11 @@ Keep it under 100 words, friendly and energetic."""
         try:
             if not self.github_manager:
                 return 0
+            # Defer GitHub connection - will be attempted when needed
             repos = self.github_manager.get_repositories()
             return sum(repo.get("stargazers_count", 0) for repo in repos)
-        except:
+        except Exception:
+            # Silently fail if credentials not configured or connection fails
             return 0
 
     def _get_recent_commits(self):
@@ -1244,8 +1256,10 @@ Keep it under 100 words, friendly and energetic."""
         if not self.email_handler:
             return 0
         try:
+            # Defer email connection - will be attempted when needed
             return self.email_handler.get_unread_count()
-        except:
+        except Exception:
+            # Silently fail if credentials not configured or connection fails
             return 0
 
     def _get_jobs_count(self):
@@ -1258,9 +1272,11 @@ Keep it under 100 words, friendly and energetic."""
         if not self.github_manager:
             return 0
         try:
+            # Defer GitHub connection - will be attempted when needed
             repos = self.github_manager.get_repositories()
             return len(repos)
-        except:
+        except Exception:
+            # Silently fail if credentials not configured or connection fails
             return 0
 
     def _create_email_page(self):
@@ -1335,18 +1351,19 @@ Keep it under 100 words, friendly and energetic."""
         if WEBENGINE_AVAILABLE:
             # Create persistent profile to save login session
             self.gmail_profile = QWebEngineProfile("GmailProfile", self)
-            self.gmail_profile.setPersistentStoragePath(str(Path.home() / ".xeno" / "gmail_data"))
+            self.gmail_profile.setPersistentStoragePath(str(Path.home() / ".XENO" / "gmail_data"))
             self.gmail_profile.setPersistentCookiesPolicy(
                 QWebEngineProfile.PersistentCookiesPolicy.ForcePersistentCookies
             )
 
             # Create web view with persistent profile
             self.gmail_webview = QWebEngineView()
-            self.gmail_webview.setPage(self.gmail_profile.createNewPage(self.gmail_webview))
+            gmail_page = QWebEnginePage(self.gmail_profile, self.gmail_webview)
+            self.gmail_webview.setPage(gmail_page)
 
             # Enable all features for full Gmail functionality
             settings = self.gmail_webview.settings()
-            settings.setAttribute(QWebEngineSettings.WebAttribute.JavaScriptEnabled, True)
+            settings.setAttribute(QWebEngineSettings.WebAttribute.JavascriptEnabled, True)
             settings.setAttribute(QWebEngineSettings.WebAttribute.PluginsEnabled, True)
             settings.setAttribute(QWebEngineSettings.WebAttribute.LocalStorageEnabled, True)
             settings.setAttribute(QWebEngineSettings.WebAttribute.AutoLoadImages, True)
@@ -2463,18 +2480,19 @@ Keep it under 100 words, friendly and energetic."""
         if WEBENGINE_AVAILABLE:
             # Create persistent profile to save login session
             self.linkedin_profile = QWebEngineProfile("LinkedInProfile", self)
-            self.linkedin_profile.setPersistentStoragePath(str(Path.home() / ".xeno" / "linkedin_data"))
+            self.linkedin_profile.setPersistentStoragePath(str(Path.home() / ".XENO" / "linkedin_data"))
             self.linkedin_profile.setPersistentCookiesPolicy(
                 QWebEngineProfile.PersistentCookiesPolicy.ForcePersistentCookies
             )
 
             # Create web view with persistent profile
             self.linkedin_webview = QWebEngineView()
-            self.linkedin_webview.setPage(self.linkedin_profile.createNewPage(self.linkedin_webview))
+            linkedin_page = QWebEnginePage(self.linkedin_profile, self.linkedin_webview)
+            self.linkedin_webview.setPage(linkedin_page)
 
             # Enable all features for full LinkedIn functionality
             settings = self.linkedin_webview.settings()
-            settings.setAttribute(QWebEngineSettings.WebAttribute.JavaScriptEnabled, True)
+            settings.setAttribute(QWebEngineSettings.WebAttribute.JavascriptEnabled, True)
             settings.setAttribute(QWebEngineSettings.WebAttribute.PluginsEnabled, True)
             settings.setAttribute(QWebEngineSettings.WebAttribute.LocalStorageEnabled, True)
             settings.setAttribute(QWebEngineSettings.WebAttribute.AutoLoadImages, True)
@@ -3060,18 +3078,19 @@ Keep it under 100 words, friendly and energetic."""
         if WEBENGINE_AVAILABLE:
             # Create persistent profile to save login session
             self.github_profile = QWebEngineProfile("GitHubProfile", self)
-            self.github_profile.setPersistentStoragePath(str(Path.home() / ".xeno" / "github_data"))
+            self.github_profile.setPersistentStoragePath(str(Path.home() / ".XENO" / "github_data"))
             self.github_profile.setPersistentCookiesPolicy(
                 QWebEngineProfile.PersistentCookiesPolicy.ForcePersistentCookies
             )
 
             # Create web view with persistent profile
             self.github_webview = QWebEngineView()
-            self.github_webview.setPage(self.github_profile.createNewPage(self.github_webview))
+            github_page = QWebEnginePage(self.github_profile, self.github_webview)
+            self.github_webview.setPage(github_page)
 
             # Enable all features for full GitHub functionality
             settings = self.github_webview.settings()
-            settings.setAttribute(QWebEngineSettings.WebAttribute.JavaScriptEnabled, True)
+            settings.setAttribute(QWebEngineSettings.WebAttribute.JavascriptEnabled, True)
             settings.setAttribute(QWebEngineSettings.WebAttribute.PluginsEnabled, True)
             settings.setAttribute(QWebEngineSettings.WebAttribute.LocalStorageEnabled, True)
             settings.setAttribute(QWebEngineSettings.WebAttribute.AutoLoadImages, True)
@@ -4302,6 +4321,10 @@ Keep it concise, friendly, and professional.
 
     def _switch_page(self, index):
         """Switch to a different page"""
+        # Bring window to front when switching pages via voice command
+        self.raise_()
+        self.activateWindow()
+        
         # Uncheck all buttons
         for btn in self.nav_buttons:
             btn.setChecked(False)
@@ -4536,7 +4559,7 @@ Keep it concise, friendly, and professional.
                 return
 
             # Save to .env file
-            env_path = Path.home() / ".xeno" / ".env"
+            env_path = Path.home() / ".XENO" / ".env"
             if not env_path.exists():
                 env_path = Path("E:/Personal assistant/.env")
 
@@ -4754,7 +4777,7 @@ Keep it concise, friendly, and professional.
                 return
 
             # Save to .env file
-            env_path = Path.home() / ".xeno" / ".env"
+            env_path = Path.home() / ".XENO" / ".env"
             if not env_path.exists():
                 env_path = Path("E:/Personal assistant/.env")
 

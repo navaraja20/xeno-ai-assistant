@@ -1,4 +1,4 @@
-"""
+﻿"""
 End-to-End IoT and Voice Integration Tests
 Tests complete IoT device management and voice control workflows
 """
@@ -201,11 +201,11 @@ def test_e2e_wake_word_detection_workflow():
     detector.add_custom_wake_word("jarvis")
     
     # Step 2: Test detection with default wake words (returns tuple: bool, word)
-    detected, word = detector.detect("hey xeno can you help me")
+    detected, word = detector.detect("hey XENO can you help me")
     assert detected is True
-    assert word in ["hey xeno", "xeno"]
+    assert word in ["hey XENO", "XENO"]
     
-    detected, word = detector.detect("xeno turn on the lights")
+    detected, word = detector.detect("XENO turn on the lights")
     assert detected is True
     
     detected, word = detector.detect("hello there")

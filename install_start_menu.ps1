@@ -1,4 +1,4 @@
-# Create XENO Start Menu Entry
+﻿# Create XENO Start Menu Entry
 # Run with: powershell -ExecutionPolicy Bypass -File install_start_menu.ps1
 
 Write-Host ""
@@ -6,21 +6,21 @@ Write-Host "Creating XENO Start Menu entry..." -ForegroundColor Cyan
 
 $PythonExe = (Get-Command python).Source
 $JarvisPath = Join-Path $PSScriptRoot "src\jarvis.py"
-$IconPath = Join-Path $PSScriptRoot "assets\xeno.ico"
+$IconPath = Join-Path $PSScriptRoot "assets\XENO.ico"
 $WorkingDir = $PSScriptRoot
 
 # Create XENO folder in Start Menu
 $StartMenuPath = [Environment]::GetFolderPath("StartMenu")
 $ProgramsPath = Join-Path $StartMenuPath "Programs"
-$XenoFolder = Join-Path $ProgramsPath "XENO"
+$XENOFolder = Join-Path $ProgramsPath "XENO"
 
-if (!(Test-Path $XenoFolder)) {
-    New-Item -ItemType Directory -Path $XenoFolder -Force | Out-Null
-    Write-Host "[OK] Created folder: $XenoFolder" -ForegroundColor Green
+if (!(Test-Path $XENOFolder)) {
+    New-Item -ItemType Directory -Path $XENOFolder -Force | Out-Null
+    Write-Host "[OK] Created folder: $XENOFolder" -ForegroundColor Green
 }
 
 # Create main XENO shortcut
-$MainShortcut = Join-Path $XenoFolder "XENO.lnk"
+$MainShortcut = Join-Path $XENOFolder "XENO.lnk"
 $WScriptShell = New-Object -ComObject WScript.Shell
 $Shortcut = $WScriptShell.CreateShortcut($MainShortcut)
 $Shortcut.TargetPath = $PythonExe
@@ -32,7 +32,7 @@ $Shortcut.Save()
 Write-Host "[OK] Created: XENO.lnk" -ForegroundColor Green
 
 # Create Settings shortcut
-$SettingsShortcut = Join-Path $XenoFolder "XENO Settings.lnk"
+$SettingsShortcut = Join-Path $XENOFolder "XENO Settings.lnk"
 $Shortcut2 = $WScriptShell.CreateShortcut($SettingsShortcut)
 $Shortcut2.TargetPath = $PythonExe
 $Shortcut2.Arguments = "`"$JarvisPath`" --setup"
@@ -44,7 +44,7 @@ Write-Host "[OK] Created: XENO Settings.lnk" -ForegroundColor Green
 
 # Create Documentation shortcut  
 $DocsPath = Join-Path $PSScriptRoot "SETUP_GUIDE.md"
-$DocsShortcut = Join-Path $XenoFolder "Documentation.lnk"
+$DocsShortcut = Join-Path $XENOFolder "Documentation.lnk"
 $Shortcut3 = $WScriptShell.CreateShortcut($DocsShortcut)
 $Shortcut3.TargetPath = $DocsPath
 $Shortcut3.WorkingDirectory = $PSScriptRoot
@@ -54,7 +54,7 @@ Write-Host "[OK] Created: Documentation.lnk" -ForegroundColor Green
 
 # Create Uninstall shortcut
 $UninstallScript = Join-Path $PSScriptRoot "uninstall.ps1"
-$UninstallShortcut = Join-Path $XenoFolder "Uninstall XENO.lnk"
+$UninstallShortcut = Join-Path $XENOFolder "Uninstall XENO.lnk"
 $Shortcut4 = $WScriptShell.CreateShortcut($UninstallShortcut)
 $Shortcut4.TargetPath = "powershell.exe"
 $Shortcut4.Arguments = "-ExecutionPolicy Bypass -File `"$UninstallScript`""

@@ -1,4 +1,4 @@
-# XENO Quick Start Guide
+﻿# XENO Quick Start Guide
 
 ## 🚀 Getting Started with Enhanced XENO
 
@@ -67,7 +67,7 @@ python api/mobile_api.py
 API will run on `http://localhost:5000`
 
 ### 3. Configure Mobile App:
-Edit `mobile/src/services/XenoAPI.js`:
+Edit `mobile/src/services/XENOAPI.js`:
 ```javascript
 const API_BASE_URL = 'http://YOUR_COMPUTER_IP:5000/api';
 // Example: 'http://192.168.1.100:5000/api'
@@ -292,7 +292,7 @@ Full API docs in `api/README.md`
 
 **Cannot connect to server**:
 - Verify API server is running
-- Check IP address in XenoAPI.js
+- Check IP address in XENOAPI.js
 - Ensure on same network
 - Check firewall settings
 
@@ -318,7 +318,7 @@ Full API docs in `api/README.md`
 
 ### Mobile:
 - `mobile/App.js` - Mobile app entry
-- `mobile/src/services/XenoAPI.js` - API client
+- `mobile/src/services/XENOAPI.js` - API client
 - `mobile/package.json` - Dependencies
 
 ### API:

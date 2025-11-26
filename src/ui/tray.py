@@ -1,4 +1,4 @@
-"""
+﻿"""
 System Tray Application for XENO
 """
 from PyQt6.QtWidgets import QSystemTrayIcon, QMenu, QApplication
@@ -157,8 +157,8 @@ class SystemTrayApp:
         
         # For display
         message = f"{greeting}, Master {name}. XENO is online and at your service."
-        # For speech - pronounce XENO as "Zeeno" to make it sound like a name
-        speech_message = f"{greeting}, Master {name}. Zeeno is online and at your service."
+        # For speech - pronounce XENO as "XENOo" to make it sound like a name
+        speech_message = f"{greeting}, Master {name}. XENOo is online and at your service."
         
         # Show notification
         self.tray_icon.showMessage(
@@ -257,7 +257,7 @@ class SystemTrayApp:
         )
         
         if reply == QMessageBox.StandardButton.Yes:
-            # Speak goodbye if voice enabled - pronounce XENO as "Zeeno"
+            # Speak goodbye if voice enabled - pronounce XENO as "XENOo"
             if self.config.user.voice_enabled and self.voice_engine:
                 try:
                     self.voice_engine.say(f"Goodbye, Master {self.config.user.name}. Until next time.")

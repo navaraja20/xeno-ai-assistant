@@ -1,4 +1,4 @@
-# XENO Deployment Guide 🚀
+﻿# XENO Deployment Guide 🚀
 
 Complete guide for deploying XENO AI Assistant in various environments.
 
@@ -53,8 +53,8 @@ winget install Git.Git
 ### 1. Clone Repository
 
 ```powershell
-git clone https://github.com/YOUR_USERNAME/xeno-ai-assistant.git
-cd xeno-ai-assistant
+git clone https://github.com/YOUR_USERNAME/XENO-ai-assistant.git
+cd XENO-ai-assistant
 ```
 
 ### 2. Create Virtual Environment
@@ -87,7 +87,7 @@ pip list | Select-String "PyQt6|cryptography|pytest"
 
 ```powershell
 # Create configuration directory
-mkdir $env:USERPROFILE\.xeno
+mkdir $env:USERPROFILE\.XENO
 
 # Create .env file
 @"
@@ -110,7 +110,7 @@ LINKEDIN_PASSWORD=your_password
 # Security (generate with: python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())")
 SECRET_KEY=your_secret_key_here
 ENCRYPTION_KEY=your_fernet_key_here
-"@ | Out-File -FilePath $env:USERPROFILE\.xeno\.env -Encoding UTF8
+"@ | Out-File -FilePath $env:USERPROFILE\.XENO\.env -Encoding UTF8
 ```
 
 ### 5. Run Tests
@@ -139,7 +139,7 @@ python src\jarvis.py
 Start-Process python -ArgumentList "src\jarvis.py" -WindowStyle Hidden
 
 # Run with logging
-python src\jarvis.py 2>&1 | Tee-Object -FilePath logs\xeno.log
+python src\jarvis.py 2>&1 | Tee-Object -FilePath logs\XENO.log
 ```
 
 ---
@@ -162,14 +162,14 @@ python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().d
 
 ```powershell
 # Restrict .env file access (Windows)
-$acl = Get-Acl "$env:USERPROFILE\.xeno\.env"
+$acl = Get-Acl "$env:USERPROFILE\.XENO\.env"
 $acl.SetAccessRuleProtection($true, $false)
 $rule = New-Object System.Security.AccessControl.FileSystemAccessRule($env:USERNAME, "FullControl", "Allow")
 $acl.SetAccessRule($rule)
-Set-Acl "$env:USERPROFILE\.xeno\.env" $acl
+Set-Acl "$env:USERPROFILE\.XENO\.env" $acl
 
 # Restrict .env file access (Linux)
-chmod 600 ~/.xeno/.env
+chmod 600 ~/.XENO/.env
 ```
 
 #### Enable MFA
@@ -270,7 +270,7 @@ nssm status XENO
 LOG_LEVEL=INFO  # DEBUG, INFO, WARNING, ERROR, CRITICAL
 
 # Log file
-LOG_FILE=logs/xeno.log
+LOG_FILE=logs/XENO.log
 LOG_MAX_SIZE=10485760  # 10MB
 LOG_BACKUP_COUNT=5
 
@@ -392,10 +392,10 @@ def health_check():
 
 ```powershell
 # Monitor logs in real-time
-Get-Content logs\xeno.log -Wait -Tail 50
+Get-Content logs\XENO.log -Wait -Tail 50
 
 # Search for errors
-Select-String -Path logs\xeno.log -Pattern "ERROR|CRITICAL"
+Select-String -Path logs\XENO.log -Pattern "ERROR|CRITICAL"
 
 # Rotate logs
 @"
@@ -416,7 +416,7 @@ $backupPath = "backups\backup_$timestamp"
 Copy-Item data\*.db $backupPath\
 
 # Backup configuration
-Copy-Item $env:USERPROFILE\.xeno\.env $backupPath\
+Copy-Item $env:USERPROFILE\.XENO\.env $backupPath\
 
 # Compress
 Compress-Archive -Path $backupPath -DestinationPath "$backupPath.zip"
@@ -523,9 +523,9 @@ python -m pytest tests/ -v --log-cli-level=DEBUG
 ### Getting Help
 
 - **Documentation:** See [README.md](README.md) and [COMPLETE_FEATURES_GUIDE.md](COMPLETE_FEATURES_GUIDE.md)
-- **Issues:** Report bugs at [GitHub Issues](https://github.com/YOUR_USERNAME/xeno-ai-assistant/issues)
-- **Discussions:** Ask questions at [GitHub Discussions](https://github.com/YOUR_USERNAME/xeno-ai-assistant/discussions)
-- **Logs:** Check `logs/xeno.log` and `logs/audit.log`
+- **Issues:** Report bugs at [GitHub Issues](https://github.com/YOUR_USERNAME/XENO-ai-assistant/issues)
+- **Discussions:** Ask questions at [GitHub Discussions](https://github.com/YOUR_USERNAME/XENO-ai-assistant/discussions)
+- **Logs:** Check `logs/XENO.log` and `logs/audit.log`
 
 ---
 

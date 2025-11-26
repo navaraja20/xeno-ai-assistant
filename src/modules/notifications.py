@@ -1,4 +1,4 @@
-"""
+﻿"""
 Notification system for XENO
 Handles desktop notifications for emails, GitHub, LinkedIn, and other events
 """

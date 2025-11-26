@@ -1,4 +1,4 @@
-"""
+﻿"""
 XENO Daemon - Background service manager
 Coordinates all modules and handles task scheduling
 """
@@ -13,7 +13,7 @@ from core.logger import setup_logger
 from utils.system import enable_autostart
 
 
-class XenoDaemon:
+class XENODaemon:
     """Main daemon service for XENO"""
     
     def __init__(self, config: Config, ui_enabled: bool = True):
@@ -94,7 +94,7 @@ class XenoDaemon:
         try:
             from PyQt6.QtWidgets import QApplication
             from ui.tray import SystemTrayApp
-            from ui.main_window import XenoMainWindow
+            from ui.main_window import XENOMainWindow
             
             self.logger.info("Starting UI...")
             
@@ -107,7 +107,7 @@ class XenoDaemon:
             app.setQuitOnLastWindowClosed(False)
             
             # Create main window (hidden by default)
-            self.main_window = XenoMainWindow(self)
+            self.main_window = XENOMainWindow(self)
             
             # Create system tray application
             tray_app = SystemTrayApp(self.config, self, self.main_window)

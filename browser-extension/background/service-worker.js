@@ -1,6 +1,6 @@
-// XENO Browser Extension - Service Worker (Background Script)
+﻿// XENO Browser Extension - Service Worker (Background Script)
 
-class XenoServiceWorker {
+class XENOServiceWorker {
   constructor() {
     this.ws = null;
     this.connected = false;
@@ -98,7 +98,7 @@ class XenoServiceWorker {
 
     // Save to XENO
     chrome.contextMenus.create({
-      id: 'save-to-xeno',
+      id: 'save-to-XENO',
       title: 'Save to XENO',
       contexts: ['selection', 'page', 'link']
     });
@@ -119,7 +119,7 @@ class XenoServiceWorker {
       case 'quick-calendar':
         this.openPopupAction('calendar');
         break;
-      case 'open-xeno':
+      case 'open-XENO':
         this.openDashboard();
         break;
     }
@@ -162,8 +162,8 @@ class XenoServiceWorker {
         chrome.action.openPopup();
         break;
         
-      case 'save-to-xeno':
-        this.saveToXeno({
+      case 'save-to-XENO':
+        this.saveToXENO({
           url: info.linkUrl || info.pageUrl || tab.url,
           title: selection || tab.title,
           content: selection
@@ -234,8 +234,8 @@ class XenoServiceWorker {
         sendResponse({ activity: this.recentActivity });
         break;
 
-      case 'save_to_xeno':
-        this.saveToXeno(message.data)
+      case 'save_to_XENO':
+        this.saveToXENO(message.data)
           .then(() => sendResponse({ success: true }))
           .catch(error => sendResponse({ success: false, error: error.message }));
         break;
@@ -418,7 +418,7 @@ class XenoServiceWorker {
     }
   }
 
-  async saveToXeno(data) {
+  async saveToXENO(data) {
     // Add to activity
     this.addActivity({
       type: 'saved',
@@ -522,7 +522,7 @@ class XenoServiceWorker {
 }
 
 // Initialize service worker
-const serviceWorker = new XenoServiceWorker();
+const serviceWorker = new XENOServiceWorker();
 
 // Keep service worker alive
 chrome.runtime.onStartup.addListener(() => {

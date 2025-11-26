@@ -1,4 +1,4 @@
-# Makefile for XENO AI Assistant
+﻿# Makefile for XENO AI Assistant
 # Quick commands for development workflow
 
 .PHONY: help install test lint format clean build docs run

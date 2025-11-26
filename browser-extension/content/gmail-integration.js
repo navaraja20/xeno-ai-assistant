@@ -1,4 +1,4 @@
-// XENO Browser Extension - Gmail Integration Content Script
+﻿// XENO Browser Extension - Gmail Integration Content Script
 
 (function() {
   'use strict';
@@ -74,19 +74,19 @@
 
     addComposeEnhancements() {
       // Find compose windows
-      const composeWindows = document.querySelectorAll('[role="dialog"]:not([data-xeno-enhanced])');
+      const composeWindows = document.querySelectorAll('[role="dialog"]:not([data-XENO-enhanced])');
       
       composeWindows.forEach(window => {
-        window.setAttribute('data-xeno-enhanced', 'true');
+        window.setAttribute('data-XENO-enhanced', 'true');
         
         // Find toolbar
         const toolbar = window.querySelector('[role="toolbar"]');
         if (!toolbar) return;
         
         // Create XENO AI assist button
-        const xenoBtn = document.createElement('div');
-        xenoBtn.className = 'xeno-compose-btn';
-        xenoBtn.innerHTML = `
+        const XENOBtn = document.createElement('div');
+        XENOBtn.className = 'XENO-compose-btn';
+        XENOBtn.innerHTML = `
           <div style="
             display: inline-flex;
             align-items: center;
@@ -104,20 +104,20 @@
           </div>
         `;
         
-        xenoBtn.addEventListener('click', () => {
+        XENOBtn.addEventListener('click', () => {
           this.showAIAssist(window);
         });
         
-        toolbar.appendChild(xenoBtn);
+        toolbar.appendChild(XENOBtn);
       });
     }
 
     addThreadEnhancements() {
       // Find email threads
-      const threads = document.querySelectorAll('[data-message-id]:not([data-xeno-enhanced])');
+      const threads = document.querySelectorAll('[data-message-id]:not([data-XENO-enhanced])');
       
       threads.forEach(thread => {
-        thread.setAttribute('data-xeno-enhanced', 'true');
+        thread.setAttribute('data-XENO-enhanced', 'true');
         
         // Create XENO action buttons
         const actionBar = thread.querySelector('[role="toolbar"]');
@@ -176,10 +176,10 @@
 
     addPriorityIndicators() {
       // Add ML-based priority indicators to emails
-      const emailRows = document.querySelectorAll('[role="row"]:not([data-xeno-priority])');
+      const emailRows = document.querySelectorAll('[role="row"]:not([data-XENO-priority])');
       
       emailRows.forEach(async row => {
-        row.setAttribute('data-xeno-priority', 'checking');
+        row.setAttribute('data-XENO-priority', 'checking');
         
         // Extract email info
         const subject = row.querySelector('[data-thread-perm-id]')?.textContent;
@@ -241,19 +241,19 @@
       panel.innerHTML = `
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
           <strong style="color: #5865F2; font-size: 14px;">⚡ XENO AI Assistant</strong>
-          <button id="xeno-ai-close" style="background: none; border: none; cursor: pointer; font-size: 18px;">&times;</button>
+          <button id="XENO-ai-close" style="background: none; border: none; cursor: pointer; font-size: 18px;">&times;</button>
         </div>
         <div style="display: flex; flex-direction: column; gap: 8px;">
-          <button class="xeno-ai-action" data-action="professional">Make it professional</button>
-          <button class="xeno-ai-action" data-action="friendly">Make it friendly</button>
-          <button class="xeno-ai-action" data-action="concise">Make it concise</button>
-          <button class="xeno-ai-action" data-action="expand">Expand details</button>
-          <button class="xeno-ai-action" data-action="grammar">Fix grammar</button>
+          <button class="XENO-ai-action" data-action="professional">Make it professional</button>
+          <button class="XENO-ai-action" data-action="friendly">Make it friendly</button>
+          <button class="XENO-ai-action" data-action="concise">Make it concise</button>
+          <button class="XENO-ai-action" data-action="expand">Expand details</button>
+          <button class="XENO-ai-action" data-action="grammar">Fix grammar</button>
         </div>
       `;
       
       // Add styles
-      panel.querySelectorAll('.xeno-ai-action').forEach(btn => {
+      panel.querySelectorAll('.XENO-ai-action').forEach(btn => {
         btn.style.cssText = `
           padding: 8px 12px;
           background: #f1f3f4;
@@ -273,7 +273,7 @@
         });
       });
       
-      panel.querySelector('#xeno-ai-close').addEventListener('click', () => {
+      panel.querySelector('#XENO-ai-close').addEventListener('click', () => {
         panel.remove();
       });
       
@@ -374,7 +374,7 @@
       picker.innerHTML = `
         <div style="font-weight: 600; margin-bottom: 8px; color: #5865F2;">Quick Reply Templates</div>
         ${Object.entries(templates).map(([name, text]) => `
-          <div class="xeno-template" data-text="${text}" style="
+          <div class="XENO-template" data-text="${text}" style="
             padding: 8px;
             cursor: pointer;
             border-radius: 4px;
@@ -384,7 +384,7 @@
         `).join('')}
       `;
       
-      picker.querySelectorAll('.xeno-template').forEach(item => {
+      picker.querySelectorAll('.XENO-template').forEach(item => {
         item.addEventListener('mouseenter', () => item.style.background = '#f1f3f4');
         item.addEventListener('mouseleave', () => item.style.background = 'white');
         

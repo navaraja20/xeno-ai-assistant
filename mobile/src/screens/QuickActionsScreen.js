@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Quick Actions Screen
  * Fast access to common XENO tasks
  */
@@ -15,7 +15,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import XenoAPI from '../services/XenoAPI';
+import XENOAPI from '../services/XENOAPI';
 
 const QuickActionsScreen = () => {
   const [loading, setLoading] = useState(false);
@@ -39,7 +39,7 @@ const QuickActionsScreen = () => {
                   onPress: async subject => {
                     try {
                       setLoading(true);
-                      await XenoAPI.sendEmail(recipient, subject, '');
+                      await XENOAPI.sendEmail(recipient, subject, '');
                       Alert.alert('Success', 'Email sent!');
                     } catch (error) {
                       Alert.alert('Error', error.message);
@@ -72,7 +72,7 @@ const QuickActionsScreen = () => {
               const now = new Date();
               const later = new Date(now.getTime() + 60 * 60 * 1000); // 1 hour later
               
-              await XenoAPI.createCalendarEvent({
+              await XENOAPI.createCalendarEvent({
                 summary: title,
                 start_time: now.toISOString(),
                 end_time: later.toISOString(),
@@ -101,7 +101,7 @@ const QuickActionsScreen = () => {
           onPress: async keywords => {
             try {
               setLoading(true);
-              const jobs = await XenoAPI.getJobs(keywords);
+              const jobs = await XENOAPI.getJobs(keywords);
               Alert.alert(
                 'Jobs Found',
                 `Found ${jobs.length} jobs matching "${keywords}"`,
@@ -144,7 +144,7 @@ const QuickActionsScreen = () => {
       onPress: async () => {
         try {
           setLoading(true);
-          const stats = await XenoAPI.getGitHubStats();
+          const stats = await XENOAPI.getGitHubStats();
           Alert.alert('GitHub Stats', JSON.stringify(stats, null, 2));
         } catch (error) {
           Alert.alert('Error', error.message);
@@ -160,7 +160,7 @@ const QuickActionsScreen = () => {
       onPress: async () => {
         try {
           setLoading(true);
-          const timeline = await XenoAPI.getTimeline(5);
+          const timeline = await XENOAPI.getTimeline(5);
           Alert.alert(
             'Recent Activity',
             timeline.map(a => `• ${a.title}`).join('\n'),
@@ -187,7 +187,7 @@ const QuickActionsScreen = () => {
               onPress: async message => {
                 try {
                   setLoading(true);
-                  const response = await XenoAPI.sendMessage(message);
+                  const response = await XENOAPI.sendMessage(message);
                   Alert.alert('AI Response', response.response);
                 } catch (error) {
                   Alert.alert('Error', error.message);

@@ -1,4 +1,4 @@
-# Advanced Voice & NLP - XENO
+﻿# Advanced Voice & NLP - XENO
 
 Complete voice control system with custom wake words, multi-language support, emotion analysis, voice biometrics, and natural conversation.
 
@@ -171,7 +171,7 @@ print(command.parameters)  # {'recipient': 'john', 'message': 'about the project
 print(command.confidence)  # 0.92
 
 # Execute command
-executor = VoiceCommandExecutor(xeno_app)
+executor = VoiceCommandExecutor(XENO_app)
 result = await executor.execute(command)
 print(result)  # {'success': True, 'message': 'Email sent to john'}
 ```
@@ -409,7 +409,7 @@ async def conversation_loop():
 from src.voice.advanced_voice_engine import AdvancedVoiceEngine
 from src.voice.voice_command_processor import VoiceCommandExecutor
 
-class XenoApp:
+class XENOApp:
     def __init__(self):
         self.voice_engine = AdvancedVoiceEngine()
         self.command_executor = VoiceCommandExecutor(self)
@@ -447,7 +447,7 @@ workflow = {
     'trigger': {
         'type': 'voice_command',
         'config': {
-            'wake_word': 'xeno',
+            'wake_word': 'XENO',
             'command_pattern': 'run daily standup'
         }
     },

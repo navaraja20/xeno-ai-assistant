@@ -1,4 +1,4 @@
-// XENO Browser Extension - LinkedIn Quick Apply Content Script
+﻿// XENO Browser Extension - LinkedIn Quick Apply Content Script
 
 (function() {
   'use strict';
@@ -69,16 +69,16 @@
 
     addQuickApplyButtons() {
       // Find all job cards that don't have XENO button yet
-      const jobCards = document.querySelectorAll('.job-card-container:not([data-xeno-enhanced])');
+      const jobCards = document.querySelectorAll('.job-card-container:not([data-XENO-enhanced])');
       
       jobCards.forEach(card => {
-        card.setAttribute('data-xeno-enhanced', 'true');
+        card.setAttribute('data-XENO-enhanced', 'true');
         
         // Create XENO quick apply button
-        const xenoBtn = document.createElement('button');
-        xenoBtn.className = 'xeno-quick-apply-btn';
-        xenoBtn.innerHTML = '⚡ XENO Quick Apply';
-        xenoBtn.style.cssText = `
+        const XENOBtn = document.createElement('button');
+        XENOBtn.className = 'XENO-quick-apply-btn';
+        XENOBtn.innerHTML = '⚡ XENO Quick Apply';
+        XENOBtn.style.cssText = `
           background: #5865F2;
           color: white;
           border: none;
@@ -90,7 +90,7 @@
           margin: 4px 0;
         `;
         
-        xenoBtn.addEventListener('click', (e) => {
+        XENOBtn.addEventListener('click', (e) => {
           e.preventDefault();
           e.stopPropagation();
           this.quickApplyFromCard(card);
@@ -99,7 +99,7 @@
         // Insert button
         const actionArea = card.querySelector('.job-card-container__action');
         if (actionArea) {
-          actionArea.prepend(xenoBtn);
+          actionArea.prepend(XENOBtn);
         }
       });
     }
@@ -125,7 +125,7 @@
         
       } catch (error) {
         console.error('Quick apply from card failed:', error);
-        this.showXenoNotification('Failed to quick apply', 'error');
+        this.showXENONotification('Failed to quick apply', 'error');
       }
     }
 
@@ -160,7 +160,7 @@
           }
         });
         
-        this.showXenoNotification('Quick Apply started! Check the form before submitting.');
+        this.showXENONotification('Quick Apply started! Check the form before submitting.');
         
         return jobDetails;
         
@@ -330,7 +330,7 @@
           }
         }
         
-        this.showXenoNotification('Connection request ready. Review and send!');
+        this.showXENONotification('Connection request ready. Review and send!');
         
       } catch (error) {
         console.error('Failed to send connection request:', error);
@@ -345,14 +345,14 @@
 
     highlightElement(element) {
       element.style.border = '2px solid #5865F2';
-      element.style.animation = 'xeno-pulse 1s infinite';
+      element.style.animation = 'XENO-pulse 1s infinite';
       
       // Add CSS animation if not exists
-      if (!document.getElementById('xeno-animations')) {
+      if (!document.getElementById('XENO-animations')) {
         const style = document.createElement('style');
-        style.id = 'xeno-animations';
+        style.id = 'XENO-animations';
         style.textContent = `
-          @keyframes xeno-pulse {
+          @keyframes XENO-pulse {
             0%, 100% { box-shadow: 0 0 0 0 rgba(88, 101, 242, 0.7); }
             50% { box-shadow: 0 0 0 10px rgba(88, 101, 242, 0); }
           }
@@ -361,10 +361,10 @@
       }
     }
 
-    showXenoNotification(message, type = 'info') {
+    showXENONotification(message, type = 'info') {
       // Create toast notification
       const toast = document.createElement('div');
-      toast.className = 'xeno-toast';
+      toast.className = 'XENO-toast';
       toast.textContent = message;
       toast.style.cssText = `
         position: fixed;
@@ -378,13 +378,13 @@
         font-weight: 600;
         z-index: 999999;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        animation: xeno-slide-in 0.3s ease-out;
+        animation: XENO-slide-in 0.3s ease-out;
       `;
       
       document.body.appendChild(toast);
       
       setTimeout(() => {
-        toast.style.animation = 'xeno-slide-out 0.3s ease-in';
+        toast.style.animation = 'XENO-slide-out 0.3s ease-in';
         setTimeout(() => toast.remove(), 300);
       }, 3000);
     }

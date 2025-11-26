@@ -1,4 +1,4 @@
-# ⚡ XENO Quick Reference Card
+﻿# ⚡ XENO Quick Reference Card
 
 ## Essential Commands (PowerShell/Windows)
 
@@ -188,8 +188,8 @@ tests/
 ### First-Time Setup
 ```powershell
 # 1. Clone repository
-git clone https://github.com/yourusername/xeno-ai-assistant.git
-cd xeno-ai-assistant
+git clone https://github.com/yourusername/XENO-ai-assistant.git
+cd XENO-ai-assistant
 
 # 2. Create virtual environment
 python -m venv venv

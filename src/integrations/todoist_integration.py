@@ -1,4 +1,4 @@
-"""
+﻿"""
 Todoist Integration for XENO
 Supports: Create tasks, projects, manage labels, sync data
 """

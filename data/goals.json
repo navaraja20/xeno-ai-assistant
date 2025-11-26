@@ -1,15 +1,15 @@
 {
   "goals": [
     {
-      "text": "Review 10 job applications",
-      "completed": false
-    },
-    {
       "text": "Respond to urgent emails",
       "completed": false
     },
     {
       "text": "Update GitHub repositories",
+      "completed": false
+    },
+    {
+      "text": "Review 10 job applications",
       "completed": false
     }
   ]

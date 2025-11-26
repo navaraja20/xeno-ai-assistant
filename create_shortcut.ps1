@@ -1,9 +1,9 @@
-# PowerShell script to create XENO desktop shortcut
+﻿# PowerShell script to create XENO desktop shortcut
 # Run with: powershell -ExecutionPolicy Bypass -File create_shortcut.ps1
 
 $PythonExe = (Get-Command python).Source
 $JarvisPath = Join-Path $PSScriptRoot "src\jarvis.py"
-$IconPath = Join-Path $PSScriptRoot "assets\xeno.ico"
+$IconPath = Join-Path $PSScriptRoot "assets\XENO.ico"
 $DesktopPath = [Environment]::GetFolderPath("Desktop")
 $ShortcutPath = Join-Path $DesktopPath "XENO.lnk"
 $WorkingDir = $PSScriptRoot

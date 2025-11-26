@@ -1,4 +1,4 @@
-"""
+﻿"""
 XENO Browser Extension - WebSocket Server
 Enables real-time sync between desktop app and browser extension
 """
@@ -19,7 +19,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-class XenoBrowserServer:
+class XENOBrowserServer:
     """WebSocket server for browser extension communication"""
     
     def __init__(self, host: str = 'localhost', port: int = 8765):
@@ -297,7 +297,7 @@ class XenoBrowserServer:
 
 async def main():
     """Main entry point"""
-    server = XenoBrowserServer(host='localhost', port=8765)
+    server = XENOBrowserServer(host='localhost', port=8765)
     
     try:
         await server.start()

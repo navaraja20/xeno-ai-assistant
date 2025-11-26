@@ -1,4 +1,4 @@
-# Browser Extension Quick Start Guide
+﻿# Browser Extension Quick Start Guide
 
 ## Installation (5 minutes)
 

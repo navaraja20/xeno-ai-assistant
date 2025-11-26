@@ -1,4 +1,4 @@
-"""
+﻿"""
 Enhanced AI Chat with Context Awareness and Memory
 Integrates with email, GitHub, LinkedIn data for smart responses
 """
@@ -70,20 +70,29 @@ class ContextualAIChat:
     
     def _load_context_memory(self):
         """Load context memory from disk"""
-        memory_file = Path("data/context_memory.json")
-        if memory_file.exists():
-            try:
+        try:
+            # Use user home directory to avoid permission issues
+            memory_file = Path.home() / ".XENO" / "context_memory.json"
+            if memory_file.exists():
                 with open(memory_file, 'r') as f:
                     self.context_memory = json.load(f)
-            except:
+            else:
                 self.context_memory = {}
+        except Exception as e:
+            print(f"Could not load context memory: {e}")
+            self.context_memory = {}
     
     def _save_context_memory(self):
         """Save context memory to disk"""
-        memory_file = Path("data/context_memory.json")
-        memory_file.parent.mkdir(exist_ok=True)
-        with open(memory_file, 'w') as f:
-            json.dump(self.context_memory, f, indent=2, default=str)
+        try:
+            # Use user home directory to avoid permission issues
+            memory_file = Path.home() / ".XENO" / "context_memory.json"
+            memory_file.parent.mkdir(parents=True, exist_ok=True)
+            with open(memory_file, 'w') as f:
+                json.dump(self.context_memory, f, indent=2, default=str)
+        except Exception as e:
+            # Silently fail if we can't save - don't block chat functionality
+            print(f"Could not save context memory: {e}")
     
     def send_message(self, message: str) -> str:
         """
@@ -321,6 +330,10 @@ Provide a concise, actionable briefing in JARVIS style."""
     def get_history(self, limit: int = 10) -> List[Dict]:
         """Get conversation history"""
         return self.conversation_history[-limit:]
+    
+    def is_available(self) -> bool:
+        """Check if AI is available and configured"""
+        return self.client is not None and self.provider is not None
 
 
 # Helper function for backward compatibility

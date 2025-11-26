@@ -1,4 +1,4 @@
-"""
+﻿"""
 IoT Dashboard UI for XENO
 Displays wearable data and smart home controls
 """

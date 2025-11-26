@@ -1,4 +1,4 @@
-# CI/CD Setup Complete! 🎉
+﻿# CI/CD Setup Complete! 🎉
 
 ## What Was Created
 
@@ -42,7 +42,7 @@ I've set up a **professional-grade CI/CD pipeline** and development workflow for
 
 **5. Setup Script** (`setup.py`)
 - ✅ Package installation configuration
-- ✅ Entry point for `xeno` command
+- ✅ Entry point for `XENO` command
 - ✅ Dependencies management
 - ✅ PyPI-ready
 
@@ -156,7 +156,7 @@ git push origin main
 - Go to repository Settings → Pages
 - Source: Deploy from a branch
 - Branch: `gh-pages` → `/` (root)
-- Your docs will be at: `https://navaraja20.github.io/xeno-ai-assistant`
+- Your docs will be at: `https://navaraja20.github.io/XENO-ai-assistant`
 
 ### 4. Add Branch Protection (Recommended)
 - Go to Settings → Branches

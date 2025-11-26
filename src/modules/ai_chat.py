@@ -1,4 +1,4 @@
-"""
+﻿"""
 AI Chat Module - Supports FREE Google Gemini and OpenAI
 """
 import os

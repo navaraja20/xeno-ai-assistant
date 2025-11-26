@@ -1,4 +1,4 @@
-"""
+﻿"""
 Slack Integration for XENO
 Supports: Send messages, create channels, manage users, file uploads
 """

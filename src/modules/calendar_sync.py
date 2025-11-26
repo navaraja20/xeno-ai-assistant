@@ -1,4 +1,4 @@
-"""
+﻿"""
 Calendar sync module for XENO AI Assistant.
 Handles Google Calendar integration for event management.
 """
@@ -28,10 +28,10 @@ class CalendarSync:
         Initialize calendar sync.
         
         Args:
-            credentials_path: Path to store credentials (default: ~/.xeno/)
+            credentials_path: Path to store credentials (default: ~/.XENO/)
         """
         if credentials_path is None:
-            credentials_path = os.path.expanduser('~/.xeno/')
+            credentials_path = os.path.expanduser('~/.XENO/')
         
         self.credentials_path = credentials_path
         self.token_file = os.path.join(credentials_path, 'calendar_token.pickle')
