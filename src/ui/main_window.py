@@ -9,10 +9,10 @@ from pathlib import Path
 
 from dotenv import load_dotenv, set_key
 
-# CRITICAL: Import QWebEngine BEFORE any QApplication is created
+# Import QWebEngine for embedded web views (Gmail, GitHub, etc.)
 try:
+    from PyQt6.QtWebEngineCore import QWebEnginePage, QWebEngineProfile, QWebEngineSettings
     from PyQt6.QtWebEngineWidgets import QWebEngineView
-    from PyQt6.QtWebEngineCore import QWebEngineProfile, QWebEngineSettings, QWebEnginePage
     WEBENGINE_AVAILABLE = True
 except ImportError:
     WEBENGINE_AVAILABLE = False
@@ -66,27 +66,34 @@ class XENOMainWindow(QMainWindow):
         self.daemon = daemon
         self.config = daemon.config
 
-        # Initialize AI chat (enhanced version with context)
+        # Initialize advanced AI Agent (Ollama + Gemini)
+        self.ai_agent = None
         try:
-            from modules.ai_chat_enhanced import get_enhanced_ai_chat
-
-            self.ai_chat = get_enhanced_ai_chat(
-                self.config,
-                email_handler=self.email_handler if hasattr(self, "email_handler") else None,
-                github_manager=self.github_manager if hasattr(self, "github_manager") else None,
-                linkedin_automation=self.linkedin_automation
-                if hasattr(self, "linkedin_automation")
-                else None,
-            )
+            import sys
+            from pathlib import Path
+            # Add parent directory to path
+            parent_dir = Path(__file__).parent.parent.parent
+            if str(parent_dir) not in sys.path:
+                sys.path.insert(0, str(parent_dir))
+            
+            from src.ai.ai_agent import get_ai_agent
+            
+            self.ai_agent = get_ai_agent()
+            print("✓ AI Agent initialized (Ollama + Gemini)")
         except Exception as e:
-            print(f"Could not initialize enhanced AI chat, using basic: {e}")
-            try:
-                from modules.ai_chat import get_ai_chat
-
-                self.ai_chat = get_ai_chat(self.config)
-            except Exception as e2:
-                print(f"Could not initialize AI chat: {e2}")
-                self.ai_chat = None
+            print(f"✗ Could not initialize AI Agent: {e}")
+            self.ai_agent = None
+        
+        # Initialize Job Hunter
+        self.job_hunter = None
+        try:
+            from src.jobs.job_hunter import get_job_hunter
+            
+            self.job_hunter = get_job_hunter()
+            print("✓ Job Hunter initialized")
+        except Exception as e:
+            print(f"✗ Could not initialize Job Hunter: {e}")
+            self.job_hunter = None
 
         # Initialize automation modules
         self._init_automation_modules()
@@ -213,8 +220,8 @@ class XENOMainWindow(QMainWindow):
     def _init_voice_system(self):
         """Initialize voice recognition and command processing"""
         try:
-            from voice.command_handler import VoiceCommandHandler
-            from voice.recognition import VoiceRecognition
+            from src.voice.command_handler import VoiceCommandHandler
+            from src.voice.recognition import VoiceRecognition
 
             # Initialize voice recognition
             self.voice_recognition = VoiceRecognition()
@@ -266,10 +273,11 @@ class XENOMainWindow(QMainWindow):
                 # Respond to wake word in separate thread to avoid blocking
                 if self.config.user.voice_enabled and self.voice_command_handler:
                     import threading
+
                     threading.Thread(
                         target=self.voice_command_handler.speak,
                         args=("Yes Master, how can I help you?",),
-                        daemon=True
+                        daemon=True,
                     ).start()
                 return
 
@@ -278,6 +286,7 @@ class XENOMainWindow(QMainWindow):
             # Process command with enhanced handler in separate thread
             if self.voice_command_handler:
                 import threading
+
                 def process_and_respond():
                     response = self.voice_command_handler.process_command(command)
                     if response:
@@ -285,8 +294,11 @@ class XENOMainWindow(QMainWindow):
                         # Add to activity timeline if dashboard exists
                         if hasattr(self, "_add_timeline_activity"):
                             from datetime import datetime
-                            self._add_timeline_activity(f"🎤 Voice: {command[:30]}...", datetime.now())
-                
+
+                            self._add_timeline_activity(
+                                f"🎤 Voice: {command[:30]}...", datetime.now()
+                            )
+
                 threading.Thread(target=process_and_respond, daemon=True).start()
 
     def _speak(self, text):
@@ -457,17 +469,23 @@ class XENOMainWindow(QMainWindow):
         # Create different pages
         self.chat_page = self._create_chat_page()
         self.dashboard_page = self._create_dashboard_page()
+        
+        # WebEngine pages re-enabled with threading fixes
+        # Threading issues that caused Qt6WebEngineCore.dll crashes have been resolved:
+        # - TTS now uses dedicated worker thread with COM initialization
+        # - All UI updates use QTimer.singleShot for thread safety
+        # - Page switching uses QMetaObject.invokeMethod with QueuedConnection
         self.email_page = self._create_email_page()
-        self.jobs_page = self._create_jobs_page()
         self.github_page = self._create_github_page()
+        self.jobs_page = self._create_jobs_web_page()
         self.calendar_page = self._create_calendar_page()
         self.settings_page = self._create_settings_page()
 
         self.content_stack.addWidget(self.chat_page)
         self.content_stack.addWidget(self.dashboard_page)
         self.content_stack.addWidget(self.email_page)
-        self.content_stack.addWidget(self.jobs_page)
         self.content_stack.addWidget(self.github_page)
+        self.content_stack.addWidget(self.jobs_page)
         self.content_stack.addWidget(self.calendar_page)
         self.content_stack.addWidget(self.settings_page)
 
@@ -533,8 +551,8 @@ class XENOMainWindow(QMainWindow):
             ("💬 Chat", 0),
             ("📊 Dashboard", 1),
             ("📧 Gmail", 2),
-            ("💼 LinkedIn", 3),
-            ("⚙️ GitHub", 4),
+            ("⚙️ GitHub", 3),
+            ("💼 Jobs", 4),
             ("📅 Calendar", 5),
             ("⚙️ Settings", 6),
         ]
@@ -580,47 +598,172 @@ class XENOMainWindow(QMainWindow):
         return sidebar
 
     def _create_chat_page(self):
-        """Create AI chat interface"""
+        """Create AI chat interface with advanced AI Agent"""
         page = QWidget()
         layout = QVBoxLayout(page)
         layout.setContentsMargins(20, 20, 20, 20)
 
-        # Header
-        header = QLabel("AI Assistant Chat")
+        # Header with status
+        header_layout = QHBoxLayout()
+        
+        header = QLabel("🤖 AI Agent Chat")
         header.setStyleSheet(
             f"font-size: 24px; font-weight: bold; color: {self.ACCENT_BLUE}; margin-bottom: 10px;"
         )
-        layout.addWidget(header)
+        header_layout.addWidget(header)
+        
+        header_layout.addStretch()
+        
+        # AI Status indicator
+        if hasattr(self, 'ai_agent') and self.ai_agent:
+            status = self.ai_agent.get_status()
+            status_text = ""
+            if status['ollama_available']:
+                status_text += f"🟢 Ollama ({status['current_local_model']}) "
+            if status['gemini_available']:
+                status_text += "☁️ Gemini"
+            
+            status_label = QLabel(status_text if status_text else "⚠️ No AI Available")
+            status_label.setStyleSheet(
+                f"color: {self.ONLINE_GREEN if status_text else self.TEXT_SECONDARY}; "
+                f"font-size: 12px; padding: 5px 10px; background: {self.BG_LIGHTER}; border-radius: 4px;"
+            )
+            header_layout.addWidget(status_label)
+        
+        layout.addLayout(header_layout)
 
         # Chat history
         self.chat_history = QTextEdit()
         self.chat_history.setReadOnly(True)
-        self.chat_history.setPlaceholderText("Chat history will appear here...")
+        self.chat_history.setPlaceholderText("💬 Start chatting with XENO...\n\nTry:\n• 'Hello!'\n• 'Help me write a cover letter'\n• 'Analyze this job description'")
+        self.chat_history.setStyleSheet(
+            f"""
+            QTextEdit {{
+                background-color: {self.BG_LIGHTER};
+                border: 2px solid {self.BORDER_COLOR};
+                border-radius: 8px;
+                padding: 15px;
+                font-size: 14px;
+                line-height: 1.6;
+            }}
+            """
+        )
         layout.addWidget(self.chat_history, 1)
 
         # Input area
         input_layout = QHBoxLayout()
 
         self.chat_input = QLineEdit()
-        self.chat_input.setPlaceholderText("Ask XENO anything...")
+        self.chat_input.setPlaceholderText("Type your message... (Press Enter to send)")
         self.chat_input.returnPressed.connect(self._send_message)
 
-        send_btn = QPushButton("Send")
+        send_btn = QPushButton("Send 📤")
         send_btn.setStyleSheet(
             f"""
-            background-color: {self.ACCENT_BLUE};
-            color: #000000;
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                stop:0 {self.ACCENT_BLUE}, stop:1 {self.ACCENT_PURPLE});
+            color: #ffffff;
             font-weight: bold;
             padding: 10px 30px;
+            border-radius: 8px;
         """
         )
         send_btn.clicked.connect(self._send_message)
+        
+        clear_btn = QPushButton("Clear 🗑️")
+        clear_btn.setStyleSheet(
+            f"""
+            background-color: {self.BG_LIGHTER};
+            color: {self.TEXT_SECONDARY};
+            padding: 10px 20px;
+            border-radius: 8px;
+        """
+        )
+        clear_btn.clicked.connect(self._clear_chat)
 
         input_layout.addWidget(self.chat_input, 1)
+        input_layout.addWidget(clear_btn)
         input_layout.addWidget(send_btn)
 
         layout.addLayout(input_layout)
 
+        return page
+
+    def _create_placeholder_page(self, title, message):
+        """Create a simple placeholder page with title, message, and web browser button"""
+        page = QWidget()
+        layout = QVBoxLayout(page)
+        layout.setContentsMargins(40, 40, 40, 40)
+        
+        # Center content
+        layout.addStretch()
+        
+        # Title
+        title_label = QLabel(f"🔒 {title}")
+        title_label.setStyleSheet(
+            f"font-size: 32px; font-weight: bold; color: {self.ACCENT_PURPLE};"
+        )
+        title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(title_label)
+        
+        # Message
+        message_label = QLabel(message)
+        message_label.setStyleSheet(
+            f"font-size: 16px; color: {self.TEXT_SECONDARY}; margin-top: 16px;"
+        )
+        message_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        message_label.setWordWrap(True)
+        layout.addWidget(message_label)
+        
+        # Info text
+        info_label = QLabel("WebEngine pages have been disabled due to stability issues.")
+        info_label.setStyleSheet(
+            f"font-size: 14px; color: {self.TEXT_SECONDARY}; margin-top: 24px; opacity: 0.7;"
+        )
+        info_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(info_label)
+        
+        # Open in browser button
+        browser_btn = QPushButton(f"🌐 Open {title} in Web Browser")
+        browser_btn.setStyleSheet(
+            f"""
+            QPushButton {{
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                    stop:0 {self.ACCENT_BLUE}, stop:1 {self.ACCENT_PURPLE});
+                color: white;
+                border: none;
+                border-radius: 8px;
+                padding: 16px 32px;
+                font-size: 16px;
+                font-weight: bold;
+                margin-top: 32px;
+            }}
+            QPushButton:hover {{
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                    stop:0 {self.ACCENT_PURPLE}, stop:1 {self.ACCENT_PINK});
+            }}
+            """
+        )
+        
+        # Determine URL based on title
+        url_map = {
+            "Gmail": "https://mail.google.com",
+            "GitHub": "https://github.com/navaraja20",
+            "Job Hunter": "https://www.linkedin.com/jobs"
+        }
+        url = url_map.get(title, "https://www.google.com")
+        
+        import webbrowser
+        browser_btn.clicked.connect(lambda: webbrowser.open(url))
+        
+        btn_container = QHBoxLayout()
+        btn_container.addStretch()
+        btn_container.addWidget(browser_btn)
+        btn_container.addStretch()
+        layout.addLayout(btn_container)
+        
+        layout.addStretch()
+        
         return page
 
     def _create_dashboard_page(self):
@@ -910,8 +1053,8 @@ class XENOMainWindow(QMainWindow):
             self._add_timeline_activity("✓ Email connected", datetime.now())
         if self.github_manager:
             self._add_timeline_activity("✓ GitHub connected", datetime.now())
-        if self.ai_chat or self.ai_chat_enhanced:
-            self._add_timeline_activity("✓ AI Chat ready", datetime.now())
+        if hasattr(self, 'ai_agent') and self.ai_agent:
+            self._add_timeline_activity("✓ AI Agent ready", datetime.now())
 
         self.timeline_layout.addStretch()
 
@@ -1156,10 +1299,8 @@ class XENOMainWindow(QMainWindow):
 
             QApplication.processEvents()
 
-            if hasattr(self, "ai_chat_enhanced") and self.ai_chat_enhanced:
-                briefing = self.ai_chat_enhanced.get_daily_briefing()
-            elif hasattr(self, "ai_chat") and self.ai_chat:
-                # Fallback to basic AI
+            if hasattr(self, "ai_agent") and self.ai_agent:
+                # Use AI Agent for briefing
                 prompt = f"""Generate a brief daily summary for {self.config.user.name}.
 
 Include:
@@ -1168,9 +1309,9 @@ Include:
 - Quick productivity tip
 
 Keep it under 100 words, friendly and energetic."""
-                briefing = self.ai_chat.send_message(prompt)
+                briefing = self.ai_agent.chat(prompt)
             else:
-                briefing = "AI not configured. Set up Gemini API key in settings to enable daily briefings."
+                briefing = "AI not configured. Set up Ollama or Gemini API key to enable daily briefings."
 
             self.briefing_content.setText(briefing)
             self._add_timeline_activity("✨ Daily briefing generated", datetime.now())
@@ -1322,7 +1463,9 @@ Keep it under 100 words, friendly and energetic."""
             }}
         """
         )
-        home_btn.clicked.connect(lambda: self.gmail_webview.setUrl(QUrl("https://mail.google.com/mail/u/0/#inbox")))
+        home_btn.clicked.connect(
+            lambda: self.gmail_webview.setUrl(QUrl("https://mail.google.com/mail/u/0/#inbox"))
+        )
         header_layout.addWidget(home_btn)
 
         # Refresh button
@@ -1367,8 +1510,12 @@ Keep it under 100 words, friendly and energetic."""
             settings.setAttribute(QWebEngineSettings.WebAttribute.PluginsEnabled, True)
             settings.setAttribute(QWebEngineSettings.WebAttribute.LocalStorageEnabled, True)
             settings.setAttribute(QWebEngineSettings.WebAttribute.AutoLoadImages, True)
-            settings.setAttribute(QWebEngineSettings.WebAttribute.AllowRunningInsecureContent, False)
-            settings.setAttribute(QWebEngineSettings.WebAttribute.LocalContentCanAccessFileUrls, True)
+            settings.setAttribute(
+                QWebEngineSettings.WebAttribute.AllowRunningInsecureContent, False
+            )
+            settings.setAttribute(
+                QWebEngineSettings.WebAttribute.LocalContentCanAccessFileUrls, True
+            )
             settings.setAttribute(QWebEngineSettings.WebAttribute.JavascriptCanOpenWindows, True)
             settings.setAttribute(QWebEngineSettings.WebAttribute.FullScreenSupportEnabled, True)
 
@@ -1377,12 +1524,16 @@ Keep it under 100 words, friendly and energetic."""
 
             # Add loading progress
             self.gmail_webview.loadProgress.connect(lambda p: print(f"📧 Gmail loading: {p}%"))
-            self.gmail_webview.loadFinished.connect(lambda ok: print(f"📧 Gmail loaded: {'✅' if ok else '❌'}"))
+            self.gmail_webview.loadFinished.connect(
+                lambda ok: print(f"📧 Gmail loaded: {'✅' if ok else '❌'}")
+            )
 
             main_layout.addWidget(self.gmail_webview, 1)
 
             # Info label
-            info_label = QLabel("💡 Sign in to your Gmail account in the browser above. Your session will be saved.")
+            info_label = QLabel(
+                "💡 Sign in to your Gmail account in the browser above. Your session will be saved."
+            )
             info_label.setStyleSheet(
                 f"color: {self.TEXT_SECONDARY}; padding: 10px; background: {self.BG_LIGHTER}; font-size: 12px;"
             )
@@ -2411,129 +2562,302 @@ Keep it under 100 words, friendly and energetic."""
             self.email_list.addItem(f"❌ Error: {str(e)}")
 
     def _create_jobs_page(self):
-        """Create embedded LinkedIn web interface"""
+        """Create Job Hunter interface with resume tailoring and cover letters"""
         page = QWidget()
         layout = QVBoxLayout(page)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(0)
+        layout.setContentsMargins(20, 20, 20, 20)
+        layout.setSpacing(15)
 
-        # Header with LinkedIn branding
-        header = QFrame()
+        # Header
+        header_layout = QHBoxLayout()
+        header = QLabel("💼 Job Hunter")
         header.setStyleSheet(
-            f"""
-            QFrame {{
-                background-color: {self.BG_LIGHTER};
-                border-bottom: 1px solid {self.HOVER_COLOR};
-                padding: 15px 20px;
-            }}
-        """
+            f"font-size: 24px; font-weight: bold; color: {self.ACCENT_PURPLE};"
         )
-        header_layout = QHBoxLayout(header)
-        header_layout.setContentsMargins(0, 0, 0, 0)
-
-        linkedin_logo = QLabel("💼 LinkedIn")
-        linkedin_logo.setStyleSheet(
-            f"font-size: 20px; font-weight: bold; color: #0a66c2;"  # LinkedIn blue
-        )
-        header_layout.addWidget(linkedin_logo)
+        header_layout.addWidget(header)
         header_layout.addStretch()
+        
+        # Statistics
+        if hasattr(self, 'job_hunter') and self.job_hunter:
+            stats = self.job_hunter.get_statistics()
+            stats_label = QLabel(f"📊 {stats.get('total_jobs', 0)} Jobs | {stats.get('applied', 0)} Applied")
+            stats_label.setStyleSheet(
+                f"color: {self.TEXT_SECONDARY}; font-size: 14px; background: {self.BG_LIGHTER}; "
+                f"padding: 8px 15px; border-radius: 6px;"
+            )
+            header_layout.addWidget(stats_label)
+        
+        layout.addLayout(header_layout)
 
-        # Navigation buttons
-        jobs_btn = QPushButton("💼 Jobs")
-        jobs_btn.setStyleSheet(
-            f"""
+        # Tab-like buttons for different sections
+        tabs_layout = QHBoxLayout()
+        tabs_layout.setSpacing(10)
+        
+        self.job_search_btn = QPushButton("🔍 Search Jobs")
+        self.job_search_btn.setCheckable(True)
+        self.job_search_btn.setChecked(True)
+        self.job_search_btn.clicked.connect(lambda: self._switch_job_tab(0))
+        
+        self.resume_btn = QPushButton("📝 Resume")
+        self.resume_btn.setCheckable(True)
+        self.resume_btn.clicked.connect(lambda: self._switch_job_tab(1))
+        
+        self.applications_btn = QPushButton("📋 Applications")
+        self.applications_btn.setCheckable(True)
+        self.applications_btn.clicked.connect(lambda: self._switch_job_tab(2))
+        
+        tab_style = f"""
             QPushButton {{
-                background-color: transparent;
+                background-color: {self.BG_LIGHTER};
                 color: {self.TEXT_PRIMARY};
-                border: 1px solid {self.HOVER_COLOR};
-                padding: 8px 16px;
-                border-radius: 4px;
-                font-size: 13px;
+                border: none;
+                border-radius: 8px;
+                padding: 12px 24px;
+                font-size: 14px;
+                font-weight: 600;
             }}
             QPushButton:hover {{
                 background-color: {self.HOVER_COLOR};
             }}
+            QPushButton:checked {{
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                    stop:0 {self.GRADIENT_START}, stop:1 {self.GRADIENT_END});
+                color: #ffffff;
+            }}
         """
-        )
-        jobs_btn.clicked.connect(lambda: self.linkedin_webview.setUrl(QUrl("https://www.linkedin.com/jobs/")))
-        header_layout.addWidget(jobs_btn)
+        self.job_search_btn.setStyleSheet(tab_style)
+        self.resume_btn.setStyleSheet(tab_style)
+        self.applications_btn.setStyleSheet(tab_style)
+        
+        tabs_layout.addWidget(self.job_search_btn)
+        tabs_layout.addWidget(self.resume_btn)
+        tabs_layout.addWidget(self.applications_btn)
+        tabs_layout.addStretch()
+        
+        layout.addLayout(tabs_layout)
 
-        feed_btn = QPushButton("📰 Feed")
-        feed_btn.setStyleSheet(jobs_btn.styleSheet())
-        feed_btn.clicked.connect(lambda: self.linkedin_webview.setUrl(QUrl("https://www.linkedin.com/feed/")))
-        header_layout.addWidget(feed_btn)
-
-        network_btn = QPushButton("👥 Network")
-        network_btn.setStyleSheet(jobs_btn.styleSheet())
-        network_btn.clicked.connect(lambda: self.linkedin_webview.setUrl(QUrl("https://www.linkedin.com/mynetwork/")))
-        header_layout.addWidget(network_btn)
-
-        # Refresh button
-        refresh_btn = QPushButton("🔄 Refresh")
-        refresh_btn.setStyleSheet(jobs_btn.styleSheet())
-        refresh_btn.clicked.connect(lambda: self.linkedin_webview.reload())
-        header_layout.addWidget(refresh_btn)
-
-        layout.addWidget(header)
-
-        # Embedded LinkedIn web view
-        if WEBENGINE_AVAILABLE:
-            # Create persistent profile to save login session
-            self.linkedin_profile = QWebEngineProfile("LinkedInProfile", self)
-            self.linkedin_profile.setPersistentStoragePath(str(Path.home() / ".XENO" / "linkedin_data"))
-            self.linkedin_profile.setPersistentCookiesPolicy(
-                QWebEngineProfile.PersistentCookiesPolicy.ForcePersistentCookies
-            )
-
-            # Create web view with persistent profile
-            self.linkedin_webview = QWebEngineView()
-            linkedin_page = QWebEnginePage(self.linkedin_profile, self.linkedin_webview)
-            self.linkedin_webview.setPage(linkedin_page)
-
-            # Enable all features for full LinkedIn functionality
-            settings = self.linkedin_webview.settings()
-            settings.setAttribute(QWebEngineSettings.WebAttribute.JavascriptEnabled, True)
-            settings.setAttribute(QWebEngineSettings.WebAttribute.PluginsEnabled, True)
-            settings.setAttribute(QWebEngineSettings.WebAttribute.LocalStorageEnabled, True)
-            settings.setAttribute(QWebEngineSettings.WebAttribute.AutoLoadImages, True)
-            settings.setAttribute(QWebEngineSettings.WebAttribute.JavascriptCanOpenWindows, True)
-            settings.setAttribute(QWebEngineSettings.WebAttribute.FullScreenSupportEnabled, True)
-
-            # Set user agent to avoid mobile version
-            self.linkedin_profile.setHttpUserAgent(
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-            )
-
-            # Load LinkedIn Jobs page
-            self.linkedin_webview.setUrl(QUrl("https://www.linkedin.com/jobs/"))
-
-            # Add loading progress
-            self.linkedin_webview.loadProgress.connect(lambda p: print(f"💼 LinkedIn loading: {p}%"))
-            self.linkedin_webview.loadFinished.connect(lambda ok: print(f"💼 LinkedIn loaded: {'✅' if ok else '❌'}"))
-
-            layout.addWidget(self.linkedin_webview, 1)
-
-            # Info label
-            info_label = QLabel("💡 Sign in to LinkedIn in the browser above. Search jobs, apply, network - all within XENO!")
-            info_label.setStyleSheet(
-                f"color: {self.TEXT_SECONDARY}; padding: 10px; background: {self.BG_LIGHTER}; font-size: 12px;"
-            )
-            info_label.setWordWrap(True)
-            layout.addWidget(info_label)
-
-        else:
-            # Fallback if QWebEngineView not available
-            error_label = QLabel(
-                "❌ Web Engine not available. Install PyQt6-WebEngine:\n\npip install PyQt6-WebEngine\n\nThen restart XENO."
-            )
-            error_label.setStyleSheet(
-                f"color: #ff4444; padding: 40px; font-size: 14px; background: {self.BG_LIGHTER};"
-            )
-            error_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-            error_label.setWordWrap(True)
-            layout.addWidget(error_label, 1)
+        # Stacked widget for different tabs
+        self.job_stack = QStackedWidget()
+        self.job_stack.addWidget(self._create_job_search_tab())
+        self.job_stack.addWidget(self._create_resume_tab())
+        self.job_stack.addWidget(self._create_applications_tab())
+        
+        layout.addWidget(self.job_stack, 1)
 
         return page
+    
+    def _switch_job_tab(self, index):
+        """Switch between job hunter tabs"""
+        self.job_stack.setCurrentIndex(index)
+        self.job_search_btn.setChecked(index == 0)
+        self.resume_btn.setChecked(index == 1)
+        self.applications_btn.setChecked(index == 2)
+    
+    def _create_job_search_tab(self):
+        """Create job search interface"""
+        widget = QWidget()
+        layout = QVBoxLayout(widget)
+        layout.setContentsMargins(0, 10, 0, 0)
+
+        # Search panel
+        search_panel = QFrame()
+        search_panel.setStyleSheet(
+            f"""
+            QFrame {{
+                background-color: {self.BG_LIGHTER};
+                border-radius: 12px;
+                padding: 20px;
+            }}
+            """
+        )
+        search_layout = QVBoxLayout(search_panel)
+
+        # Job keywords
+        keywords_label = QLabel("🎯 Job Keywords:")
+        keywords_label.setStyleSheet(f"color: {self.TEXT_PRIMARY}; font-weight: bold; margin-bottom: 5px;")
+        self.job_keywords_input = QLineEdit()
+        self.job_keywords_input.setPlaceholderText("e.g., Data Scientist, Machine Learning Engineer, Python Developer")
+        search_layout.addWidget(keywords_label)
+        search_layout.addWidget(self.job_keywords_input)
+
+        # Location
+        location_label = QLabel("📍 Location:")
+        location_label.setStyleSheet(f"color: {self.TEXT_PRIMARY}; font-weight: bold; margin-top: 10px; margin-bottom: 5px;")
+        self.job_location_input = QLineEdit()
+        self.job_location_input.setPlaceholderText("e.g., Paris, France")
+        search_layout.addWidget(location_label)
+        search_layout.addWidget(self.job_location_input)
+
+        # Search button
+        search_btn = QPushButton("🔍 Search Jobs")
+        search_btn.setStyleSheet(
+            f"""
+            QPushButton {{
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                    stop:0 {self.ACCENT_BLUE}, stop:1 {self.ACCENT_PURPLE});
+                color: #ffffff;
+                font-weight: bold;
+                padding: 12px;
+                border-radius: 8px;
+                margin-top: 15px;
+                font-size: 14px;
+            }}
+            QPushButton:hover {{
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                    stop:0 {self.ACCENT_PURPLE}, stop:1 {self.ACCENT_BLUE});
+            }}
+            """
+        )
+        search_btn.clicked.connect(self._search_jobs)
+        search_layout.addWidget(search_btn)
+
+        layout.addWidget(search_panel)
+
+        # Results area
+        results_label = QLabel("📋 Search Results:")
+        results_label.setStyleSheet(f"color: {self.TEXT_PRIMARY}; font-weight: bold; margin-top: 15px;")
+        layout.addWidget(results_label)
+
+        self.job_results_list = QListWidget()
+        self.job_results_list.setStyleSheet(
+            f"""
+            QListWidget {{
+                background-color: {self.BG_LIGHTER};
+                border: 2px solid {self.BORDER_COLOR};
+                border-radius: 8px;
+                padding: 10px;
+            }}
+            QListWidget::item {{
+                background-color: {self.BG_DARK};
+                border: 1px solid {self.BORDER_COLOR};
+                border-radius: 6px;
+                padding: 15px;
+                margin: 5px;
+            }}
+            QListWidget::item:hover {{
+                background-color: {self.HOVER_COLOR};
+                border-color: {self.ACCENT_BLUE};
+            }}
+            QListWidget::item:selected {{
+                background-color: {self.HOVER_COLOR};
+                border-color: {self.ACCENT_PURPLE};
+            }}
+            """
+        )
+        self.job_results_list.itemDoubleClicked.connect(self._show_job_details)
+        layout.addWidget(self.job_results_list, 1)
+
+        return widget
+    
+    def _create_resume_tab(self):
+        """Create resume management interface"""
+        widget = QWidget()
+        layout = QVBoxLayout(widget)
+        layout.setContentsMargins(0, 10, 0, 0)
+
+        # Resume panel
+        resume_panel = QFrame()
+        resume_panel.setStyleSheet(
+            f"""
+            QFrame {{
+                background-color: {self.BG_LIGHTER};
+                border-radius: 12px;
+                padding: 20px;
+            }}
+            """
+        )
+        resume_layout = QVBoxLayout(resume_panel)
+
+        # Title
+        title = QLabel("📝 Your Resume")
+        title.setStyleSheet(f"color: {self.TEXT_PRIMARY}; font-size: 18px; font-weight: bold;")
+        resume_layout.addWidget(title)
+
+        # Load resume button
+        load_btn_layout = QHBoxLayout()
+        load_btn = QPushButton("📂 Load Resume")
+        load_btn.clicked.connect(self._load_resume_file)
+        load_btn_layout.addWidget(load_btn)
+        load_btn_layout.addStretch()
+        resume_layout.addLayout(load_btn_layout)
+
+        # Resume content
+        self.resume_content = QTextEdit()
+        self.resume_content.setPlaceholderText("Your resume will appear here...\n\nClick 'Load Resume' to import your resume file (TXT, PDF, DOCX)")
+        self.resume_content.setStyleSheet(
+            f"""
+            QTextEdit {{
+                background-color: {self.BG_DARK};
+                border: 2px solid {self.BORDER_COLOR};
+                border-radius: 8px;
+                padding: 15px;
+                font-family: 'Consolas', 'Courier New', monospace;
+                font-size: 13px;
+            }}
+            """
+        )
+        resume_layout.addWidget(self.resume_content, 1)
+
+        # Tailor resume button
+        tailor_btn = QPushButton("✨ Tailor Resume for Selected Job")
+        tailor_btn.setStyleSheet(
+            f"""
+            QPushButton {{
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                    stop:0 {self.ACCENT_PURPLE}, stop:1 {self.ACCENT_PINK});
+                color: #ffffff;
+                font-weight: bold;
+                padding: 12px;
+                border-radius: 8px;
+                font-size: 14px;
+            }}
+            """
+        )
+        tailor_btn.clicked.connect(self._tailor_resume)
+        resume_layout.addWidget(tailor_btn)
+
+        layout.addWidget(resume_panel)
+
+        return widget
+    
+    def _create_applications_tab(self):
+        """Create applications tracking interface"""
+        widget = QWidget()
+        layout = QVBoxLayout(widget)
+        layout.setContentsMargins(0, 10, 0, 0)
+
+        # Info label
+        info = QLabel("📋 Your Job Applications")
+        info.setStyleSheet(f"color: {self.TEXT_PRIMARY}; font-size: 18px; font-weight: bold;")
+        layout.addWidget(info)
+
+        # Applications list
+        self.applications_list = QListWidget()
+        self.applications_list.setStyleSheet(
+            f"""
+            QListWidget {{
+                background-color: {self.BG_LIGHTER};
+                border: 2px solid {self.BORDER_COLOR};
+                border-radius: 8px;
+                padding: 10px;
+            }}
+            QListWidget::item {{
+                background-color: {self.BG_DARK};
+                border: 1px solid {self.BORDER_COLOR};
+                border-radius: 6px;
+                padding: 15px;
+                margin: 5px;
+            }}
+            """
+        )
+        layout.addWidget(self.applications_list, 1)
+
+        # Export button
+        export_btn = QPushButton("📊 Export to Excel")
+        export_btn.clicked.connect(self._export_jobs)
+        layout.addWidget(export_btn)
+
+        return widget
 
         # Search filters panel
         search_panel = QFrame()
@@ -2991,6 +3315,82 @@ Keep it under 100 words, friendly and energetic."""
             self.job_list.clear()
             self.job_list.addItem(f"❌ Error: {str(e)}")
 
+    def _create_jobs_web_page(self):
+        """Create web-based Job Hunter interface"""
+        page = QWidget()
+        main_layout = QVBoxLayout(page)
+        main_layout.setContentsMargins(0, 0, 0, 0)
+        main_layout.setSpacing(0)
+
+        try:
+            from PyQt6.QtWebEngineWidgets import QWebEngineView
+            from PyQt6.QtWebEngineCore import QWebEngineSettings, QWebEngineProfile, QWebEnginePage
+            from PyQt6.QtCore import QUrl
+
+            # Create persistent profile
+            self.jobs_profile = QWebEngineProfile("JobsProfile", self)
+            self.jobs_profile.setPersistentStoragePath(str(Path.home() / ".XENO" / "jobs_data"))
+            self.jobs_profile.setPersistentCookiesPolicy(
+                QWebEngineProfile.PersistentCookiesPolicy.ForcePersistentCookies
+            )
+
+            # Create web view
+            self.jobs_webview = QWebEngineView()
+            jobs_page_obj = QWebEnginePage(self.jobs_profile, self.jobs_webview)
+            
+            # Handle new window requests (for job application links)
+            def handle_new_window(url):
+                import webbrowser
+                webbrowser.open(url.toString())
+            
+            jobs_page_obj.newWindowRequested.connect(lambda req: handle_new_window(req.requestedUrl()))
+            
+            self.jobs_webview.setPage(jobs_page_obj)
+
+            # Enable all features
+            settings = self.jobs_webview.settings()
+            settings.setAttribute(QWebEngineSettings.WebAttribute.JavascriptEnabled, True)
+            settings.setAttribute(QWebEngineSettings.WebAttribute.LocalStorageEnabled, True)
+            settings.setAttribute(QWebEngineSettings.WebAttribute.AutoLoadImages, True)
+            settings.setAttribute(QWebEngineSettings.WebAttribute.JavascriptCanOpenWindows, True)
+            settings.setAttribute(QWebEngineSettings.WebAttribute.AllowWindowActivationFromJavaScript, True)
+
+            # Load the job hunter web interface
+            # The web server should be running on localhost:8000
+            self.jobs_webview.setUrl(QUrl("http://localhost:8000"))
+
+            # Add loading progress
+            self.jobs_webview.loadProgress.connect(lambda p: print(f"💼 Job Hunter loading: {p}%"))
+            self.jobs_webview.loadFinished.connect(
+                lambda ok: print(f"💼 Job Hunter loaded: {'✅' if ok else '❌'}")
+            )
+
+            main_layout.addWidget(self.jobs_webview, 1)
+
+            # Info label
+            info_label = QLabel(
+                "💡 Search for Data Science, ML Engineer, and AI internships across France. Results are scraped from Welcome to the Jungle, Remotive, and Wellfound."
+            )
+            info_label.setStyleSheet(
+                f"color: {self.TEXT_SECONDARY}; padding: 10px; background: {self.BG_LIGHTER}; font-size: 12px;"
+            )
+            info_label.setWordWrap(True)
+            main_layout.addWidget(info_label)
+
+        except Exception as e:
+            # Fallback if web engine not available
+            error_label = QLabel(
+                f"❌ Job Hunter web interface not available.\n\nError: {str(e)}\n\nMake sure the web server is running:\npython web_server.py"
+            )
+            error_label.setStyleSheet(
+                f"color: {self.TEXT_SECONDARY}; padding: 40px; font-size: 14px;"
+            )
+            error_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            error_label.setWordWrap(True)
+            main_layout.addWidget(error_label, 1)
+
+        return page
+
     def _create_github_page(self):
         """Create embedded GitHub web interface"""
         page = QWidget()
@@ -3034,17 +3434,23 @@ Keep it under 100 words, friendly and energetic."""
             }}
         """
         )
-        repos_btn.clicked.connect(lambda: self.github_webview.setUrl(QUrl("https://github.com?tab=repositories")))
+        repos_btn.clicked.connect(
+            lambda: self.github_webview.setUrl(QUrl("https://github.com?tab=repositories"))
+        )
         header_layout.addWidget(repos_btn)
 
         issues_btn = QPushButton("🐛 Issues")
         issues_btn.setStyleSheet(repos_btn.styleSheet())
-        issues_btn.clicked.connect(lambda: self.github_webview.setUrl(QUrl("https://github.com/issues")))
+        issues_btn.clicked.connect(
+            lambda: self.github_webview.setUrl(QUrl("https://github.com/issues"))
+        )
         header_layout.addWidget(issues_btn)
 
         prs_btn = QPushButton("🔀 Pull Requests")
         prs_btn.setStyleSheet(repos_btn.styleSheet())
-        prs_btn.clicked.connect(lambda: self.github_webview.setUrl(QUrl("https://github.com/pulls")))
+        prs_btn.clicked.connect(
+            lambda: self.github_webview.setUrl(QUrl("https://github.com/pulls"))
+        )
         header_layout.addWidget(prs_btn)
 
         profile_btn = QPushButton("👤 Profile")
@@ -3107,12 +3513,16 @@ Keep it under 100 words, friendly and energetic."""
 
             # Add loading progress
             self.github_webview.loadProgress.connect(lambda p: print(f"⚙️ GitHub loading: {p}%"))
-            self.github_webview.loadFinished.connect(lambda ok: print(f"⚙️ GitHub loaded: {'✅' if ok else '❌'}"))
+            self.github_webview.loadFinished.connect(
+                lambda ok: print(f"⚙️ GitHub loaded: {'✅' if ok else '❌'}")
+            )
 
             main_layout.addWidget(self.github_webview, 1)
 
             # Info label
-            info_label = QLabel("💡 Sign in to GitHub in the browser above. Browse repos, manage issues, review PRs - all within XENO!")
+            info_label = QLabel(
+                "💡 Sign in to GitHub in the browser above. Browse repos, manage issues, review PRs - all within XENO!"
+            )
             info_label.setStyleSheet(
                 f"color: {self.TEXT_SECONDARY}; padding: 10px; background: {self.BG_LIGHTER}; font-size: 12px;"
             )
@@ -3440,13 +3850,11 @@ Keep it concise, friendly, and professional.
 """
 
             # Use enhanced AI if available, otherwise basic AI
-            if hasattr(self, "ai_chat_enhanced") and self.ai_chat_enhanced:
-                response = self.ai_chat_enhanced.send_message(email_context)
-            elif hasattr(self, "ai_chat") and self.ai_chat:
-                response = self.ai_chat.send_message(email_context)
+            if hasattr(self, "ai_agent") and self.ai_agent:
+                response = self.ai_agent.chat(email_context)
             else:
                 QMessageBox.warning(
-                    self, "AI Not Available", "AI chat is not configured. Please set up AI first."
+                    self, "AI Not Available", "AI Agent is not configured. Please set up Ollama or Gemini first."
                 )
                 return
 
@@ -4319,12 +4727,23 @@ Keep it concise, friendly, and professional.
 
         return panel
 
+    def _switch_page_safe(self, index):
+        """Thread-safe wrapper for _switch_page - use this from voice commands"""
+        from PyQt6.QtCore import QMetaObject, Q_ARG, Qt
+        # Use invokeMethod for true thread safety - works from any thread
+        QMetaObject.invokeMethod(
+            self,
+            "_switch_page",
+            Qt.ConnectionType.QueuedConnection,
+            Q_ARG(int, index)
+        )
+
     def _switch_page(self, index):
-        """Switch to a different page"""
+        """Switch to a different page - must be called from Qt main thread"""
         # Bring window to front when switching pages via voice command
         self.raise_()
         self.activateWindow()
-        
+
         # Uncheck all buttons
         for btn in self.nav_buttons:
             btn.setChecked(False)
@@ -4336,54 +4755,277 @@ Keep it concise, friendly, and professional.
         self.content_stack.setCurrentIndex(index)
 
     def _send_message(self):
-        """Send a message to the AI"""
+        """Send a message to the AI Agent"""
         message = self.chat_input.text().strip()
         if not message:
             return
 
         # Add user message to chat
         self.chat_history.append(
-            f'<div style="color: {self.ACCENT_BLUE}; font-weight: bold;">You:</div>'
+            f'<div style="background: {self.BG_LIGHTER}; padding: 10px; border-radius: 8px; margin: 5px 0;">'
+            f'<span style="color: {self.ACCENT_BLUE}; font-weight: bold;">You:</span> '
+            f'<span style="color: {self.TEXT_PRIMARY};">{message}</span>'
+            f'</div>'
         )
-        self.chat_history.append(f'<div style="margin-bottom: 15px;">{message}</div>')
 
         # Clear input
         self.chat_input.clear()
 
-        # Send to AI and get response
-        if self.ai_chat and self.ai_chat.is_available():
+        # Send to AI Agent and get response
+        if hasattr(self, 'ai_agent') and self.ai_agent:
             # Show thinking indicator
             self.chat_history.append(
-                f'<div style="color: {self.ACCENT_PURPLE}; font-weight: bold;">XENO:</div>'
-            )
-            self.chat_history.append(
-                f'<div style="margin-bottom: 15px; color: {self.TEXT_SECONDARY};">Thinking...</div>'
+                f'<div style="background: {self.BG_DARKER}; padding: 10px; border-radius: 8px; margin: 5px 0;">'
+                f'<span style="color: {self.ACCENT_PURPLE}; font-weight: bold;">XENO:</span> '
+                f'<span style="color: {self.TEXT_SECONDARY};">⏳ Thinking...</span>'
+                f'</div>'
             )
 
-            # Process in background (simple version - blocks UI for now)
+            # Scroll to bottom
+            self.chat_history.moveCursor(self.chat_history.textCursor().MoveOperation.End)
+
+            # Process message
             try:
-                response = self.ai_chat.send_message(message)
+                response = self.ai_agent.chat(message)
 
                 # Remove thinking indicator
                 cursor = self.chat_history.textCursor()
                 cursor.movePosition(cursor.MoveOperation.End)
-                cursor.movePosition(cursor.MoveOperation.StartOfBlock, cursor.MoveMode.KeepAnchor)
-                cursor.movePosition(cursor.MoveOperation.Up, cursor.MoveMode.KeepAnchor)
+                cursor.select(cursor.SelectionType.BlockUnderCursor)
                 cursor.removeSelectedText()
+                cursor.deletePreviousChar()
 
                 # Add actual response
-                self.chat_history.append(f'<div style="margin-bottom: 15px;">{response}</div>')
-            except Exception as e:
                 self.chat_history.append(
-                    f'<div style="margin-bottom: 15px; color: #ff6b6b;">Error: {str(e)}</div>'
+                    f'<div style="background: {self.BG_DARKER}; padding: 10px; border-radius: 8px; margin: 5px 0;">'
+                    f'<span style="color: {self.ACCENT_PURPLE}; font-weight: bold;">XENO:</span> '
+                    f'<span style="color: {self.TEXT_PRIMARY};">{response}</span>'
+                    f'</div>'
+                )
+            except Exception as e:
+                # Remove thinking indicator
+                cursor = self.chat_history.textCursor()
+                cursor.movePosition(cursor.MoveOperation.End)
+                cursor.select(cursor.SelectionType.BlockUnderCursor)
+                cursor.removeSelectedText()
+                cursor.deletePreviousChar()
+                
+                self.chat_history.append(
+                    f'<div style="background: {self.BG_DARKER}; padding: 10px; border-radius: 8px; margin: 5px 0; border-left: 3px solid #ff4444;">'
+                    f'<span style="color: #ff4444; font-weight: bold;">Error:</span> '
+                    f'<span style="color: {self.TEXT_SECONDARY};">{str(e)}</span>'
+                    f'</div>'
                 )
         else:
             self.chat_history.append(
-                f'<div style="color: {self.ACCENT_PURPLE}; font-weight: bold;">XENO:</div>'
+                f'<div style="background: {self.BG_DARKER}; padding: 10px; border-radius: 8px; margin: 5px 0; border-left: 3px solid #ffaa00;">'
+                f'<span style="color: #ffaa00; font-weight: bold;">⚠️ AI Not Available:</span> '
+                f'<span style="color: {self.TEXT_SECONDARY};">Please install Ollama or configure Gemini API in .env file.</span>'
+                f'</div>'
             )
-            self.chat_history.append(
-                f'<div style="margin-bottom: 15px;">AI module not yet connected. Please add your OpenAI API key in Settings → Run setup again with: python src\\jarvis.py --setup</div>'
+    
+    def _clear_chat(self):
+        """Clear chat history"""
+        self.chat_history.clear()
+        if hasattr(self, 'ai_agent') and self.ai_agent:
+            self.ai_agent.clear_history()
+        self.chat_history.append(
+            f'<div style="color: {self.TEXT_SECONDARY}; text-align: center; padding: 20px;">'
+            f'Chat cleared. Start a new conversation!'
+            f'</div>'
+        )
+    
+    def _search_jobs(self):
+        """Search for jobs using Job Hunter"""
+        if not hasattr(self, 'job_hunter') or not self.job_hunter:
+            QMessageBox.warning(self, "Job Hunter Not Available", "Job Hunter module is not initialized.")
+            return
+        
+        keywords = self.job_keywords_input.text().strip()
+        location = self.job_location_input.text().strip()
+        
+        if not keywords:
+            QMessageBox.warning(self, "Missing Keywords", "Please enter job keywords to search.")
+            return
+        
+        # Clear previous results
+        self.job_results_list.clear()
+        
+        # Add searching indicator
+        searching_item = QListWidgetItem(f"🔍 Searching for '{keywords}' in '{location or 'any location'}'...")
+        self.job_results_list.addItem(searching_item)
+        
+        try:
+            # Search jobs (convert keywords string to list)
+            keyword_list = [k.strip() for k in keywords.split(',') if k.strip()]
+            if not keyword_list:
+                keyword_list = [keywords]  # Use as single keyword if no commas
+            
+            # Add internship variations for French market
+            internship_keywords = []
+            for kw in keyword_list:
+                internship_keywords.append(f"{kw} Stage")  # French internship
+                internship_keywords.append(f"{kw} Internship")
+                internship_keywords.append(f"Stage {kw}")
+                internship_keywords.append(kw)  # Original keyword
+            
+            # Remove duplicates while preserving order
+            seen = set()
+            unique_keywords = []
+            for kw in internship_keywords:
+                if kw.lower() not in seen:
+                    seen.add(kw.lower())
+                    unique_keywords.append(kw)
+            
+            jobs = self.job_hunter.search_jobs(
+                keywords=unique_keywords[:5],  # Limit to top 5 variations
+                location=location or "France",
+                job_types=["internship", "full-time"],  # Accept both for more results
+                sources=["remotive", "welcometothejungle", "wellfound"],  # All working sources with Brave browser
+                max_per_source=25  # Balance between sources
             )
+            
+            # Remove searching indicator
+            self.job_results_list.clear()
+            
+            if jobs:
+                for job in jobs:
+                    title = job.get('title', 'Unknown Title')
+                    company = job.get('company', 'Unknown Company')
+                    location = job.get('location', 'Unknown Location')
+                    
+                    item_text = f"📌 {title}\n🏢 {company}\n📍 {location}"
+                    item = QListWidgetItem(item_text)
+                    item.setData(Qt.ItemDataRole.UserRole, job)
+                    self.job_results_list.addItem(item)
+                
+                QMessageBox.information(self, "Success", f"Found {len(jobs)} jobs!")
+            else:
+                no_results = QListWidgetItem("ℹ️ No jobs found. Try different keywords or location.")
+                self.job_results_list.addItem(no_results)
+        
+        except Exception as e:
+            self.job_results_list.clear()
+            error_item = QListWidgetItem(f"❌ Error searching jobs: {str(e)}")
+            self.job_results_list.addItem(error_item)
+    
+    def _show_job_details(self, item):
+        """Show detailed job information"""
+        job = item.data(Qt.ItemDataRole.UserRole)
+        if not job:
+            return
+        
+        details = f"""
+        <h2 style='color: {self.ACCENT_PURPLE};'>{job.get('title', 'Unknown')}</h2>
+        <p><b>Company:</b> {job.get('company', 'Unknown')}</p>
+        <p><b>Location:</b> {job.get('location', 'Unknown')}</p>
+        <p><b>Type:</b> {job.get('type', 'Unknown')}</p>
+        <p><b>Posted:</b> {job.get('date_posted', 'Unknown')}</p>
+        <br>
+        <p><b>Description:</b></p>
+        <p>{job.get('description', 'No description available.')}</p>
+        """
+        
+        msg = QMessageBox(self)
+        msg.setWindowTitle("Job Details")
+        msg.setTextFormat(Qt.TextFormat.RichText)
+        msg.setText(details)
+        msg.exec()
+    
+    def _load_resume_file(self):
+        """Load resume from file"""
+        from PyQt6.QtWidgets import QFileDialog
+        
+        file_path, _ = QFileDialog.getOpenFileName(
+            self,
+            "Select Resume File",
+            "",
+            "Text Files (*.txt);;PDF Files (*.pdf);;Word Files (*.docx);;All Files (*.*)"
+        )
+        
+        if file_path:
+            try:
+                if hasattr(self, 'job_hunter') and self.job_hunter:
+                    self.job_hunter.load_resume(file_path)
+                
+                # Read and display file content
+                with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                    content = f.read()
+                    self.resume_content.setPlainText(content)
+                
+                QMessageBox.information(self, "Success", f"Resume loaded from:\n{file_path}")
+            except Exception as e:
+                QMessageBox.critical(self, "Error", f"Failed to load resume:\n{str(e)}")
+    
+    def _tailor_resume(self):
+        """Tailor resume for selected job using AI"""
+        if not hasattr(self, 'job_hunter') or not self.job_hunter:
+            QMessageBox.warning(self, "Job Hunter Not Available", "Job Hunter module is not initialized.")
+            return
+        
+        if not hasattr(self, 'ai_agent') or not self.ai_agent:
+            QMessageBox.warning(self, "AI Agent Not Available", "AI Agent is required for resume tailoring.")
+            return
+        
+        # Get selected job
+        selected_items = self.job_results_list.selectedItems()
+        if not selected_items:
+            QMessageBox.warning(self, "No Job Selected", "Please select a job from the search results first.")
+            return
+        
+        job = selected_items[0].data(Qt.ItemDataRole.UserRole)
+        if not job:
+            return
+        
+        try:
+            # Extract job requirements
+            job_description = job.get('description', '')
+            requirements = self.ai_agent.extract_job_requirements(job_description)
+            
+            # Get current resume
+            resume_text = self.resume_content.toPlainText()
+            if not resume_text:
+                QMessageBox.warning(self, "No Resume", "Please load your resume first.")
+                return
+            
+            # Tailor resume
+            QMessageBox.information(self, "Tailoring Resume", "AI is tailoring your resume... This may take a moment.")
+            
+            tailored = self.ai_agent.tailor_resume(resume_text, requirements)
+            
+            # Display tailored resume
+            self.resume_content.setPlainText(tailored)
+            
+            QMessageBox.information(
+                self, 
+                "Success", 
+                f"Resume tailored for:\n{job.get('title')} at {job.get('company')}\n\nReview the changes and save if needed."
+            )
+        
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Failed to tailor resume:\n{str(e)}")
+    
+    def _export_jobs(self):
+        """Export jobs to Excel"""
+        if not hasattr(self, 'job_hunter') or not self.job_hunter:
+            QMessageBox.warning(self, "Job Hunter Not Available", "Job Hunter module is not initialized.")
+            return
+        
+        from PyQt6.QtWidgets import QFileDialog
+        
+        file_path, _ = QFileDialog.getSaveFileName(
+            self,
+            "Export Jobs to Excel",
+            "jobs_export.xlsx",
+            "Excel Files (*.xlsx)"
+        )
+        
+        if file_path:
+            try:
+                self.job_hunter.export_to_excel(file_path)
+                QMessageBox.information(self, "Success", f"Jobs exported to:\n{file_path}")
+            except Exception as e:
+                QMessageBox.critical(self, "Error", f"Failed to export jobs:\n{str(e)}")
 
     def _open_login_page(self, url: str):
         """Open a login page in the default browser"""
@@ -4830,5 +5472,34 @@ Keep it concise, friendly, and professional.
 
     def closeEvent(self, event):
         """Handle window close - minimize to tray instead"""
-        event.ignore()
-        self.hide()
+        try:
+            from src.core.logger import setup_logger
+            logger = setup_logger("ui.main_window")
+            logger.info("="*50)
+            logger.info("CLOSE EVENT TRIGGERED - User clicked X button")
+            logger.info("="*50)
+            
+            # CRITICAL: Ignore the close event - just hide the window
+            # This prevents the app from quitting
+            event.ignore()
+            self.hide()
+            logger.info("Window hidden (not closed)")
+            
+            # Try to show tray notification (but don't crash if it fails)
+            try:
+                if hasattr(self, 'daemon') and hasattr(self.daemon, 'tray_app') and self.daemon.tray_app:
+                    self.daemon.tray_app.show_notification(
+                        "XENO minimized to tray. Voice commands still active!",
+                        duration=4000
+                    )
+                    logger.info("✓ Tray notification shown")
+            except Exception as e:
+                logger.error(f"Could not show tray notification: {e}")
+                
+            logger.info("✓ Close event handled - XENO remains running in background")
+                
+        except Exception as e:
+            # If anything goes wrong, STILL hide the window (don't let it close)
+            event.ignore()
+            self.hide()
+            print(f"Error in closeEvent: {e}")

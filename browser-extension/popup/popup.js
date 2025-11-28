@@ -6,26 +6,26 @@ class XENOPopup {
     this.connected = false;
     this.currentTab = null;
     this.serverUrl = 'ws://localhost:8765'; // Default WebSocket server
-    
+
     this.init();
   }
 
   async init() {
     // Load settings
     await this.loadSettings();
-    
+
     // Get current tab
     await this.getCurrentTab();
-    
+
     // Setup event listeners
     this.setupEventListeners();
-    
+
     // Connect to desktop app
     this.connectWebSocket();
-    
+
     // Load recent activity
     this.loadRecentActivity();
-    
+
     // Update context actions based on current site
     this.updateContextActions();
   }
@@ -58,7 +58,7 @@ class XENOPopup {
         console.log('Connected to XENO desktop');
         this.connected = true;
         this.updateConnectionStatus(true);
-        
+
         // Send initial handshake
         this.sendMessage({
           type: 'handshake',
@@ -71,7 +71,7 @@ class XENOPopup {
         console.log('Disconnected from XENO desktop');
         this.connected = false;
         this.updateConnectionStatus(false);
-        
+
         // Attempt to reconnect after 5 seconds
         setTimeout(() => this.connectWebSocket(), 5000);
       };
@@ -98,7 +98,7 @@ class XENOPopup {
   updateConnectionStatus(connected) {
     const statusDot = document.querySelector('.status-dot');
     const statusText = document.querySelector('.status-text');
-    
+
     if (connected) {
       statusDot.classList.add('online');
       statusDot.classList.remove('offline');
@@ -193,7 +193,7 @@ class XENOPopup {
     const modal = document.getElementById(modalId);
     if (modal) {
       modal.style.display = 'flex';
-      
+
       // Pre-fill email if on Gmail
       if (modalId === 'email-modal' && this.currentTab?.url?.includes('mail.google.com')) {
         this.prefillEmailFromGmail();
@@ -205,7 +205,7 @@ class XENOPopup {
     const modal = document.getElementById(modalId);
     if (modal) {
       modal.style.display = 'none';
-      
+
       // Clear form fields
       const form = modal.querySelector('form') || modal;
       const inputs = form.querySelectorAll('input, textarea, select');
@@ -279,7 +279,7 @@ class XENOPopup {
 
   applyEmailTemplate(template) {
     const bodyField = document.getElementById('email-body');
-    
+
     const templates = {
       'thank-you': 'Dear [Name],\n\nThank you for [reason]. I truly appreciate [specific detail].\n\nBest regards,\n[Your Name]',
       'follow-up': 'Hi [Name],\n\nI wanted to follow up on [topic] from our previous conversation.\n\n[Details]\n\nLooking forward to hearing from you.\n\nBest,\n[Your Name]',
@@ -297,7 +297,7 @@ class XENOPopup {
       const response = await chrome.tabs.sendMessage(this.currentTab.id, {
         type: 'get_email_context'
       });
-      
+
       if (response && response.email) {
         document.getElementById('email-to').value = response.email;
       }
@@ -310,27 +310,27 @@ class XENOPopup {
     try {
       // Request microphone permission and start voice recognition
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      
+
       // Show voice input UI (could expand into a modal)
       this.showNotification('Listening... Speak your command');
-      
+
       // Use Web Speech API
       const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
       recognition.lang = 'en-US';
       recognition.continuous = false;
-      
+
       recognition.onresult = (event) => {
         const transcript = event.results[0][0].transcript;
         this.processVoiceCommand(transcript);
         stream.getTracks().forEach(track => track.stop());
       };
-      
+
       recognition.onerror = (error) => {
         console.error('Voice recognition error:', error);
         this.showNotification('Voice recognition failed', 'error');
         stream.getTracks().forEach(track => track.stop());
       };
-      
+
       recognition.start();
     } catch (error) {
       console.error('Microphone access denied:', error);
@@ -340,13 +340,13 @@ class XENOPopup {
 
   processVoiceCommand(transcript) {
     console.log('Voice command:', transcript);
-    
+
     // Send to desktop app for processing
     this.sendMessage({
       type: 'voice_command',
       data: { transcript }
     });
-    
+
     this.showNotification(`Processing: "${transcript}"`);
   }
 
@@ -355,14 +355,14 @@ class XENOPopup {
     try {
       const result = await chrome.storage.local.get(['recentActivity']);
       const activities = result.recentActivity || [];
-      
+
       const activityList = document.getElementById('activity-list');
-      
+
       if (activities.length === 0) {
         activityList.innerHTML = '<div style="text-align: center; color: #b5bac1; padding: 20px;">No recent activity</div>';
         return;
       }
-      
+
       activityList.innerHTML = activities.slice(0, 5).map(activity => `
         <div class="activity-item">
           <div class="activity-icon">${this.getActivityIcon(activity.type)}</div>
@@ -383,7 +383,7 @@ class XENOPopup {
     const contextSection = document.getElementById('context-section');
     const contextTitle = document.getElementById('context-title');
     const contextActions = document.getElementById('context-actions');
-    
+
     let actions = [];
     let title = '';
 
@@ -418,7 +418,7 @@ class XENOPopup {
           ${this.escapeHtml(action.text)}
         </button>
       `).join('');
-      
+
       // Add event listeners
       actions.forEach((action, index) => {
         const btn = contextActions.querySelector(`[data-action-index="${index}"]`);

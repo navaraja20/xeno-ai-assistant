@@ -83,7 +83,7 @@ XENO runs minimized in your system tray for quick access!
 📊 Open Dashboard
 ───────────────────
 📧 Check Emails
-💼 Find Jobs  
+💼 Find Jobs
 ⚙️ Update GitHub
 ───────────────────
 ⚙️ Settings
@@ -396,7 +396,7 @@ Replace `assets/XENO.ico` and `assets/XENO.png` with your own designs!
 3. See stats cards and recent activity
 
 ### Changing Settings
-1. Open dashboard  
+1. Open dashboard
 2. Click "⚙️ Settings" in sidebar
 3. View/edit voice and AI configuration
 

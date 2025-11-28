@@ -1,0 +1,39 @@
+{
+  "id": "github_integration",
+  "name": "GitHub Integration",
+  "version": "1.0.0",
+  "author": "XENO Team",
+  "description": "Syncs tasks with GitHub issues and pull requests",
+  "plugin_type": "integration",
+  "entry_point": "plugin.py",
+  "dependencies": [],
+  "permissions": [
+    "tasks.read",
+    "tasks.write",
+    "network.access"
+  ],
+  "config_schema": {
+    "type": "object",
+    "properties": {
+      "api_key": {
+        "type": "string",
+        "description": "GitHub Personal Access Token"
+      },
+      "repository": {
+        "type": "string",
+        "description": "Repository in format: owner/repo"
+      },
+      "sync_interval": {
+        "type": "integer",
+        "default": 300,
+        "description": "Sync interval in seconds"
+      },
+      "auto_sync": {
+        "type": "boolean",
+        "default": true,
+        "description": "Enable automatic syncing"
+      }
+    },
+    "required": ["api_key", "repository"]
+  }
+}

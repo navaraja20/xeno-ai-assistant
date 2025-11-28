@@ -3,31 +3,34 @@ Database models for XENO
 SQLAlchemy ORM models for persistent storage
 """
 from datetime import datetime
-from sqlalchemy import create_engine, Column, Integer, String, Boolean, DateTime, Float, Text, JSON
+from pathlib import Path
+
+from sqlalchemy import JSON, Boolean, Column, DateTime, Float, Integer, String, Text, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from pathlib import Path
 
 Base = declarative_base()
 
 
 class User(Base):
     """User profile"""
-    __tablename__ = 'users'
-    
+
+    __tablename__ = "users"
+
     id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False)
     email = Column(String(255))
-    timezone = Column(String(50), default='UTC')
-    language = Column(String(10), default='en')
+    timezone = Column(String(50), default="UTC")
+    language = Column(String(10), default="en")
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
 class ConversationHistory(Base):
     """Conversation history with AI"""
-    __tablename__ = 'conversation_history'
-    
+
+    __tablename__ = "conversation_history"
+
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, nullable=False)
     role = Column(String(20))  # 'user' or 'assistant'
@@ -38,8 +41,9 @@ class ConversationHistory(Base):
 
 class Job(Base):
     """Job posting"""
-    __tablename__ = 'jobs'
-    
+
+    __tablename__ = "jobs"
+
     id = Column(Integer, primary_key=True)
     title = Column(String(255), nullable=False)
     company = Column(String(255))
@@ -52,20 +56,21 @@ class Job(Base):
     source = Column(String(50))  # 'linkedin', 'indeed', etc.
     relevance_score = Column(Float)  # AI-calculated match score
     scraped_at = Column(DateTime, default=datetime.utcnow)
-    status = Column(String(50), default='new')  # new, reviewed, applied, rejected
+    status = Column(String(50), default="new")  # new, reviewed, applied, rejected
 
 
 class JobApplication(Base):
     """Job application tracking"""
-    __tablename__ = 'job_applications'
-    
+
+    __tablename__ = "job_applications"
+
     id = Column(Integer, primary_key=True)
     job_id = Column(Integer, nullable=False)
     user_id = Column(Integer, nullable=False)
     resume_path = Column(String(500))
     cover_letter_path = Column(String(500))
     applied_at = Column(DateTime, default=datetime.utcnow)
-    status = Column(String(50), default='applied')  # applied, interview, offer, rejected, accepted
+    status = Column(String(50), default="applied")  # applied, interview, offer, rejected, accepted
     follow_up_date = Column(DateTime)
     notes = Column(Text)
     extra_data = Column(JSON)  # Additional tracking data (renamed from metadata)
@@ -73,8 +78,9 @@ class JobApplication(Base):
 
 class Email(Base):
     """Email tracking"""
-    __tablename__ = 'emails'
-    
+
+    __tablename__ = "emails"
+
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, nullable=False)
     message_id = Column(String(255), unique=True)
@@ -94,8 +100,9 @@ class Email(Base):
 
 class GitHubRepository(Base):
     """GitHub repository tracking"""
-    __tablename__ = 'github_repositories'
-    
+
+    __tablename__ = "github_repositories"
+
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, nullable=False)
     repo_name = Column(String(255), nullable=False)
@@ -112,15 +119,16 @@ class GitHubRepository(Base):
 
 class Task(Base):
     """Task and reminder tracking"""
-    __tablename__ = 'tasks'
-    
+
+    __tablename__ = "tasks"
+
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, nullable=False)
     title = Column(String(255), nullable=False)
     description = Column(Text)
     category = Column(String(50))  # email, job, github, linkedin, calendar, custom
-    priority = Column(String(20), default='medium')
-    status = Column(String(50), default='pending')  # pending, in_progress, completed, cancelled
+    priority = Column(String(20), default="medium")
+    status = Column(String(50), default="pending")  # pending, in_progress, completed, cancelled
     due_date = Column(DateTime)
     completed_at = Column(DateTime)
     created_at = Column(DateTime, default=datetime.utcnow)
@@ -129,8 +137,9 @@ class Task(Base):
 
 class Settings(Base):
     """Application settings"""
-    __tablename__ = 'settings'
-    
+
+    __tablename__ = "settings"
+
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, nullable=False)
     key = Column(String(255), nullable=False, unique=True)
@@ -142,19 +151,19 @@ def init_database(db_path: str = None):
     """Initialize database"""
     if db_path is None:
         db_path = str(Path.home() / ".XENO" / "data" / "XENO.db")
-    
+
     # Create directory if not exists
     Path(db_path).parent.mkdir(parents=True, exist_ok=True)
-    
+
     # Create engine
-    engine = create_engine(f'sqlite:///{db_path}')
-    
+    engine = create_engine(f"sqlite:///{db_path}")
+
     # Create all tables
     Base.metadata.create_all(engine)
-    
+
     # Create session factory
     Session = sessionmaker(bind=engine)
-    
+
     return engine, Session
 
 

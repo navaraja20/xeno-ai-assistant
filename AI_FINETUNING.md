@@ -84,7 +84,7 @@ engine.update_preference("expertise_level.python", "advanced")
 
 # Get personalized prompt prefix
 prefix = engine.get_personalized_prompt_prefix()
-# "Respond in a neutral tone with a professional style. 
+# "Respond in a neutral tone with a professional style.
 #  Provide detailed explanations with examples."
 
 # Record interaction for learning

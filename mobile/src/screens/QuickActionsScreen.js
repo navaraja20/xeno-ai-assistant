@@ -71,7 +71,7 @@ const QuickActionsScreen = () => {
               setLoading(true);
               const now = new Date();
               const later = new Date(now.getTime() + 60 * 60 * 1000); // 1 hour later
-              
+
               await XENOAPI.createCalendarEvent({
                 summary: title,
                 start_time: now.toISOString(),

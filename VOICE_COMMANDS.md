@@ -16,7 +16,7 @@
 ### Available Commands
 
 #### Navigation Commands
-- "Open Gmail" / "Show Gmail"  
+- "Open Gmail" / "Show Gmail"
 - "Open GitHub"
 - "Open LinkedIn"
 - "Go to chat"
@@ -198,7 +198,7 @@ Try saying:
 
 ### Gmail UI Components
 - QTabWidget for tabs
-- Custom email item widgets  
+- Custom email item widgets
 - Gmail-style color scheme (#4285F4 blue)
 - Material Design styling
 - Responsive layout

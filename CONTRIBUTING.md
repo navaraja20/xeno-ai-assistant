@@ -115,14 +115,14 @@ pytest tests/benchmarks --benchmark-only
 def example_function(param1: str, param2: int) -> bool:
     """
     Brief description of what the function does.
-    
+
     Args:
         param1: Description of param1
         param2: Description of param2
-    
+
     Returns:
         Description of return value
-    
+
     Raises:
         ValueError: When something goes wrong
     """

@@ -2,8 +2,9 @@
 XENO AI Assistant - Setup Configuration
 """
 
-from setuptools import setup, find_packages
 from pathlib import Path
+
+from setuptools import find_packages, setup
 
 # Read README for long description
 this_directory = Path(__file__).parent

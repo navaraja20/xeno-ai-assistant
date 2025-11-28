@@ -179,15 +179,15 @@ voice = VoiceRecognition(continuous_mode=False)
 
 ## 🎯 Tips for Best Results
 
-✅ **Speak clearly** but naturally  
-✅ **Wait** for XENO to finish speaking before next command  
-✅ **Use natural language** - no need for exact phrases  
-✅ **Chain commands** - do multiple tasks in one session  
-✅ **Say "thanks"** when done to end session cleanly  
+✅ **Speak clearly** but naturally
+✅ **Wait** for XENO to finish speaking before next command
+✅ **Use natural language** - no need for exact phrases
+✅ **Chain commands** - do multiple tasks in one session
+✅ **Say "thanks"** when done to end session cleanly
 
-❌ **Avoid** speaking while XENO is responding  
-❌ **Don't** shout or whisper - normal volume works best  
-❌ **Minimize** background noise for better recognition  
+❌ **Avoid** speaking while XENO is responding
+❌ **Don't** shout or whisper - normal volume works best
+❌ **Minimize** background noise for better recognition
 
 ---
 

@@ -222,12 +222,12 @@ XENO: "It's 2:30 PM."
 
 ## 🔊 Voice Feedback Features
 
-✅ **Spoken responses** for all commands  
-✅ **Female voice** (natural and clear)  
-✅ **Adjustable speed** and volume  
-✅ **Activity logging** on dashboard timeline  
-✅ **Context-aware** AI responses  
-✅ **Multi-step commands** supported  
+✅ **Spoken responses** for all commands
+✅ **Female voice** (natural and clear)
+✅ **Adjustable speed** and volume
+✅ **Activity logging** on dashboard timeline
+✅ **Context-aware** AI responses
+✅ **Multi-step commands** supported
 
 ---
 

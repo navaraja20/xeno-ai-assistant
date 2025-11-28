@@ -10,55 +10,55 @@ jobs:
   test:
     name: Test Suite
     runs-on: windows-latest
-    
+
     strategy:
       matrix:
         python-version: ['3.9', '3.10', '3.11']
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-    
+
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
         cache: 'pip'
-    
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install pytest pytest-cov pytest-asyncio pytest-benchmark flake8 pylint black
-    
+
     - name: Run linters
       run: |
         # Stop the build if there are Python syntax errors or undefined names
         flake8 src --count --select=E9,F63,F7,F82 --show-source --statistics
         # Exit-zero treats all errors as warnings
         flake8 src --count --exit-zero --max-complexity=10 --max-line-length=100 --statistics
-    
+
     - name: Check code quality
       run: |
         pylint src --exit-zero --max-line-length=100 --disable=C0114,C0115,C0116,R0913,R0914
       continue-on-error: true
-    
+
     - name: Run unit tests
       run: |
         pytest tests/unit -v --tb=short --cov=src --cov-report=xml --cov-report=term
-    
+
     - name: Run integration tests
       run: |
         pytest tests/integration -v --tb=short
-    
+
     - name: Run E2E tests
       run: |
         pytest tests/e2e -v --tb=short
-    
+
     - name: Run benchmarks
       run: |
         pytest tests/benchmarks -v --tb=short --benchmark-only
-    
+
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
       with:
@@ -70,31 +70,31 @@ jobs:
   security:
     name: Security Scan
     runs-on: windows-latest
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-    
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.9'
-    
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install safety bandit
-    
+
     - name: Run safety check
       run: |
         safety check --json || exit 0
       continue-on-error: true
-    
+
     - name: Run bandit security scan
       run: |
         bandit -r src -f json -o bandit-report.json || exit 0
       continue-on-error: true
-    
+
     - name: Upload security reports
       uses: actions/upload-artifact@v3
       with:
@@ -107,25 +107,25 @@ jobs:
     name: Build Package
     runs-on: windows-latest
     needs: [test, security]
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-    
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.9'
-    
+
     - name: Install build tools
       run: |
         python -m pip install --upgrade pip
         pip install build wheel setuptools
-    
+
     - name: Build package
       run: |
         python -m build
-    
+
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
@@ -137,20 +137,20 @@ jobs:
     runs-on: ubuntu-latest
     needs: test
     if: github.ref == 'refs/heads/main'
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-    
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.9'
-    
+
     - name: Install MkDocs
       run: |
         pip install mkdocs mkdocs-material
-    
+
     - name: Build documentation
       run: |
         mkdir -p docs
@@ -162,7 +162,7 @@ jobs:
         echo "site_name: XENO AI Assistant" > mkdocs.yml
         echo "theme: material" >> mkdocs.yml
         mkdocs build
-    
+
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:

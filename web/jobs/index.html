@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XENO Job Hunter - Find Your Dream Internship</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-briefcase"></i>
+                    <h1>XENO Job Hunter</h1>
+                </div>
+                <div class="header-stats">
+                    <div class="stat-item">
+                        <i class="fas fa-database"></i>
+                        <span id="total-jobs">0</span> Jobs Found
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        France Only
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Search Section -->
+        <section class="search-section">
+            <div class="search-container">
+                <div class="search-header">
+                    <h2><i class="fas fa-search"></i> Find Your Perfect Opportunity</h2>
+                    <p>Search for Data Science, ML Engineer, and AI internships across France</p>
+                </div>
+
+                <div class="search-form">
+                    <div class="form-group">
+                        <label for="job-role">
+                            <i class="fas fa-user-tie"></i> Job Role / Keywords
+                        </label>
+                        <input 
+                            type="text" 
+                            id="job-role" 
+                            placeholder="e.g., Data Scientist, ML Engineer, Data Analyst"
+                            value="Data Scientist"
+                        >
+                        <div class="quick-filters">
+                            <span class="filter-tag" onclick="setRole('Data Scientist')">Data Scientist</span>
+                            <span class="filter-tag" onclick="setRole('ML Engineer')">ML Engineer</span>
+                            <span class="filter-tag" onclick="setRole('Data Analyst')">Data Analyst</span>
+                            <span class="filter-tag" onclick="setRole('AI Engineer')">AI Engineer</span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="location">
+                                <i class="fas fa-location-dot"></i> Location
+                            </label>
+                            <select id="location">
+                                <option value="France">France (All Cities)</option>
+                                <option value="Paris">Paris</option>
+                                <option value="Lyon">Lyon</option>
+                                <option value="Marseille">Marseille</option>
+                                <option value="Toulouse">Toulouse</option>
+                                <option value="Bordeaux">Bordeaux</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="job-type">
+                                <i class="fas fa-briefcase"></i> Job Type
+                            </label>
+                            <select id="job-type">
+                                <option value="internship">Internship / Stage</option>
+                                <option value="full-time">Full-time</option>
+                                <option value="all">All Types</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="sources-section">
+                        <label><i class="fas fa-globe"></i> Job Sources</label>
+                        <div class="source-chips">
+                            <label class="source-chip">
+                                <input type="checkbox" checked data-source="welcometothejungle">
+                                <span><i class="fas fa-check-circle"></i> Welcome to the Jungle</span>
+                            </label>
+                            <label class="source-chip">
+                                <input type="checkbox" checked data-source="remotive">
+                                <span><i class="fas fa-check-circle"></i> Remotive</span>
+                            </label>
+                            <label class="source-chip">
+                                <input type="checkbox" checked data-source="wellfound">
+                                <span><i class="fas fa-check-circle"></i> Wellfound</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button class="search-btn" onclick="searchJobs()">
+                        <i class="fas fa-search"></i> Search Jobs
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Loading Section -->
+        <div id="loading-section" class="loading-section hidden">
+            <div class="loading-spinner"></div>
+            <p>Searching across France's top job platforms...</p>
+            <div class="loading-sources">
+                <span id="loading-wttj"><i class="fas fa-spinner fa-spin"></i> Welcome to the Jungle</span>
+                <span id="loading-remotive"><i class="fas fa-spinner fa-spin"></i> Remotive</span>
+                <span id="loading-wellfound"><i class="fas fa-spinner fa-spin"></i> Wellfound</span>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <section id="results-section" class="results-section hidden">
+            <div class="results-header">
+                <h2><i class="fas fa-list"></i> Search Results</h2>
+                <div class="results-controls">
+                    <div class="sort-dropdown">
+                        <i class="fas fa-sort"></i>
+                        <select id="sort-by" onchange="sortResults()">
+                            <option value="date">Most Recent</option>
+                            <option value="company">Company A-Z</option>
+                            <option value="location">Location</option>
+                            <option value="source">Source</option>
+                        </select>
+                    </div>
+                    <button class="export-btn" onclick="exportResults()">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                </div>
+            </div>
+
+            <div class="results-stats">
+                <div class="stat-card">
+                    <i class="fas fa-briefcase"></i>
+                    <div>
+                        <span class="stat-value" id="internship-count">0</span>
+                        <span class="stat-label">Internships</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-building"></i>
+                    <div>
+                        <span class="stat-value" id="company-count">0</span>
+                        <span class="stat-label">Companies</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div>
+                        <span class="stat-value" id="location-count">0</span>
+                        <span class="stat-label">Locations</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-globe"></i>
+                    <div>
+                        <span class="stat-value" id="source-count">0</span>
+                        <span class="stat-label">Sources</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="jobs-container" class="jobs-container">
+                <!-- Jobs will be inserted here dynamically -->
+            </div>
+
+            <div id="no-results" class="no-results hidden">
+                <i class="fas fa-search"></i>
+                <h3>No jobs found</h3>
+                <p>Try different keywords or expand your search criteria</p>
+            </div>
+        </section>
+
+        <!-- Job Detail Modal -->
+        <div id="job-modal" class="modal hidden">
+            <div class="modal-content">
+                <span class="close-btn" onclick="closeModal()">&times;</span>
+                <div id="modal-body">
+                    <!-- Job details will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

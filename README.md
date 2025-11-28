@@ -20,35 +20,38 @@
 
 ### 🎯 Core Capabilities
 
-- **🤖 AI Chat** - Powered by FREE Google Gemini or OpenAI GPT
-- **📧 Email Automation** - Read, send, auto-reply, search emails (Gmail/Outlook/Yahoo)
+- **🎤 Voice Commands** - Natural voice control with "Hey XENO" wake word - hands-free operation!
+- **🤖 AI Chat** - Powered by FREE Google Gemini or Ollama (local AI, completely free!)
+- **📧 Email Automation** - Embedded Gmail in-app, read emails by voice, draft & send replies
 - **💼 Job Search** - Search Indeed & LinkedIn, save jobs, track applications
-- **🐙 GitHub Management** - Manage repos, issues, PRs, update READMEs
-- **💼 LinkedIn Automation** - Post updates, send connections, get notifications
+- **🐙 GitHub Management** - Embedded GitHub in-app, manage repos, issues, PRs
+- **💼 LinkedIn Automation** - Embedded job search, post updates, send connections
 - **📅 Calendar Sync** - Google Calendar integration with event management
-- **🎨 Discord-Style UI** - Beautiful dark gaming interface
+- **🎨 Discord-Style UI** - Beautiful dark gaming interface with WebEngine pages
 - **🔐 OAuth Integration** - One-click credential setup with helper buttons
+- **🖥️ System Tray** - Runs in background, minimize to tray for always-on assistance
 
 ### 🚀 Advanced Features
 
-- **🔒 Enterprise Security** - MFA, session management, audit logging, input sanitization
-- **🎤 Continuous Voice Mode** - Say "Hey XENO" once, then give multiple commands naturally (NEW!)
+- **🎙️ Continuous Voice Mode** - Say "Hey XENO" once, then give multiple commands naturally
 - **📧 Smart Email Reading** - Read emails one-by-one with full details, draft & send replies by voice
-- **👥 Team Collaboration** - Team management, shared calendars, task delegation
-- **🏠 Smart Home Integration** - IoT device control, scenes, automation
-- **🎙️ Voice Control** - Advanced voice engine with emotion detection, multi-language support
-- **📊 AI Personalization** - Learns from interactions, adapts to user preferences
-- **📈 Predictive Analytics** - ML-powered insights and recommendations
+- **🌐 Embedded Web Pages** - Gmail, GitHub, and LinkedIn embedded directly in XENO
+- **🧵 Thread-Safe Architecture** - Dedicated TTS worker thread, zero crashes
+- **🔒 Enterprise Security** - MFA, session management, audit logging, input sanitization
+- **🎯 Smart Page Switching** - Voice commands switch to embedded pages instantly
 - **⚡ High Performance** - 99% operations <100ms, optimized for speed
+- **📊 AI Personalization** - Learns from interactions, adapts to user preferences
 
-### 🛡️ Security & Quality
+## 🛡️ Security & Quality
 
-- ✅ **211 Comprehensive Tests** (211 passing, 100% pass rate 🎉)
+- ✅ **Thread-Safe Architecture** - Dedicated TTS worker thread, proper Qt threading, zero crashes
+- ✅ **WebEngine Stability** - Fixed Qt6WebEngineCore.dll crashes with proper thread management
+- ✅ **Voice Recognition** - PyAudio with continuous listening mode, "Hey XENO" wake word
 - ✅ **Enterprise-grade Security** (MFA, encryption, rate limiting, audit logs)
-- ✅ **Performance Validated** (99% ops <100ms, 15 benchmarks passing)
+- ✅ **Performance Validated** (99% ops <100ms, optimized for real-time voice)
 - ✅ **Code Quality** (Pylint score: 9.1/10)
 - ✅ **Zero High-Severity Vulnerabilities**
-- ✅ **100% Test Pass Rate** (All 211 tests passing)
+- ✅ **Stable Operation** - Runs for hours without crashes
 
 ---
 
@@ -97,9 +100,17 @@ python src\jarvis.py
 
 ## 🆓 FREE AI Setup (Recommended)
 
-XENO supports **FREE Google Gemini** - no credit card required!
+XENO supports **FREE Ollama (local AI)** and **FREE Google Gemini** - no credit card required!
 
-### Quick Setup (2 minutes)
+### Option 1: Ollama (100% Free, Runs Locally)
+
+**Recommended for privacy and unlimited usage!**
+
+1. Download Ollama: https://ollama.ai/download
+2. Install and run: `ollama pull llama3.1:8b`
+3. XENO auto-detects Ollama - no API key needed!
+
+### Option 2: Google Gemini (Free Online)
 
 ```powershell
 python setup_free_ai.py
@@ -116,12 +127,9 @@ This automated script will:
 2. Sign in with Google (free)
 3. Click "Create API key"
 4. Copy key (starts with `AIzaSy...`)
-5. Add to `C:\Users\YOUR_USERNAME\.XENO\.env`:
-   ```
-   GEMINI_API_KEY=AIzaSy...your_key_here
-   ```
+5. Add to `.env` file
 
-See [GET_FREE_AI.md](GET_FREE_AI.md) for detailed instructions.
+XENO works with both simultaneously - uses Ollama by default, Gemini as backup!
 
 ---
 
@@ -139,12 +147,15 @@ Navigate between pages using the sidebar:
 
 ### Email Automation
 
-**Interactive Voice Commands:**
+**Voice Commands (Recommended):**
 ```
 You: "Hey XENO"
+XENO: "Yes, I'm listening."
 You: "Open my Gmail"
+XENO: "Opening Gmail." [Switches to embedded Gmail page]
+
 You: "Read my emails"
-XENO: "Email 1 of 5. From John Smith. Subject: Project Update. 
+XENO: "Email 1 of 5. From John Smith. Subject: Project Update.
        Received on November 26 at 9:30 AM. The email says..."
 You: "Next email"
 XENO: "Email 2 of 5. From Sarah..."
@@ -154,17 +165,16 @@ You: "Send reply"
 XENO: "Reply sent successfully."
 ```
 
-**Chat Commands:**
-```python
-# In Chat, ask XENO:
-"Check my emails"
-"Send an email to john@example.com"
-"Show me unread emails"
-```
+**More Voice Commands:**
+- `"Hey XENO, open my GitHub"` - Opens embedded GitHub page
+- `"Hey XENO, open LinkedIn"` - Opens job search page
+- `"Hey XENO, what time is it?"` - Tells you the current time
+- `"Hey XENO, check my repositories"` - Shows GitHub repo count
+- `"Hey XENO, check LinkedIn jobs"` - Opens job search
 
-Or use the Email page to browse emails directly.
+**See [VOICE_COMMANDS.md](VOICE_COMMANDS.md) for complete command list.**
 
-**See [CONTINUOUS_MODE.md](CONTINUOUS_MODE.md) for complete voice command guide.**
+Or use the Email page to browse embedded Gmail directly in XENO.
 
 ### Job Search
 
@@ -350,7 +360,7 @@ XENO is optimized for speed with validated performance:
 
 - **211 Total Tests** (190 passing, 90% coverage)
   - 132 Unit Tests
-  - 5 Integration Tests  
+  - 5 Integration Tests
   - 15 Performance Benchmarks
   - 18 End-to-End Tests (authentication, collaboration, IoT)
 - **Code Quality:** Pylint score 9.1/10
@@ -384,19 +394,32 @@ See [FAQ](docs/FAQ.md) for more help.
 
 ## 🗺️ Roadmap
 
-- [x] Core AI chat functionality
-- [x] Email automation
+### ✅ Completed (v2.0)
+- [x] Core AI chat functionality (Gemini + Ollama)
+- [x] Voice recognition with "Hey XENO" wake word
+- [x] Continuous voice command mode
+- [x] Email automation with voice control
+- [x] Embedded Gmail page (WebEngine)
 - [x] Job search integration
-- [x] GitHub management
+- [x] Embedded GitHub page (WebEngine)
 - [x] LinkedIn automation
 - [x] Google Calendar sync
 - [x] OAuth integration
-- [x] Free AI support (Gemini)
-- [ ] Voice recognition
-- [ ] Optimus Prime voice synthesis
-- [ ] Mobile app companion
-- [ ] Advanced analytics dashboard
+- [x] Free AI support (Gemini + Ollama)
+- [x] Thread-safe architecture
+- [x] System tray background operation
+- [x] Discord-style dark UI
+
+### 🚧 In Progress
+- [ ] Text-to-speech voice responses
 - [ ] Multi-language support
+- [ ] Advanced analytics dashboard
+
+### 📋 Planned
+- [ ] Mobile app companion
+- [ ] Custom voice wake words
+- [ ] Plugin system for extensions
+- [ ] Team collaboration features
 
 ---
 
@@ -417,9 +440,9 @@ This project is licensed under the MIT License - see [LICENSE](LICENSE) file for
 
 ## 💡 Why XENO?
 
-**X** - eXceptional  
-**E** - Executive  
-**N** - Network  
+**X** - eXceptional
+**E** - Executive
+**N** - Network
 **O** - Operator
 
 Your exceptional executive assistant for everything! 🚀

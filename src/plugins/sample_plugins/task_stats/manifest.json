@@ -1,0 +1,28 @@
+{
+  "id": "task_stats",
+  "name": "Task Statistics",
+  "version": "1.0.0",
+  "author": "XENO Team",
+  "description": "Analyzes task completion patterns and provides insights",
+  "plugin_type": "analytics",
+  "entry_point": "plugin.py",
+  "dependencies": [],
+  "permissions": [
+    "tasks.read",
+    "analytics.track"
+  ],
+  "config_schema": {
+    "type": "object",
+    "properties": {
+      "enabled": {
+        "type": "boolean",
+        "default": true
+      },
+      "include_archived": {
+        "type": "boolean",
+        "default": false
+      }
+    },
+    "required": []
+  }
+}

@@ -248,29 +248,29 @@ async def main():
     # Initialize engine
     engine = AdvancedVoiceEngine()
     await engine.initialize()
-    
+
     # Listen to microphone
     recognizer = sr.Recognizer()
     microphone = sr.Microphone()
-    
+
     with microphone as source:
         print("Say something...")
         audio = recognizer.listen(source)
-    
+
     # Process audio
     result = await engine.process_audio(audio)
-    
+
     if result['success']:
         print(f"Text: {result['text']}")
         print(f"Language: {result['language']}")
         print(f"Emotion: {result['emotion']}")
         print(f"User: {result['user_id']}")
         print(f"Confidence: {result['confidence']:.2%}")
-        
+
         # Respond
         response_text = "I heard you!"
         await engine.respond(response_text, result['user_id'], result['emotion'])
-    
+
     await engine.shutdown()
 
 asyncio.run(main())
@@ -343,10 +343,10 @@ print(f"Enrolled with confidence threshold: {profile.confidence_threshold}")
 ```python
 async def respond_with_emotion(text: str, user_emotion):
     """Respond with matching emotion"""
-    
+
     # Match user's emotion
     response_emotion = user_emotion
-    
+
     # Or adapt based on context
     if user_emotion == Emotion.SAD:
         response_emotion = Emotion.CALM  # Be calming
@@ -354,7 +354,7 @@ async def respond_with_emotion(text: str, user_emotion):
         response_emotion = Emotion.CALM  # De-escalate
     elif user_emotion == Emotion.EXCITED:
         response_emotion = Emotion.HAPPY  # Match excitement
-    
+
     await engine.respond(text, user_id="user123", emotion=response_emotion)
 ```
 
@@ -363,35 +363,35 @@ async def respond_with_emotion(text: str, user_emotion):
 ```python
 async def conversation_loop():
     """Natural conversation with context"""
-    
+
     user_id = "john_doe"
-    
+
     while True:
         # Listen
         with sr.Microphone() as source:
             audio = recognizer.listen(source)
-        
+
         # Process
         result = await engine.process_audio(audio)
-        
+
         if not result['success']:
             continue
-        
+
         # Get conversation context
         context = engine.conversation_manager.get_context(user_id)
-        
+
         # Check for topic change
         if result.get('topic_changed'):
             print("New topic detected!")
-        
+
         # Use entities from context
         entities = result.get('entities', {})
         print(f"Entities: {entities}")
-        
+
         # Generate contextual response
         # (integrate with your LLM here)
         response = f"I understand. You mentioned {entities}"
-        
+
         # Respond with emotion
         await engine.respond(
             response,
@@ -413,23 +413,23 @@ class XENOApp:
     def __init__(self):
         self.voice_engine = AdvancedVoiceEngine()
         self.command_executor = VoiceCommandExecutor(self)
-        
+
     async def initialize_voice(self):
         await self.voice_engine.initialize()
-        
+
     async def process_voice_command(self, audio):
         # Process audio
         result = await self.voice_engine.process_audio(audio)
-        
+
         if result['success']:
             # Parse command
             from src.voice.voice_command_processor import NaturalLanguageProcessor
             nlp = NaturalLanguageProcessor()
             command = nlp.parse_command(result['text'])
-            
+
             # Execute
             exec_result = await self.command_executor.execute(command)
-            
+
             # Respond
             await self.voice_engine.respond(
                 exec_result['message'],

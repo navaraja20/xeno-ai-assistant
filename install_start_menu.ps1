@@ -42,7 +42,7 @@ $Shortcut2.IconLocation = $IconPath
 $Shortcut2.Save()
 Write-Host "[OK] Created: XENO Settings.lnk" -ForegroundColor Green
 
-# Create Documentation shortcut  
+# Create Documentation shortcut
 $DocsPath = Join-Path $PSScriptRoot "SETUP_GUIDE.md"
 $DocsShortcut = Join-Path $XENOFolder "Documentation.lnk"
 $Shortcut3 = $WScriptShell.CreateShortcut($DocsShortcut)

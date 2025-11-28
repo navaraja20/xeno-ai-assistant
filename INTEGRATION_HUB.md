@@ -267,28 +267,28 @@ class CustomIntegration(IntegrationBase):
     @property
     def service_name(self) -> str:
         return 'my_service'
-    
+
     @property
     def supported_triggers(self) -> List[str]:
         return ['event_happened']
-    
+
     @property
     def supported_actions(self) -> List[str]:
         return ['do_something', 'do_other']
-    
+
     async def authenticate(self) -> bool:
         # Implement authentication
         return True
-    
+
     async def test_connection(self) -> bool:
         # Test if service is reachable
         return True
-    
+
     async def execute_action(self, action: str, parameters: Dict[str, Any]) -> Dict[str, Any]:
         if action == 'do_something':
             return await self.do_something(**parameters)
         raise ValueError(f"Unknown action: {action}")
-    
+
     async def do_something(self, param1: str) -> Dict[str, Any]:
         # Implement action
         return {'success': True}

@@ -3,7 +3,8 @@ AI Chat Module - Supports FREE Google Gemini and OpenAI
 """
 import os
 from pathlib import Path
-from typing import Optional, List, Dict
+from typing import Dict, List, Optional
+
 from dotenv import load_dotenv
 
 # Load environment variables (override to get latest values)
@@ -12,43 +13,45 @@ load_dotenv(override=True)
 
 class AIChat:
     """AI chat interface supporting multiple providers (Gemini is FREE!)"""
-    
+
     def __init__(self, config=None):
         """Initialize AI chat - tries Gemini first (free), then OpenAI"""
         self.config = config
         self.conversation_history = []
         self.provider = None
         self.client = None
-        
+
         # Try Google Gemini first (completely free!)
-        gemini_key = os.getenv('GEMINI_API_KEY') or os.getenv('GOOGLE_API_KEY')
+        gemini_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
         if gemini_key:
             try:
                 import google.generativeai as genai
+
                 genai.configure(api_key=gemini_key)
                 # Use Gemini 2.5 Flash - fastest and free!
-                self.client = genai.GenerativeModel('gemini-2.5-flash')
-                self.provider = 'gemini'
+                self.client = genai.GenerativeModel("gemini-2.5-flash")
+                self.provider = "gemini"
                 print("✅ Using FREE Google Gemini 2.5 Flash")
                 return
             except Exception as e:
                 print(f"Could not initialize Gemini: {e}")
-        
+
         # Fallback to OpenAI if available
-        openai_key = os.getenv('OPENAI_API_KEY')
+        openai_key = os.getenv("OPENAI_API_KEY")
         if openai_key:
             try:
                 import openai
+
                 self.client = openai.OpenAI(api_key=openai_key)
-                self.provider = 'openai'
+                self.provider = "openai"
                 print("✅ Using OpenAI GPT")
                 return
             except Exception as e:
                 print(f"Could not initialize OpenAI: {e}")
-        
+
         print("❌ No AI provider configured")
         print("💡 Get FREE Gemini API key: https://makersuite.google.com/app/apikey")
-    
+
     def send_message(self, message: str) -> str:
         """
         Send a message and get AI response.
@@ -56,20 +59,20 @@ class AIChat:
         """
         if not self.client:
             return "❌ AI not configured. Get a FREE Gemini API key: https://makersuite.google.com/app/apikey"
-        
+
         try:
-            if self.provider == 'gemini':
+            if self.provider == "gemini":
                 return self._send_gemini(message)
-            elif self.provider == 'openai':
+            elif self.provider == "openai":
                 return self._send_openai(message)
             else:
                 return "❌ No AI provider available"
-                
+
         except Exception as e:
             error_msg = str(e)
-            
+
             # Handle quota errors with helpful message
-            if 'quota' in error_msg.lower() or '429' in error_msg:
+            if "quota" in error_msg.lower() or "429" in error_msg:
                 return (
                     "❌ API quota exceeded.\n\n"
                     "FREE Alternative:\n"
@@ -79,18 +82,20 @@ class AIChat:
                     "3. Restart XENO\n\n"
                     "Gemini is free forever with generous limits!"
                 )
-            
+
             return f"❌ Error: {error_msg}"
-    
+
     def _send_gemini(self, message: str) -> str:
         """Send message using FREE Google Gemini"""
         try:
             # Build context from conversation history
             if self.conversation_history:
-                context = "\n".join([
-                    f"{'User' if msg['role'] == 'user' else 'Assistant'}: {msg['content']}"
-                    for msg in self.conversation_history[-10:]  # Last 10 messages
-                ])
+                context = "\n".join(
+                    [
+                        f"{'User' if msg['role'] == 'user' else 'Assistant'}: {msg['content']}"
+                        for msg in self.conversation_history[-10:]  # Last 10 messages
+                    ]
+                )
                 full_message = f"{context}\nUser: {message}\nAssistant:"
             else:
                 # Add JARVIS personality
@@ -101,30 +106,24 @@ class AIChat:
                     "Provide concise, actionable responses."
                 )
                 full_message = f"{system_prompt}\n\nUser: {message}\nAssistant:"
-            
+
             # Generate response
             response = self.client.generate_content(full_message)
             ai_response = response.text
-            
+
             # Save to history
-            self.conversation_history.append({
-                'role': 'user',
-                'content': message
-            })
-            self.conversation_history.append({
-                'role': 'assistant',
-                'content': ai_response
-            })
-            
+            self.conversation_history.append({"role": "user", "content": message})
+            self.conversation_history.append({"role": "assistant", "content": ai_response})
+
             # Keep only last 20 messages
             if len(self.conversation_history) > 20:
                 self.conversation_history = self.conversation_history[-20:]
-            
+
             return ai_response
-            
+
         except Exception as e:
             return f"❌ Gemini error: {str(e)}"
-    
+
     def _send_openai(self, message: str) -> str:
         """Send message using OpenAI GPT"""
         try:
@@ -137,48 +136,36 @@ class AIChat:
                         "You are helpful, proactive, intelligent, and slightly witty. "
                         "Address the user as 'Sir' or 'Master'. "
                         "Provide concise, actionable responses."
-                    )
+                    ),
                 }
             ]
-            
+
             # Add conversation history
             messages.extend(self.conversation_history[-10:])  # Last 10 messages
-            
+
             # Add current message
-            messages.append({
-                "role": "user",
-                "content": message
-            })
-            
+            messages.append({"role": "user", "content": message})
+
             # Call OpenAI API
             response = self.client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=messages,
-                max_tokens=500,
-                temperature=0.7
+                model="gpt-4o-mini", messages=messages, max_tokens=500, temperature=0.7
             )
-            
+
             ai_response = response.choices[0].message.content
-            
+
             # Save to history
-            self.conversation_history.append({
-                'role': 'user',
-                'content': message
-            })
-            self.conversation_history.append({
-                'role': 'assistant',
-                'content': ai_response
-            })
-            
+            self.conversation_history.append({"role": "user", "content": message})
+            self.conversation_history.append({"role": "assistant", "content": ai_response})
+
             # Keep only last 20 messages
             if len(self.conversation_history) > 20:
                 self.conversation_history = self.conversation_history[-20:]
-            
+
             return ai_response
-            
+
         except Exception as e:
             error_msg = str(e)
-            if 'quota' in error_msg.lower() or '429' in error_msg:
+            if "quota" in error_msg.lower() or "429" in error_msg:
                 return (
                     "❌ OpenAI quota exceeded.\n\n"
                     "Switch to FREE Gemini:\n"
@@ -187,11 +174,11 @@ class AIChat:
                     "3. Restart XENO"
                 )
             return f"❌ OpenAI error: {error_msg}"
-    
+
     def clear_history(self):
         """Clear conversation history"""
         self.conversation_history = []
-    
+
     def is_available(self) -> bool:
         """Check if AI is available and configured"""
         return self.client is not None and self.provider is not None

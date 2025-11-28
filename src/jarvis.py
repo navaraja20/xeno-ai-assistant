@@ -2,10 +2,10 @@
 XENO - Personal AI Assistant
 Main entry point for the application
 """
-import sys
-import os
-import warnings
 import argparse
+import os
+import sys
+import warnings
 from pathlib import Path
 
 # Suppress non-critical warnings for cleaner startup
@@ -15,11 +15,11 @@ warnings.filterwarnings("ignore", message=".*packages_distributions.*")
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from core.daemon import XENODaemon
 from core.config import Config
+from core.daemon import XENODaemon
 from core.logger import setup_logger
 from ui.setup_wizard import SetupWizard
-from utils.system import is_first_run, create_directories
+from utils.system import create_directories, is_first_run
 
 
 def main():
@@ -29,28 +29,29 @@ def main():
     parser.add_argument("--no-ui", action="store_true", help="Run without UI (daemon only)")
     parser.add_argument("--debug", action="store_true", help="Enable debug logging")
     parser.add_argument("--config", type=str, help="Path to config file")
-    
+
     args = parser.parse_args()
-    
+
     # Setup directories
     create_directories()
-    
+
     # Setup logging
     logger = setup_logger(debug=args.debug)
     logger.info("Starting XENO...")
-    
+
     # Load configuration
     config = Config(config_path=args.config)
-    
+
     # Check if first run or setup requested
     if is_first_run() or args.setup:
         logger.info("First run detected or setup requested")
         if not args.no_ui:
             # Run setup wizard
             from PyQt6.QtWidgets import QApplication
+
             app = QApplication(sys.argv)
             wizard = SetupWizard()
-            
+
             if wizard.exec():
                 logger.info("Setup completed successfully")
                 # Save config from wizard
@@ -61,7 +62,7 @@ def main():
         else:
             logger.error("Cannot run setup in no-ui mode")
             return 1
-    
+
     # Start the daemon
     try:
         daemon = XENODaemon(config=config, ui_enabled=not args.no_ui)

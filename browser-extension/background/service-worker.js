@@ -7,22 +7,22 @@ class XENOServiceWorker {
     this.serverUrl = 'ws://localhost:8765';
     this.recentActivity = [];
     this.maxActivityItems = 20;
-    
+
     this.init();
   }
 
   init() {
     console.log('XENO Service Worker initialized');
-    
+
     // Load settings
     this.loadSettings();
-    
+
     // Setup listeners
     this.setupListeners();
-    
+
     // Connect to desktop app
     this.connectWebSocket();
-    
+
     // Load saved activity
     this.loadActivity();
   }
@@ -111,7 +111,7 @@ class XENOServiceWorker {
 
   handleCommand(command) {
     console.log('Command:', command);
-    
+
     switch (command) {
       case 'quick-email':
         this.openPopupAction('email');
@@ -127,7 +127,7 @@ class XENOServiceWorker {
 
   async handleContextMenuClick(info, tab) {
     const selection = info.selectionText || '';
-    
+
     switch (info.menuItemId) {
       case 'quick-email':
         // Open popup with pre-filled email
@@ -139,7 +139,7 @@ class XENOServiceWorker {
         });
         chrome.action.openPopup();
         break;
-        
+
       case 'quick-calendar':
         // Open popup with pre-filled calendar
         await chrome.storage.local.set({
@@ -150,7 +150,7 @@ class XENOServiceWorker {
         });
         chrome.action.openPopup();
         break;
-        
+
       case 'quick-task':
         // Open popup with pre-filled task
         await chrome.storage.local.set({
@@ -161,7 +161,7 @@ class XENOServiceWorker {
         });
         chrome.action.openPopup();
         break;
-        
+
       case 'save-to-XENO':
         this.saveToXENO({
           url: info.linkUrl || info.pageUrl || tab.url,
@@ -192,7 +192,7 @@ class XENOServiceWorker {
     ];
 
     const isSupportedSite = supportedSites.some(site => tab.url.includes(site));
-    
+
     if (isSupportedSite) {
       // Update badge to show XENO is active on this page
       chrome.action.setBadgeText({ text: '✓', tabId });
@@ -257,7 +257,7 @@ class XENOServiceWorker {
       this.ws.onopen = () => {
         console.log('Connected to XENO desktop');
         this.connected = true;
-        
+
         // Send handshake
         this.sendMessage({
           type: 'handshake',
@@ -279,10 +279,10 @@ class XENOServiceWorker {
       this.ws.onclose = () => {
         console.log('Disconnected from XENO desktop');
         this.connected = false;
-        
+
         // Update icon to show disconnected state
         // (Could use greyscale version)
-        
+
         // Attempt to reconnect after 5 seconds
         setTimeout(() => this.connectWebSocket(), 5000);
       };
@@ -301,7 +301,7 @@ class XENOServiceWorker {
       };
     } catch (error) {
       console.error('Failed to connect WebSocket:', error);
-      
+
       // Retry connection after 5 seconds
       setTimeout(() => this.connectWebSocket(), 5000);
     }
@@ -450,7 +450,7 @@ class XENOServiceWorker {
       case 'open_tab':
         chrome.tabs.create({ url: data.url });
         break;
-        
+
       case 'focus_tab':
         chrome.tabs.query({ url: data.url }, (tabs) => {
           if (tabs.length > 0) {
@@ -459,7 +459,7 @@ class XENOServiceWorker {
           }
         });
         break;
-        
+
       case 'close_tab':
         chrome.tabs.query({ url: data.url }, (tabs) => {
           if (tabs.length > 0) {
@@ -472,12 +472,12 @@ class XENOServiceWorker {
 
   addActivity(activity) {
     this.recentActivity.unshift(activity);
-    
+
     // Keep only last N items
     if (this.recentActivity.length > this.maxActivityItems) {
       this.recentActivity = this.recentActivity.slice(0, this.maxActivityItems);
     }
-    
+
     this.saveActivity();
   }
 

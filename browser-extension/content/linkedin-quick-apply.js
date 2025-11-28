@@ -10,7 +10,7 @@
 
     init() {
       console.log('XENO LinkedIn integration loaded');
-      
+
       // Listen for messages from popup/background
       chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         this.handleMessage(message, sender, sendResponse);
@@ -70,10 +70,10 @@
     addQuickApplyButtons() {
       // Find all job cards that don't have XENO button yet
       const jobCards = document.querySelectorAll('.job-card-container:not([data-XENO-enhanced])');
-      
+
       jobCards.forEach(card => {
         card.setAttribute('data-XENO-enhanced', 'true');
-        
+
         // Create XENO quick apply button
         const XENOBtn = document.createElement('button');
         XENOBtn.className = 'XENO-quick-apply-btn';
@@ -89,13 +89,13 @@
           cursor: pointer;
           margin: 4px 0;
         `;
-        
+
         XENOBtn.addEventListener('click', (e) => {
           e.preventDefault();
           e.stopPropagation();
           this.quickApplyFromCard(card);
         });
-        
+
         // Insert button
         const actionArea = card.querySelector('.job-card-container__action');
         if (actionArea) {
@@ -110,19 +110,19 @@
         const jobTitle = card.querySelector('.job-card-list__title')?.textContent?.trim();
         const company = card.querySelector('.job-card-container__company-name')?.textContent?.trim();
         const location = card.querySelector('.job-card-container__metadata-item')?.textContent?.trim();
-        
+
         // Click the job to open details panel
         const titleLink = card.querySelector('.job-card-list__title');
         if (titleLink) {
           titleLink.click();
         }
-        
+
         // Wait for details panel to load
         await this.sleep(1000);
-        
+
         // Start quick apply process
         await this.quickApply();
-        
+
       } catch (error) {
         console.error('Quick apply from card failed:', error);
         this.showXENONotification('Failed to quick apply', 'error');
@@ -134,22 +134,22 @@
         // Find Easy Apply button
         const easyApplyBtn = document.querySelector('button[aria-label*="Easy Apply"]') ||
                             document.querySelector('button.jobs-apply-button');
-        
+
         if (!easyApplyBtn) {
           throw new Error('Easy Apply button not found. Is this an Easy Apply job?');
         }
 
         // Get job details before applying
         const jobDetails = await this.getJobDetails();
-        
+
         // Click Easy Apply
         easyApplyBtn.click();
-        
+
         await this.sleep(500);
-        
+
         // Auto-fill application form
         await this.autoFillApplication();
-        
+
         // Send job details to XENO for tracking
         chrome.runtime.sendMessage({
           type: 'create_task',
@@ -159,11 +159,11 @@
             priority: 'medium'
           }
         });
-        
+
         this.showXENONotification('Quick Apply started! Check the form before submitting.');
-        
+
         return jobDetails;
-        
+
       } catch (error) {
         console.error('Quick apply failed:', error);
         throw error;
@@ -173,13 +173,13 @@
     async autoFillApplication() {
       // Wait for modal to appear
       await this.sleep(500);
-      
+
       const modal = document.querySelector('.jobs-easy-apply-modal');
       if (!modal) return;
 
       // Get stored user data from XENO
       const userData = await this.getUserData();
-      
+
       // Auto-fill common fields
       const fields = {
         'First name': userData.firstName,
@@ -191,12 +191,12 @@
 
       for (const [label, value] of Object.entries(fields)) {
         if (!value) continue;
-        
+
         const input = Array.from(modal.querySelectorAll('input')).find(inp => {
           const labelText = inp.parentElement?.querySelector('label')?.textContent;
           return labelText?.toLowerCase().includes(label.toLowerCase());
         });
-        
+
         if (input && !input.value) {
           input.value = value;
           input.dispatchEvent(new Event('input', { bubbles: true }));
@@ -276,17 +276,17 @@
         if (experienceSection) {
           const experiences = [];
           const expItems = experienceSection.parentElement.querySelectorAll('.pvs-list__paged-list-item');
-          
+
           expItems.forEach(item => {
             const title = item.querySelector('.mr1.hoverable-link-text')?.textContent?.trim();
             const company = item.querySelector('.t-14.t-normal span[aria-hidden="true"]')?.textContent?.trim();
             const duration = item.querySelector('.t-14.t-normal.t-black--light span[aria-hidden="true"]')?.textContent?.trim();
-            
+
             if (title) {
               experiences.push({ title, company, duration });
             }
           });
-          
+
           profile.experience = experiences;
         }
 
@@ -300,27 +300,27 @@
     async sendConnectionRequest() {
       try {
         // Find Connect button
-        const connectBtn = Array.from(document.querySelectorAll('button')).find(btn => 
+        const connectBtn = Array.from(document.querySelectorAll('button')).find(btn =>
           btn.textContent.trim().toLowerCase() === 'connect'
         );
-        
+
         if (!connectBtn) {
           throw new Error('Connect button not found');
         }
 
         connectBtn.click();
-        
+
         await this.sleep(500);
-        
+
         // Look for "Add a note" option and click it
         const addNoteBtn = Array.from(document.querySelectorAll('button')).find(btn =>
           btn.textContent.toLowerCase().includes('add a note')
         );
-        
+
         if (addNoteBtn) {
           addNoteBtn.click();
           await this.sleep(300);
-          
+
           // Get personalized note from XENO
           const note = await this.getConnectionNote();
           const textarea = document.querySelector('textarea[name="message"]');
@@ -329,9 +329,9 @@
             textarea.dispatchEvent(new Event('input', { bubbles: true }));
           }
         }
-        
+
         this.showXENONotification('Connection request ready. Review and send!');
-        
+
       } catch (error) {
         console.error('Failed to send connection request:', error);
         throw error;
@@ -346,7 +346,7 @@
     highlightElement(element) {
       element.style.border = '2px solid #5865F2';
       element.style.animation = 'XENO-pulse 1s infinite';
-      
+
       // Add CSS animation if not exists
       if (!document.getElementById('XENO-animations')) {
         const style = document.createElement('style');
@@ -380,9 +380,9 @@
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         animation: XENO-slide-in 0.3s ease-out;
       `;
-      
+
       document.body.appendChild(toast);
-      
+
       setTimeout(() => {
         toast.style.animation = 'XENO-slide-out 0.3s ease-in';
         setTimeout(() => toast.remove(), 300);

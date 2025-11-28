@@ -10,7 +10,7 @@
 
     init() {
       console.log('XENO Gmail integration loaded');
-      
+
       // Listen for messages from popup/background
       chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         this.handleMessage(message, sender, sendResponse);
@@ -19,7 +19,7 @@
 
       // Add XENO quick actions to Gmail
       this.enhanceGmail();
-      
+
       // Observe for Gmail updates (Gmail uses dynamic content)
       this.observeGmailChanges();
     }
@@ -64,10 +64,10 @@
     enhanceGmail() {
       // Add XENO button to compose toolbar
       this.addComposeEnhancements();
-      
+
       // Add XENO actions to email threads
       this.addThreadEnhancements();
-      
+
       // Add priority indicators
       this.addPriorityIndicators();
     }
@@ -75,14 +75,14 @@
     addComposeEnhancements() {
       // Find compose windows
       const composeWindows = document.querySelectorAll('[role="dialog"]:not([data-XENO-enhanced])');
-      
+
       composeWindows.forEach(window => {
         window.setAttribute('data-XENO-enhanced', 'true');
-        
+
         // Find toolbar
         const toolbar = window.querySelector('[role="toolbar"]');
         if (!toolbar) return;
-        
+
         // Create XENO AI assist button
         const XENOBtn = document.createElement('div');
         XENOBtn.className = 'XENO-compose-btn';
@@ -103,11 +103,11 @@
             ⚡ XENO AI
           </div>
         `;
-        
+
         XENOBtn.addEventListener('click', () => {
           this.showAIAssist(window);
         });
-        
+
         toolbar.appendChild(XENOBtn);
       });
     }
@@ -115,29 +115,29 @@
     addThreadEnhancements() {
       // Find email threads
       const threads = document.querySelectorAll('[data-message-id]:not([data-XENO-enhanced])');
-      
+
       threads.forEach(thread => {
         thread.setAttribute('data-XENO-enhanced', 'true');
-        
+
         // Create XENO action buttons
         const actionBar = thread.querySelector('[role="toolbar"]');
         if (!actionBar) return;
-        
+
         // Add quick reply button
         const quickReplyBtn = this.createThreadActionButton('⚡ Quick Reply', () => {
           this.initiateQuickReply(thread);
         });
-        
+
         // Add create task button
         const taskBtn = this.createThreadActionButton('✅ Task', () => {
           this.createTaskFromEmail(thread);
         });
-        
+
         // Add schedule button
         const scheduleBtn = this.createThreadActionButton('📅 Schedule', () => {
           this.scheduleEventFromEmail(thread);
         });
-        
+
         actionBar.appendChild(quickReplyBtn);
         actionBar.appendChild(taskBtn);
         actionBar.appendChild(scheduleBtn);
@@ -160,36 +160,36 @@
         transition: background 0.2s;
       `;
       btn.textContent = text;
-      
+
       btn.addEventListener('mouseenter', () => {
         btn.style.background = '#e8eaed';
       });
-      
+
       btn.addEventListener('mouseleave', () => {
         btn.style.background = '#f1f3f4';
       });
-      
+
       btn.addEventListener('click', onClick);
-      
+
       return btn;
     }
 
     addPriorityIndicators() {
       // Add ML-based priority indicators to emails
       const emailRows = document.querySelectorAll('[role="row"]:not([data-XENO-priority])');
-      
+
       emailRows.forEach(async row => {
         row.setAttribute('data-XENO-priority', 'checking');
-        
+
         // Extract email info
         const subject = row.querySelector('[data-thread-perm-id]')?.textContent;
         const sender = row.querySelector('[email]')?.getAttribute('email');
-        
+
         if (!subject || !sender) return;
-        
+
         // Get priority from XENO ML model
         const priority = await this.getPriorityPrediction(subject, sender);
-        
+
         if (priority === 'high') {
           // Add visual indicator
           const indicator = document.createElement('span');
@@ -201,7 +201,7 @@
             border-radius: 50%;
             margin-right: 6px;
           `;
-          
+
           const subjectCell = row.querySelector('[data-thread-perm-id]');
           if (subjectCell) {
             subjectCell.prepend(indicator);
@@ -237,7 +237,7 @@
         z-index: 10000;
         min-width: 300px;
       `;
-      
+
       panel.innerHTML = `
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
           <strong style="color: #5865F2; font-size: 14px;">⚡ XENO AI Assistant</strong>
@@ -251,7 +251,7 @@
           <button class="XENO-ai-action" data-action="grammar">Fix grammar</button>
         </div>
       `;
-      
+
       // Add styles
       panel.querySelectorAll('.XENO-ai-action').forEach(btn => {
         btn.style.cssText = `
@@ -263,20 +263,20 @@
           font-size: 13px;
           text-align: left;
         `;
-        
+
         btn.addEventListener('mouseenter', () => btn.style.background = '#e8eaed');
         btn.addEventListener('mouseleave', () => btn.style.background = '#f1f3f4');
-        
+
         btn.addEventListener('click', () => {
           this.applyAIAction(composeWindow, btn.dataset.action);
           panel.remove();
         });
       });
-      
+
       panel.querySelector('#XENO-ai-close').addEventListener('click', () => {
         panel.remove();
       });
-      
+
       composeWindow.appendChild(panel);
     }
 
@@ -284,12 +284,12 @@
       // Get current email body
       const bodyElement = composeWindow.querySelector('[contenteditable="true"][aria-label*="Message"]');
       if (!bodyElement) return;
-      
+
       const currentBody = bodyElement.textContent;
-      
+
       // Show loading indicator
       this.showNotification('XENO AI is processing...', 'info');
-      
+
       // Send to XENO for AI processing
       chrome.runtime.sendMessage({
         type: 'ai_rewrite_email',
@@ -313,7 +313,7 @@
         // Get current email address if composing to someone
         const toField = document.querySelector('input[name="to"]');
         const email = toField?.value || '';
-        
+
         return { email };
       } catch (error) {
         console.error('Failed to get email context:', error);
@@ -328,7 +328,7 @@
         const bodyElement = document.querySelector('[data-message-id] .a3s.aiL');
         const body = bodyElement?.textContent?.trim();
         const sender = document.querySelector('[email]')?.getAttribute('email');
-        
+
         return { subject, body, sender };
       } catch (error) {
         console.error('Failed to get selected email:', error);
@@ -341,9 +341,9 @@
       const replyBtn = thread.querySelector('[role="button"][aria-label*="Reply"]');
       if (replyBtn) {
         replyBtn.click();
-        
+
         await this.sleep(500);
-        
+
         // Show XENO quick templates
         this.showQuickReplyTemplates();
       }
@@ -356,7 +356,7 @@
         'Meeting': 'Thank you for the invitation. I would be happy to meet. What time works best for you?',
         'Follow-up': 'Following up on my previous email. Please let me know if you need any additional information.'
       };
-      
+
       // Create template picker
       const picker = document.createElement('div');
       picker.style.cssText = `
@@ -370,7 +370,7 @@
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         z-index: 10000;
       `;
-      
+
       picker.innerHTML = `
         <div style="font-weight: 600; margin-bottom: 8px; color: #5865F2;">Quick Reply Templates</div>
         ${Object.entries(templates).map(([name, text]) => `
@@ -383,11 +383,11 @@
           ">${name}</div>
         `).join('')}
       `;
-      
+
       picker.querySelectorAll('.XENO-template').forEach(item => {
         item.addEventListener('mouseenter', () => item.style.background = '#f1f3f4');
         item.addEventListener('mouseleave', () => item.style.background = 'white');
-        
+
         item.addEventListener('click', () => {
           const replyBox = document.querySelector('[aria-label*="Reply"] [contenteditable="true"]');
           if (replyBox) {
@@ -397,9 +397,9 @@
           picker.remove();
         });
       });
-      
+
       document.body.appendChild(picker);
-      
+
       setTimeout(() => picker.remove(), 10000);
     }
 
@@ -407,9 +407,9 @@
       try {
         const subject = thread.querySelector('[data-thread-perm-id]')?.textContent?.trim();
         const sender = thread.querySelector('[email]')?.getAttribute('email');
-        
+
         if (!subject) return;
-        
+
         chrome.runtime.sendMessage({
           type: 'create_task',
           data: {
@@ -418,7 +418,7 @@
             priority: 'medium'
           }
         });
-        
+
         this.showNotification('Task created from email', 'success');
       } catch (error) {
         this.showNotification('Failed to create task', 'error');
@@ -428,16 +428,16 @@
     async scheduleEventFromEmail(thread) {
       try {
         const subject = thread.querySelector('[data-thread-perm-id]')?.textContent?.trim();
-        
+
         if (!subject) return;
-        
+
         // Open calendar modal in popup
         chrome.runtime.sendMessage({
           type: 'trigger_action',
           action: 'calendar',
           prefill: { title: subject }
         });
-        
+
         this.showNotification('Opening calendar...', 'info');
       } catch (error) {
         this.showNotification('Failed to schedule event', 'error');
@@ -466,9 +466,9 @@
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
       `;
       toast.textContent = message;
-      
+
       document.body.appendChild(toast);
-      
+
       setTimeout(() => toast.remove(), 3000);
     }
 

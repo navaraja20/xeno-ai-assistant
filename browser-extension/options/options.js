@@ -33,13 +33,13 @@ class OptionsPage {
   async init() {
     // Load saved settings
     await this.loadSettings();
-    
+
     // Setup event listeners
     this.setupEventListeners();
-    
+
     // Test connection on load
     this.testConnection();
-    
+
     // Load statistics
     this.loadStatistics();
   }
@@ -53,7 +53,7 @@ class OptionsPage {
       ]);
 
       // Server URL
-      document.getElementById('server-url').value = 
+      document.getElementById('server-url').value =
         result.serverUrl || this.defaultSettings.serverUrl;
 
       // User Data
@@ -169,7 +169,7 @@ class OptionsPage {
     try {
       // Reset to defaults
       await chrome.storage.sync.set(this.defaultSettings);
-      
+
       // Reload page to show defaults
       location.reload();
 
@@ -237,7 +237,7 @@ class OptionsPage {
 
   updateConnectionStatus(connected, message) {
     const statusIndicator = document.getElementById('connection-status');
-    
+
     if (connected) {
       statusIndicator.className = 'status-indicator connected';
       statusIndicator.innerHTML = `

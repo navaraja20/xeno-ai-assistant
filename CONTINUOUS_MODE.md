@@ -222,7 +222,7 @@ self.session_timeout = 30     # Seconds of silence before pause
 
 ```python
 self.exit_words = [
-    "sleep", "go to sleep", "stop listening", 
+    "sleep", "go to sleep", "stop listening",
     "pause", "that's all", "thanks", "thank you"
 ]
 ```
@@ -230,24 +230,24 @@ self.exit_words = [
 ## Benefits
 
 ### Natural Workflow
-✅ Chain multiple commands without interruption  
-✅ Natural conversation flow  
-✅ Faster task completion  
+✅ Chain multiple commands without interruption
+✅ Natural conversation flow
+✅ Faster task completion
 
 ### Email Automation
-✅ Read through emails like a human assistant  
-✅ Get full context (sender, date, subject, content)  
-✅ Draft and send replies with voice commands  
+✅ Read through emails like a human assistant
+✅ Get full context (sender, date, subject, content)
+✅ Draft and send replies with voice commands
 
 ### Multi-Platform Management
-✅ Switch between Gmail, GitHub, LinkedIn seamlessly  
-✅ Check multiple systems in one session  
-✅ Automate repetitive checking tasks  
+✅ Switch between Gmail, GitHub, LinkedIn seamlessly
+✅ Check multiple systems in one session
+✅ Automate repetitive checking tasks
 
 ### Productivity
-✅ Hands-free operation  
-✅ Voice-first automation  
-✅ Reduced context switching  
+✅ Hands-free operation
+✅ Voice-first automation
+✅ Reduced context switching
 
 ## Privacy & Security
 
@@ -281,13 +281,13 @@ self.exit_words = [
 
 ## Future Enhancements
 
-🔮 Context-aware AI replies (personalized to your writing style)  
-🔮 Calendar integration for meeting scheduling  
-🔮 Smart email categorization and filtering  
-🔮 Voice-activated job application automation  
-🔮 Multi-language support  
-🔮 Custom wake words  
-🔮 Voice profile training for better accuracy  
+🔮 Context-aware AI replies (personalized to your writing style)
+🔮 Calendar integration for meeting scheduling
+🔮 Smart email categorization and filtering
+🔮 Voice-activated job application automation
+🔮 Multi-language support
+🔮 Custom wake words
+🔮 Voice profile training for better accuracy
 
 ## Example Automation Workflows
 

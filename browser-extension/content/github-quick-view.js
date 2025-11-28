@@ -10,7 +10,7 @@
 
     init() {
       console.log('XENO GitHub integration loaded');
-      
+
       // Listen for messages from popup/background
       chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         this.handleMessage(message, sender, sendResponse);
@@ -19,7 +19,7 @@
 
       // Add XENO quick actions to repository pages
       this.enhanceRepositoryPage();
-      
+
       // Observe for page navigation (GitHub uses AJAX navigation)
       this.observeNavigation();
     }
@@ -58,7 +58,7 @@
     observeNavigation() {
       // GitHub uses turbo for navigation, observe URL changes
       let lastUrl = location.href;
-      
+
       new MutationObserver(() => {
         const currentUrl = location.href;
         if (currentUrl !== lastUrl) {
@@ -74,7 +74,7 @@
 
       // Add XENO quick actions panel
       this.addQuickActionsPanel();
-      
+
       // Add XENO badges to interesting files
       this.enhanceFileExplorer();
     }
@@ -168,12 +168,12 @@
     enhanceFileExplorer() {
       // Add XENO badges to README, package.json, requirements.txt, etc.
       const importantFiles = ['README.md', 'package.json', 'requirements.txt', 'Dockerfile', 'docker-compose.yml'];
-      
+
       const fileLinks = document.querySelectorAll('[role="rowheader"] a.Link--primary');
-      
+
       fileLinks.forEach(link => {
         const filename = link.textContent.trim();
-        
+
         if (importantFiles.includes(filename) && !link.querySelector('.XENO-badge')) {
           const badge = document.createElement('span');
           badge.className = 'XENO-badge';
@@ -189,14 +189,14 @@
         // Find star button
         const starBtn = document.querySelector('button[data-hydro-click*="star"]') ||
                        document.querySelector('button.btn-sm.btn-with-count');
-        
+
         if (!starBtn) {
           throw new Error('Star button not found');
         }
 
         // Check if already starred
         const isStarred = starBtn.getAttribute('aria-label')?.includes('Unstar');
-        
+
         if (isStarred) {
           this.showNotification('Repository already starred', 'info');
           return;
@@ -204,7 +204,7 @@
 
         starBtn.click();
         this.showNotification('Repository starred successfully', 'success');
-        
+
       } catch (error) {
         console.error('Failed to star repository:', error);
         throw error;
@@ -215,27 +215,27 @@
       try {
         // Find watch button
         const watchBtn = document.querySelector('button[data-hydro-click*="watch"]');
-        
+
         if (!watchBtn) {
           throw new Error('Watch button not found');
         }
 
         watchBtn.click();
-        
+
         // Wait for dropdown
         await this.sleep(300);
-        
+
         // Click "All Activity" option
         const allActivityBtn = Array.from(document.querySelectorAll('button')).find(btn =>
           btn.textContent.includes('All Activity')
         );
-        
+
         if (allActivityBtn) {
           allActivityBtn.click();
         }
-        
+
         this.showNotification('Now watching repository', 'success');
-        
+
       } catch (error) {
         console.error('Failed to watch repository:', error);
         throw error;
@@ -291,7 +291,7 @@
     async saveRepositoryToXENO() {
       try {
         const info = await this.getRepositoryInfo();
-        
+
         chrome.runtime.sendMessage({
           type: 'save_to_XENO',
           data: {
@@ -301,7 +301,7 @@
             content: JSON.stringify(info, null, 2)
           }
         });
-        
+
         this.showNotification('Repository saved to XENO', 'success');
       } catch (error) {
         this.showNotification('Failed to save repository', 'error');
@@ -311,7 +311,7 @@
     async createTaskFromRepo() {
       try {
         const info = await this.getRepositoryInfo();
-        
+
         chrome.runtime.sendMessage({
           type: 'create_task',
           data: {
@@ -320,7 +320,7 @@
             priority: 'medium'
           }
         });
-        
+
         this.showNotification('Task created in XENO', 'success');
       } catch (error) {
         this.showNotification('Failed to create task', 'error');
@@ -331,7 +331,7 @@
       try {
         const info = await this.getRepositoryInfo();
         const text = `# ${info.fullName}\n\n${info.description}\n\n**URL:** ${info.url}\n**Language:** ${info.language}\n**Stars:** ${info.stars}\n**Forks:** ${info.forks}\n\n**Clone:**\n\`\`\`\ngit clone https://github.com/${info.fullName}.git\n\`\`\``;
-        
+
         await navigator.clipboard.writeText(text);
         this.showNotification('Repository info copied to clipboard', 'success');
       } catch (error) {
@@ -342,13 +342,13 @@
     async analyzeRepository() {
       try {
         const info = await this.getRepositoryInfo();
-        
+
         // Send to XENO for AI analysis
         chrome.runtime.sendMessage({
           type: 'analyze_repository',
           data: info
         });
-        
+
         this.showNotification('Analysis request sent to XENO', 'success');
       } catch (error) {
         this.showNotification('Failed to analyze repository', 'error');
@@ -378,7 +378,7 @@
         animation: slideIn 0.3s ease-out;
       `;
       toast.textContent = message;
-      
+
       // Add animation
       if (!document.getElementById('XENO-github-animations')) {
         const style = document.createElement('style');
@@ -407,9 +407,9 @@
         `;
         document.head.appendChild(style);
       }
-      
+
       document.body.appendChild(toast);
-      
+
       setTimeout(() => {
         toast.style.animation = 'slideOut 0.3s ease-in';
         setTimeout(() => toast.remove(), 300);
