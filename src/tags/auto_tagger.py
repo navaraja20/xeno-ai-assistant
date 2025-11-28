@@ -132,9 +132,7 @@ class AutoTagger:
                 if rule["condition"](item):
                     for tag in rule["tags"]:
                         if tag not in existing_tags:
-                            suggestions[tag] = max(
-                                suggestions.get(tag, 0), rule["confidence"]
-                            )
+                            suggestions[tag] = max(suggestions.get(tag, 0), rule["confidence"])
             except Exception as e:
                 self.logger.error(f"Rule '{rule['name']}' failed: {e}")
 
@@ -165,15 +163,11 @@ class AutoTagger:
         }
 
         # Sort by confidence
-        sorted_suggestions = sorted(
-            filtered_suggestions.items(), key=lambda x: x[1], reverse=True
-        )
+        sorted_suggestions = sorted(filtered_suggestions.items(), key=lambda x: x[1], reverse=True)
 
         return sorted_suggestions
 
-    def add_rule(
-        self, name: str, condition: callable, tags: List[str], confidence: float = 0.8
-    ):
+    def add_rule(self, name: str, condition: callable, tags: List[str], confidence: float = 0.8):
         """Add a custom tagging rule"""
         self.rules.append(
             {
@@ -194,9 +188,7 @@ class AutoTagger:
                 return True
         return False
 
-    def _contains_keywords(
-        self, item: Dict[str, Any], keywords: List[str]
-    ) -> bool:
+    def _contains_keywords(self, item: Dict[str, Any], keywords: List[str]) -> bool:
         """Check if item contains any of the keywords"""
         text = ""
 
@@ -239,7 +231,7 @@ class AutoTagger:
 
         # Extract capitalized words (potential entities)
         # This is a very simple approach; use NER in production
-        words = re.findall(r'\b[A-Z][a-z]+\b', text)
+        words = re.findall(r"\b[A-Z][a-z]+\b", text)
 
         # Filter common words
         common_words = {

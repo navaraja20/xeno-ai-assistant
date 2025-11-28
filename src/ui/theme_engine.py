@@ -381,9 +381,7 @@ class ThemeEngine:
             ActivityContext.ADMIN: "light_modern",
         }
 
-        theme_name = context_themes.get(
-            self.current_context, "light_modern"
-        )
+        theme_name = context_themes.get(self.current_context, "light_modern")
         theme = self.get_theme(theme_name)
 
         if theme:

@@ -3,15 +3,15 @@ Predictive Task Automation - Comprehensive Demo
 Demonstrates pattern recognition, ML prediction, auto-scheduling, and suggestions
 """
 
-from datetime import datetime, timedelta
-from typing import List, Dict, Any
 import json
+from datetime import datetime, timedelta
+from typing import Any, Dict, List
 
 from src.prediction import (
-    get_pattern_engine,
-    get_task_predictor,
     get_auto_scheduler,
+    get_pattern_engine,
     get_suggestion_system,
+    get_task_predictor,
 )
 
 
@@ -27,14 +27,16 @@ def generate_sample_tasks() -> List[Dict[str, Any]]:
         date = date - timedelta(days=date.weekday())
         date = date.replace(hour=9, minute=0)
 
-        tasks.append({
-            "id": f"standup_{week}",
-            "title": "Daily standup",
-            "created_at": date.isoformat(),
-            "priority": "high",
-            "tags": ["meeting", "team"],
-            "completed_at": (date + timedelta(hours=1)).isoformat(),
-        })
+        tasks.append(
+            {
+                "id": f"standup_{week}",
+                "title": "Daily standup",
+                "created_at": date.isoformat(),
+                "priority": "high",
+                "tags": ["meeting", "team"],
+                "completed_at": (date + timedelta(hours=1)).isoformat(),
+            }
+        )
 
     # Weekly report (every Friday afternoon)
     for week in range(8):
@@ -43,14 +45,16 @@ def generate_sample_tasks() -> List[Dict[str, Any]]:
         date = date + timedelta(days=(4 - date.weekday()))
         date = date.replace(hour=15, minute=0)
 
-        tasks.append({
-            "id": f"report_{week}",
-            "title": "Weekly progress report",
-            "created_at": date.isoformat(),
-            "priority": "medium",
-            "tags": ["report", "weekly"],
-            "completed_at": (date + timedelta(hours=2)).isoformat(),
-        })
+        tasks.append(
+            {
+                "id": f"report_{week}",
+                "title": "Weekly progress report",
+                "created_at": date.isoformat(),
+                "priority": "medium",
+                "tags": ["report", "weekly"],
+                "completed_at": (date + timedelta(hours=2)).isoformat(),
+            }
+        )
 
     # Design review sequence (every 2 weeks)
     for iteration in range(4):
@@ -58,50 +62,58 @@ def generate_sample_tasks() -> List[Dict[str, Any]]:
 
         # Design mockup
         date1 = base.replace(hour=10, minute=0)
-        tasks.append({
-            "id": f"design_{iteration}_1",
-            "title": "Design mockup",
-            "created_at": date1.isoformat(),
-            "priority": "medium",
-            "tags": ["design"],
-            "completed_at": (date1 + timedelta(hours=3)).isoformat(),
-        })
+        tasks.append(
+            {
+                "id": f"design_{iteration}_1",
+                "title": "Design mockup",
+                "created_at": date1.isoformat(),
+                "priority": "medium",
+                "tags": ["design"],
+                "completed_at": (date1 + timedelta(hours=3)).isoformat(),
+            }
+        )
 
         # Review design (1 hour later)
         date2 = date1 + timedelta(minutes=30)
-        tasks.append({
-            "id": f"design_{iteration}_2",
-            "title": "Review design",
-            "created_at": date2.isoformat(),
-            "priority": "high",
-            "tags": ["design", "review"],
-            "completed_at": (date2 + timedelta(hours=1)).isoformat(),
-        })
+        tasks.append(
+            {
+                "id": f"design_{iteration}_2",
+                "title": "Review design",
+                "created_at": date2.isoformat(),
+                "priority": "high",
+                "tags": ["design", "review"],
+                "completed_at": (date2 + timedelta(hours=1)).isoformat(),
+            }
+        )
 
         # Implement changes (1 hour later)
         date3 = date2 + timedelta(minutes=30)
-        tasks.append({
-            "id": f"design_{iteration}_3",
-            "title": "Implement changes",
-            "created_at": date3.isoformat(),
-            "priority": "high",
-            "tags": ["design", "implementation"],
-            "completed_at": (date3 + timedelta(hours=4)).isoformat(),
-        })
+        tasks.append(
+            {
+                "id": f"design_{iteration}_3",
+                "title": "Implement changes",
+                "created_at": date3.isoformat(),
+                "priority": "high",
+                "tags": ["design", "implementation"],
+                "completed_at": (date3 + timedelta(hours=4)).isoformat(),
+            }
+        )
 
     # Daily email check (every weekday at 8 AM)
     for day in range(40):
         date = base_date + timedelta(days=day)
         if date.weekday() < 5:  # Weekdays only
             date = date.replace(hour=8, minute=0)
-            tasks.append({
-                "id": f"email_{day}",
-                "title": "Check emails",
-                "created_at": date.isoformat(),
-                "priority": "low",
-                "tags": ["email", "routine"],
-                "completed_at": (date + timedelta(minutes=30)).isoformat(),
-            })
+            tasks.append(
+                {
+                    "id": f"email_{day}",
+                    "title": "Check emails",
+                    "created_at": date.isoformat(),
+                    "priority": "low",
+                    "tags": ["email", "routine"],
+                    "completed_at": (date + timedelta(minutes=30)).isoformat(),
+                }
+            )
 
     # Monthly planning (first Monday of month)
     for month in range(2):
@@ -111,14 +123,16 @@ def generate_sample_tasks() -> List[Dict[str, Any]]:
             date += timedelta(days=1)
         date = date.replace(hour=14, minute=0)
 
-        tasks.append({
-            "id": f"planning_{month}",
-            "title": "Monthly planning session",
-            "created_at": date.isoformat(),
-            "priority": "high",
-            "tags": ["planning", "monthly"],
-            "completed_at": (date + timedelta(hours=2)).isoformat(),
-        })
+        tasks.append(
+            {
+                "id": f"planning_{month}",
+                "title": "Monthly planning session",
+                "created_at": date.isoformat(),
+                "priority": "high",
+                "tags": ["planning", "monthly"],
+                "completed_at": (date + timedelta(hours=2)).isoformat(),
+            }
+        )
 
     return tasks
 
@@ -157,7 +171,9 @@ def demo_pattern_recognition():
     predictions = engine.predict_next_tasks()
     for pred in predictions[:5]:
         print(f"  • {pred.get('description', 'Unknown task')}")
-        print(f"    Probability: {pred.get('probability', 0):.2f}, Expected: {pred.get('expected_time', 'N/A')}")
+        print(
+            f"    Probability: {pred.get('probability', 0):.2f}, Expected: {pred.get('expected_time', 'N/A')}"
+        )
 
 
 def demo_task_prediction():
@@ -180,7 +196,7 @@ def demo_task_prediction():
     for title, template in list(predictor.task_templates.items())[:5]:
         print(f"  • {title}")
         print(f"    Occurrences: {template['count']}, Priority: {template['avg_priority']}")
-        if template.get('typical_duration'):
+        if template.get("typical_duration"):
             print(f"    Avg Duration: {template['typical_duration']:.1f} minutes")
 
     # Make predictions
@@ -372,12 +388,14 @@ def demo_integrated_workflow():
     # Convert predictions to schedulable tasks
     tasks_to_schedule = []
     for pred in predicted_tasks:
-        tasks_to_schedule.append({
-            "id": pred["title"].replace(" ", "_"),
-            "title": pred["title"],
-            "priority": pred["priority"],
-            "estimated_duration": pred.get("estimated_duration", 60),
-        })
+        tasks_to_schedule.append(
+            {
+                "id": pred["title"].replace(" ", "_"),
+                "title": pred["title"],
+                "priority": pred["priority"],
+                "estimated_duration": pred.get("estimated_duration", 60),
+            }
+        )
 
     scheduler = get_auto_scheduler()
     scheduled = scheduler.schedule_tasks(tasks_to_schedule, days=2)

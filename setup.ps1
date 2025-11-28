@@ -32,7 +32,7 @@ Write-Host ""
 Write-Host "[3/5] Checking .env configuration..." -ForegroundColor Yellow
 if (Test-Path ".env") {
     Write-Host "  ✅ .env file found" -ForegroundColor Green
-    
+
     # Check for Gemini API key
     $envContent = Get-Content ".env" -Raw
     if ($envContent -match "GEMINI_API_KEY=\S+") {
@@ -44,7 +44,7 @@ if (Test-Path ".env") {
 } else {
     Write-Host "  ❌ .env file not found!" -ForegroundColor Red
     Write-Host "  Creating .env from template..." -ForegroundColor Yellow
-    
+
     if (Test-Path ".env.example") {
         Copy-Item ".env.example" ".env"
         Write-Host "  ✅ .env created. Please configure your API keys." -ForegroundColor Green
@@ -59,7 +59,7 @@ Write-Host "[4/5] Checking Ollama (Local AI)..." -ForegroundColor Yellow
 try {
     $ollamaCheck = Invoke-WebRequest -Uri "http://localhost:11434/api/tags" -TimeoutSec 2 -ErrorAction Stop
     Write-Host "  ✅ Ollama is running" -ForegroundColor Green
-    
+
     # Check for models
     $models = (Invoke-WebRequest -Uri "http://localhost:11434/api/tags").Content | ConvertFrom-Json
     if ($models.models.Count -gt 0) {

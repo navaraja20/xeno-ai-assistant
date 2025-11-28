@@ -95,9 +95,7 @@ class Workflow:
 
         # Remove connections
         self.connections = [
-            c
-            for c in self.connections
-            if c.from_node != node_id and c.to_node != node_id
+            c for c in self.connections if c.from_node != node_id and c.to_node != node_id
         ]
 
         del self.nodes[node_id]
@@ -171,9 +169,7 @@ class Workflow:
             return errors
 
         # Find trigger nodes
-        trigger_nodes = [
-            n for n in self.nodes.values() if n.category.value == "trigger"
-        ]
+        trigger_nodes = [n for n in self.nodes.values() if n.category.value == "trigger"]
 
         if not trigger_nodes:
             errors.append("Workflow has no trigger node")
@@ -229,8 +225,12 @@ class Workflow:
 
         # Restore metadata
         metadata = data.get("metadata", {})
-        workflow.created_at = datetime.fromisoformat(metadata.get("created_at", datetime.now().isoformat()))
-        workflow.modified_at = datetime.fromisoformat(metadata.get("modified_at", datetime.now().isoformat()))
+        workflow.created_at = datetime.fromisoformat(
+            metadata.get("created_at", datetime.now().isoformat())
+        )
+        workflow.modified_at = datetime.fromisoformat(
+            metadata.get("modified_at", datetime.now().isoformat())
+        )
         workflow.version = metadata.get("version", 1)
         workflow.enabled = metadata.get("enabled", True)
         workflow.execution_count = metadata.get("execution_count", 0)
@@ -309,9 +309,7 @@ class WorkflowExecutor:
             self.completed_at = None
 
             # Find trigger nodes
-            trigger_nodes = [
-                n for n in workflow.nodes.values() if n.category.value == "trigger"
-            ]
+            trigger_nodes = [n for n in workflow.nodes.values() if n.category.value == "trigger"]
 
             if not trigger_nodes:
                 self.logger.error("No trigger nodes found")
@@ -508,9 +506,7 @@ class WorkflowManager:
             for wf in self.workflows.values()
         ]
 
-    def execute_workflow(
-        self, workflow_id: str, initial_data: Dict[str, Any] = None
-    ) -> bool:
+    def execute_workflow(self, workflow_id: str, initial_data: Dict[str, Any] = None) -> bool:
         """Execute workflow"""
         workflow = self.get_workflow(workflow_id)
         if not workflow:

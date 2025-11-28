@@ -32,9 +32,7 @@ class ScheduleSlot:
 
     def overlaps(self, other: "ScheduleSlot") -> bool:
         """Check if this slot overlaps with another"""
-        return (
-            self.start_time < other.end_time and self.end_time > other.start_time
-        )
+        return self.start_time < other.end_time and self.end_time > other.start_time
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary"""
@@ -68,10 +66,30 @@ class AutoScheduler:
     def _default_energy_curve(self) -> Dict[int, float]:
         """Default energy levels by hour of day"""
         return {
-            0: 0.1, 1: 0.05, 2: 0.05, 3: 0.05, 4: 0.1, 5: 0.2,
-            6: 0.3, 7: 0.5, 8: 0.7, 9: 0.9, 10: 0.95, 11: 0.9,
-            12: 0.7, 13: 0.6, 14: 0.8, 15: 0.85, 16: 0.75, 17: 0.6,
-            18: 0.5, 19: 0.4, 20: 0.3, 21: 0.25, 22: 0.2, 23: 0.15,
+            0: 0.1,
+            1: 0.05,
+            2: 0.05,
+            3: 0.05,
+            4: 0.1,
+            5: 0.2,
+            6: 0.3,
+            7: 0.5,
+            8: 0.7,
+            9: 0.9,
+            10: 0.95,
+            11: 0.9,
+            12: 0.7,
+            13: 0.6,
+            14: 0.8,
+            15: 0.85,
+            16: 0.75,
+            17: 0.6,
+            18: 0.5,
+            19: 0.4,
+            20: 0.3,
+            21: 0.25,
+            22: 0.2,
+            23: 0.15,
         }
 
     def set_work_hours(self, start_hour: int, end_hour: int):
@@ -114,13 +132,15 @@ class AutoScheduler:
                 slot.task_id = task.get("id", task.get("title"))
                 slot.is_available = False
 
-                scheduled.append({
-                    "task": task,
-                    "scheduled_time": slot.start_time.isoformat(),
-                    "estimated_end": slot.end_time.isoformat(),
-                    "duration_minutes": slot.duration_minutes,
-                    "energy_level": self.energy_curve.get(slot.start_time.hour, 0.5),
-                })
+                scheduled.append(
+                    {
+                        "task": task,
+                        "scheduled_time": slot.start_time.isoformat(),
+                        "estimated_end": slot.end_time.isoformat(),
+                        "duration_minutes": slot.duration_minutes,
+                        "energy_level": self.energy_curve.get(slot.start_time.hour, 0.5),
+                    }
+                )
 
                 self.logger.debug(f"Scheduled '{task.get('title')}' at {slot.start_time}")
             else:
@@ -179,7 +199,9 @@ class AutoScheduler:
             for hour in range(self.work_start_hour, self.work_end_hour):
                 # Create slots every 15 minutes
                 for minute in [0, 15, 30, 45]:
-                    slot_start = current_date.replace(hour=hour, minute=minute, second=0, microsecond=0)
+                    slot_start = current_date.replace(
+                        hour=hour, minute=minute, second=0, microsecond=0
+                    )
                     slot_end = slot_start + timedelta(minutes=self.min_slot_duration)
 
                     # Don't create slots in the past
@@ -212,9 +234,7 @@ class AutoScheduler:
 
             if consecutive_slots:
                 # Calculate slot score
-                score = self._calculate_slot_score(
-                    consecutive_slots[0], task, duration
-                )
+                score = self._calculate_slot_score(consecutive_slots[0], task, duration)
 
                 if score > best_score:
                     best_score = score
@@ -301,18 +321,18 @@ class AutoScheduler:
         for i, slot1 in enumerate(self.schedule):
             for slot2 in self.schedule[i + 1 :]:
                 if slot1.overlaps(slot2):
-                    conflicts.append({
-                        "task1": slot1.task_id,
-                        "task2": slot2.task_id,
-                        "overlap_start": max(slot1.start_time, slot2.start_time).isoformat(),
-                        "overlap_end": min(slot1.end_time, slot2.end_time).isoformat(),
-                    })
+                    conflicts.append(
+                        {
+                            "task1": slot1.task_id,
+                            "task2": slot2.task_id,
+                            "overlap_start": max(slot1.start_time, slot2.start_time).isoformat(),
+                            "overlap_end": min(slot1.end_time, slot2.end_time).isoformat(),
+                        }
+                    )
 
         return conflicts
 
-    def reschedule_task(
-        self, task_id: str, new_time: datetime
-    ) -> Optional[Dict[str, Any]]:
+    def reschedule_task(self, task_id: str, new_time: datetime) -> Optional[Dict[str, Any]]:
         """Reschedule a specific task"""
         # Find the task in schedule
         for slot in self.schedule:

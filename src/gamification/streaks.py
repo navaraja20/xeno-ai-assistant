@@ -40,7 +40,9 @@ class Streak:
             "icon": self.icon,
             "current_streak": self.current_streak,
             "longest_streak": self.longest_streak,
-            "last_activity_date": self.last_activity_date.isoformat() if self.last_activity_date else None,
+            "last_activity_date": self.last_activity_date.isoformat()
+            if self.last_activity_date
+            else None,
             "total_days": self.total_days,
             "activity_dates": self.activity_dates,
         }
@@ -188,14 +190,8 @@ class StreakSystem:
         return {
             "total_streaks": len(self.streaks),
             "active_streaks": len(self.get_active_streaks()),
-            "longest_current": max(
-                (s.current_streak for s in self.streaks.values()),
-                default=0
-            ),
-            "longest_ever": max(
-                (s.longest_streak for s in self.streaks.values()),
-                default=0
-            ),
+            "longest_current": max((s.current_streak for s in self.streaks.values()), default=0),
+            "longest_ever": max((s.longest_streak for s in self.streaks.values()), default=0),
             "total_days": sum(s.total_days for s in self.streaks.values()),
         }
 
@@ -209,12 +205,7 @@ class StreakSystem:
     def _persist_data(self):
         """Save streak data"""
         try:
-            data = {
-                "streaks": {
-                    stype: streak.to_dict()
-                    for stype, streak in self.streaks.items()
-                }
-            }
+            data = {"streaks": {stype: streak.to_dict() for stype, streak in self.streaks.items()}}
 
             with open(self.streaks_file, "w") as f:
                 json.dump(data, f, indent=2)

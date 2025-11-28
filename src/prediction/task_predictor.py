@@ -183,9 +183,7 @@ class TaskPredictor:
 
         for day in range(7):
             day_tasks = [
-                t
-                for t in tasks
-                if datetime.fromisoformat(t.get("created_at", "")).weekday() == day
+                t for t in tasks if datetime.fromisoformat(t.get("created_at", "")).weekday() == day
             ]
 
             patterns[str(day)] = {
@@ -234,20 +232,22 @@ class TaskPredictor:
 
         # Score each task template
         for title, template in self.task_templates.items():
-            score = self._calculate_prediction_score(
-                template, current_hour, current_day, context
-            )
+            score = self._calculate_prediction_score(template, current_hour, current_day, context)
 
             if score > 0.3:  # Threshold
-                predictions.append({
-                    "title": title,
-                    "probability": score,
-                    "priority": template["avg_priority"],
-                    "tags": template["common_tags"],
-                    "estimated_duration": template.get("typical_duration"),
-                    "reason": self._generate_prediction_reason(template, current_hour, current_day),
-                    "template_match": True,
-                })
+                predictions.append(
+                    {
+                        "title": title,
+                        "probability": score,
+                        "priority": template["avg_priority"],
+                        "tags": template["common_tags"],
+                        "estimated_duration": template.get("typical_duration"),
+                        "reason": self._generate_prediction_reason(
+                            template, current_hour, current_day
+                        ),
+                        "template_match": True,
+                    }
+                )
 
         # Generate new task suggestions based on patterns
         pattern_predictions = self._generate_pattern_predictions(current_hour, current_day)
@@ -277,7 +277,10 @@ class TaskPredictor:
         if hasattr(self, "time_series_features"):
             day_pattern = self.time_series_features["weekday_patterns"].get(str(current_day), {})
             day_score = day_pattern.get("count", 0) / max(
-                sum(p.get("count", 0) for p in self.time_series_features["weekday_patterns"].values()),
+                sum(
+                    p.get("count", 0)
+                    for p in self.time_series_features["weekday_patterns"].values()
+                ),
                 1,
             )
             score += day_score * self.feature_weights["day_of_week"]
@@ -379,15 +382,17 @@ class TaskPredictor:
 
             if hourly_counts.get(current_hour, 0) > avg_hourly * 1.5:
                 # High activity hour
-                predictions.append({
-                    "title": "Review pending tasks",
-                    "probability": 0.6,
-                    "priority": "medium",
-                    "tags": ["review"],
-                    "estimated_duration": 15,
-                    "reason": f"High activity hour (typically {int(hourly_counts[current_hour])} tasks created)",
-                    "template_match": False,
-                })
+                predictions.append(
+                    {
+                        "title": "Review pending tasks",
+                        "probability": 0.6,
+                        "priority": "medium",
+                        "tags": ["review"],
+                        "estimated_duration": 15,
+                        "reason": f"High activity hour (typically {int(hourly_counts[current_hour])} tasks created)",
+                        "template_match": False,
+                    }
+                )
 
         return predictions
 
@@ -419,9 +424,7 @@ class TaskPredictor:
         )
 
         accuracy = (
-            2 * precision * recall / (precision + recall)
-            if (precision + recall) > 0
-            else 0.0
+            2 * precision * recall / (precision + recall) if (precision + recall) > 0 else 0.0
         )
 
         return {

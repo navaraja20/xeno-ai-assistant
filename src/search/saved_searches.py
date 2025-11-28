@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from src.core.logger import setup_logger
-from src.search.search_engine import SearchQuery, SearchMode, SearchField, SearchFilter
+from src.search.search_engine import SearchField, SearchFilter, SearchMode, SearchQuery
 
 
 class SavedSearch:
@@ -74,9 +74,7 @@ class SavedSearch:
             query=query,
             description=data.get("description", ""),
             created_at=datetime.fromisoformat(data["created_at"]),
-            last_used=datetime.fromisoformat(data["last_used"])
-            if data.get("last_used")
-            else None,
+            last_used=datetime.fromisoformat(data["last_used"]) if data.get("last_used") else None,
             use_count=data.get("use_count", 0),
         )
 
@@ -101,16 +99,12 @@ class SavedSearchManager:
         # Load saved searches
         self._load_searches()
 
-    def save_search(
-        self, name: str, query: SearchQuery, description: str = ""
-    ) -> SavedSearch:
+    def save_search(self, name: str, query: SearchQuery, description: str = "") -> SavedSearch:
         """Save a search query"""
         # Generate ID
         search_id = f"search_{int(datetime.now().timestamp() * 1000)}"
 
-        saved_search = SavedSearch(
-            id=search_id, name=name, query=query, description=description
-        )
+        saved_search = SavedSearch(id=search_id, name=name, query=query, description=description)
 
         self.searches[search_id] = saved_search
         self._persist_searches()
@@ -131,9 +125,7 @@ class SavedSearchManager:
 
     def list_searches(self) -> List[SavedSearch]:
         """List all saved searches"""
-        return sorted(
-            self.searches.values(), key=lambda s: s.created_at, reverse=True
-        )
+        return sorted(self.searches.values(), key=lambda s: s.created_at, reverse=True)
 
     def update_search(
         self,

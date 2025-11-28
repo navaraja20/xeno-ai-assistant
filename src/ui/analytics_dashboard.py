@@ -5,7 +5,7 @@ PyQt6-based dashboard for viewing productivity analytics
 
 from datetime import datetime, timedelta
 
-from PyQt6.QtCore import QTimer, Qt
+from PyQt6.QtCore import Qt, QTimer
 from PyQt6.QtWidgets import (
     QComboBox,
     QGridLayout,
@@ -304,9 +304,7 @@ class AnalyticsDashboard(QWidget):
     def _update_score_gauge(self, start_date, end_date):
         """Update productivity score gauge"""
         try:
-            fig, canvas = self.visualizer.create_productivity_score_gauge(
-                start_date, end_date
-            )
+            fig, canvas = self.visualizer.create_productivity_score_gauge(start_date, end_date)
 
             # Clear container
             layout = QVBoxLayout()
@@ -351,9 +349,7 @@ class AnalyticsDashboard(QWidget):
     def _update_time_distribution(self, start_date, end_date):
         """Update time distribution heatmap"""
         try:
-            fig, canvas = self.visualizer.create_time_distribution_heatmap(
-                start_date, end_date
-            )
+            fig, canvas = self.visualizer.create_time_distribution_heatmap(start_date, end_date)
 
             layout = QVBoxLayout()
             layout.addWidget(canvas)
@@ -364,9 +360,7 @@ class AnalyticsDashboard(QWidget):
     def _update_activity_breakdown(self, start_date, end_date):
         """Update activity breakdown chart"""
         try:
-            fig, canvas = self.visualizer.create_activity_breakdown_chart(
-                start_date, end_date
-            )
+            fig, canvas = self.visualizer.create_activity_breakdown_chart(start_date, end_date)
 
             layout = QVBoxLayout()
             layout.addWidget(canvas)
@@ -393,7 +387,9 @@ class AnalyticsDashboard(QWidget):
             # Focus metrics
             stats_html += "<h4>🎯 Focus</h4><ul>"
             stats_html += f"<li>Sessions: {metrics['focus_metrics']['total_focus_sessions']}</li>"
-            stats_html += f"<li>Total Hours: {metrics['focus_metrics']['total_focus_hours']:.1f}</li>"
+            stats_html += (
+                f"<li>Total Hours: {metrics['focus_metrics']['total_focus_hours']:.1f}</li>"
+            )
             stats_html += f"<li>Avg Session: {metrics['focus_metrics']['avg_session_duration_minutes']:.0f} min</li>"
             stats_html += "</ul>"
 
@@ -401,14 +397,14 @@ class AnalyticsDashboard(QWidget):
             stats_html += "<h4>📧 Communication</h4><ul>"
             stats_html += f"<li>Emails Read: {metrics['communication_metrics']['emails_read']}</li>"
             stats_html += f"<li>Emails Sent: {metrics['communication_metrics']['emails_sent']}</li>"
-            stats_html += (
-                f"<li>Response Rate: {metrics['communication_metrics']['email_response_rate']*100:.1f}%</li>"
-            )
+            stats_html += f"<li>Response Rate: {metrics['communication_metrics']['email_response_rate']*100:.1f}%</li>"
             stats_html += "</ul>"
 
             # Time metrics
             stats_html += "<h4>⏰ Time</h4><ul>"
-            stats_html += f"<li>Total Tracked: {metrics['time_metrics']['total_tracked_hours']:.1f}h</li>"
+            stats_html += (
+                f"<li>Total Tracked: {metrics['time_metrics']['total_tracked_hours']:.1f}h</li>"
+            )
             stats_html += f"<li>Meetings: {metrics['time_metrics']['meeting_hours']:.1f}h</li>"
             stats_html += f"<li>Focus Time: {metrics['time_metrics']['focus_hours']:.1f}h</li>"
             stats_html += "</ul>"
@@ -442,7 +438,9 @@ class AnalyticsDashboard(QWidget):
 
                 color = "#28A745" if progress >= 100 else "#FFC107" if progress >= 80 else "#DC3545"
 
-                goals_html += f"<div style='margin: 10px 0; padding: 10px; border-left: 4px solid {color};'>"
+                goals_html += (
+                    f"<div style='margin: 10px 0; padding: 10px; border-left: 4px solid {color};'>"
+                )
                 goals_html += f"<h4>{goal_name.replace('_', ' ').title()}</h4>"
                 goals_html += f"<p><strong>Current:</strong> {current:.1f} | <strong>Target:</strong> {target:.1f}</p>"
                 goals_html += f"<p><strong>Progress:</strong> {progress:.0f}%</p>"
@@ -459,7 +457,9 @@ class AnalyticsDashboard(QWidget):
             insights = self.scorer.get_productivity_insights(start_date, end_date)
 
             insights_html = "<h3>AI-Powered Insights</h3>"
-            insights_html += "<p>Based on your activity patterns, here are personalized recommendations:</p>"
+            insights_html += (
+                "<p>Based on your activity patterns, here are personalized recommendations:</p>"
+            )
             insights_html += "<ul>"
 
             for insight in insights:

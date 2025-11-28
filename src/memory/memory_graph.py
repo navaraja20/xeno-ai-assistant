@@ -152,9 +152,7 @@ class MemoryGraph:
             incoming = [r for r in self.relationships if r.to_node == node_id]
             return outgoing + incoming
 
-    def find_path(
-        self, from_node: str, to_node: str, max_depth: int = 3
-    ) -> Optional[List[str]]:
+    def find_path(self, from_node: str, to_node: str, max_depth: int = 3) -> Optional[List[str]]:
         """Find shortest path between two nodes (BFS)"""
         if from_node not in self.nodes or to_node not in self.nodes:
             return None
@@ -298,8 +296,7 @@ class MemoryGraph:
             "total_nodes": len(self.nodes),
             "total_relationships": len(self.relationships),
             "node_types": {
-                node_type: len(node_ids)
-                for node_type, node_ids in self.nodes_by_type.items()
+                node_type: len(node_ids) for node_type, node_ids in self.nodes_by_type.items()
             },
             "avg_connections_per_node": (
                 len(self.relationships) / len(self.nodes) if self.nodes else 0

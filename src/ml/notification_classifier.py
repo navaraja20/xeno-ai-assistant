@@ -153,9 +153,7 @@ class NotificationClassifier:
         }
         return type_scores.get(notification.type.value, 0.5)
 
-    def _combine_scores(
-        self, features: Dict[str, any], ml_score: List[float]
-    ) -> List[float]:
+    def _combine_scores(self, features: Dict[str, any], ml_score: List[float]) -> List[float]:
         """Combine ML and rule-based scores"""
 
         # Start with ML score
@@ -204,9 +202,7 @@ class NotificationClassifier:
 
         return combined.tolist()
 
-    def train_from_feedback(
-        self, notifications: List[Notification], labels: List[int]
-    ):
+    def train_from_feedback(self, notifications: List[Notification], labels: List[int]):
         """Train/update model from user feedback"""
 
         if len(notifications) < 10:
@@ -214,9 +210,7 @@ class NotificationClassifier:
             return
 
         # Extract features
-        texts = [
-            f"{n.title} {n.message}" for n in notifications
-        ]
+        texts = [f"{n.title} {n.message}" for n in notifications]
 
         # Train vectorizer
         if self.vectorizer is None:
@@ -229,9 +223,7 @@ class NotificationClassifier:
 
         # Train classifier
         if self.classifier is None:
-            self.classifier = RandomForestClassifier(
-                n_estimators=50, max_depth=10, random_state=42
-            )
+            self.classifier = RandomForestClassifier(n_estimators=50, max_depth=10, random_state=42)
 
         self.classifier.fit(X, labels)
 
@@ -250,9 +242,7 @@ class NotificationClassifier:
         try:
             model_file = self.model_dir / "notification_classifier.pkl"
             with open(model_file, "wb") as f:
-                pickle.dump(
-                    {"vectorizer": self.vectorizer, "classifier": self.classifier}, f
-                )
+                pickle.dump({"vectorizer": self.vectorizer, "classifier": self.classifier}, f)
 
             self.logger.info("Model saved")
         except Exception as e:
@@ -315,9 +305,7 @@ class NotificationClassifier:
 
             # Get top 20 features
             top_indices = np.argsort(importances)[-20:]
-            return {
-                feature_names[i]: float(importances[i]) for i in top_indices
-            }
+            return {feature_names[i]: float(importances[i]) for i in top_indices}
         except:
             return {}
 

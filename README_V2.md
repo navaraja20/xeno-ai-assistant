@@ -118,13 +118,13 @@ analysis = agent.analyze_text(job_description, "extract requirements")
    ```
 
 2. **Choose AI Provider**
-   
+
    **Option A: Local AI (Ollama) - Recommended**
    ```powershell
    # Download from https://ollama.ai/download
    ollama pull llama3.1:8b
    ```
-   
+
    **Option B: Cloud AI (Gemini)**
    ```
    # Get API key: https://makersuite.google.com/app/apikey

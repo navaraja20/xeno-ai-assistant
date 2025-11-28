@@ -102,9 +102,7 @@ class TagSuggestionEngine:
             suggestions = {tag: score / max_score for tag, score in suggestions.items()}
 
         # Sort by score
-        sorted_suggestions = sorted(
-            suggestions.items(), key=lambda x: x[1], reverse=True
-        )
+        sorted_suggestions = sorted(suggestions.items(), key=lambda x: x[1], reverse=True)
 
         return sorted_suggestions[:limit]
 
@@ -139,9 +137,7 @@ class TagSuggestionEngine:
             suggestions[child.id] = 0.6
 
         # Sort by score
-        sorted_suggestions = sorted(
-            suggestions.items(), key=lambda x: x[1], reverse=True
-        )
+        sorted_suggestions = sorted(suggestions.items(), key=lambda x: x[1], reverse=True)
 
         return sorted_suggestions[:limit]
 
@@ -183,7 +179,7 @@ class TagSuggestionEngine:
             if field in item:
                 text = str(item[field]).lower()
                 # Extract words (3+ characters, alphanumeric)
-                words = re.findall(r'\b[a-z]{3,}\b', text)
+                words = re.findall(r"\b[a-z]{3,}\b", text)
                 keywords.update(words)
 
         # Remove common stop words
@@ -214,8 +210,7 @@ class TagSuggestionEngine:
                     tag: dict(related) for tag, related in self.co_occurrences.items()
                 },
                 "keyword_tag_map": {
-                    keyword: dict(tags)
-                    for keyword, tags in self.keyword_tag_map.items()
+                    keyword: dict(tags) for keyword, tags in self.keyword_tag_map.items()
                 },
             }
 

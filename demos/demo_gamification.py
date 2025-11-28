@@ -9,12 +9,11 @@ from typing import Any, Dict
 
 from src.core.logger import setup_logger
 from src.gamification import (
-    get_xp_system,
     get_achievement_system,
-    get_streak_system,
     get_leaderboard_system,
+    get_streak_system,
+    get_xp_system,
 )
-
 
 logger = setup_logger("demo.gamification")
 
@@ -40,14 +39,16 @@ def demo_xp_system():
 
     for event_type, multiplier, description in activities:
         result = xp_system.award_xp(event_type, multiplier, description)
-        
+
         print(f"\n   {description}")
         print(f"   + {result['xp_awarded']} XP (Total: {result['total_xp']})")
-        
-        if result['level_up']:
+
+        if result["level_up"]:
             print(f"   🎉 LEVEL UP! Now level {result['new_level']}")
         else:
-            print(f"   Progress: {xp_system.get_progress_to_next_level():.1f}% to level {result['new_level'] + 1}")
+            print(
+                f"   Progress: {xp_system.get_progress_to_next_level():.1f}% to level {result['new_level'] + 1}"
+            )
 
     # Show stats
     print("\n📊 XP Statistics:")
@@ -59,7 +60,7 @@ def demo_xp_system():
     print(f"   Total events: {stats['total_events']}")
 
     print(f"\n   XP by activity type:")
-    for event_type, xp in stats['xp_by_type'].items():
+    for event_type, xp in stats["xp_by_type"].items():
         print(f"   - {event_type}: {xp} XP")
 
 
@@ -84,7 +85,7 @@ def demo_achievements():
     for event_type, count, description in events:
         print(f"\n   {description} ({event_type} +{count})")
         unlocked = achievement_system.track_event(event_type, count)
-        
+
         if unlocked:
             for achievement in unlocked:
                 print(f"   🎉 ACHIEVEMENT UNLOCKED: {achievement.icon} {achievement.name}")
@@ -104,7 +105,7 @@ def demo_achievements():
 
     # Show categories
     print(f"\n   By Category:")
-    for category, cat_stats in stats['categories'].items():
+    for category, cat_stats in stats["categories"].items():
         print(f"   - {category}: {cat_stats['unlocked']}/{cat_stats['total']}")
 
     # Show unlocked achievements
@@ -115,9 +116,15 @@ def demo_achievements():
     # Show locked achievements (non-secret)
     print(f"\n🔒 Locked Achievements (Next to unlock):")
     for achievement in achievement_system.get_locked_achievements()[:5]:
-        progress_pct = (achievement.progress / achievement.max_progress * 100) if achievement.max_progress > 0 else 0
+        progress_pct = (
+            (achievement.progress / achievement.max_progress * 100)
+            if achievement.max_progress > 0
+            else 0
+        )
         print(f"   {achievement.icon} {achievement.name}")
-        print(f"      Progress: {achievement.progress}/{achievement.max_progress} ({progress_pct:.0f}%)")
+        print(
+            f"      Progress: {achievement.progress}/{achievement.max_progress} ({progress_pct:.0f}%)"
+        )
 
 
 def demo_streaks():
@@ -139,17 +146,17 @@ def demo_streaks():
 
     for streak_type, description in activities:
         result = streak_system.record_activity(streak_type)
-        
+
         print(f"\n   {description}")
-        
-        if result['already_recorded']:
+
+        if result["already_recorded"]:
             print(f"   ℹ️  Already recorded today")
         else:
             print(f"   ✓ Recorded!")
             print(f"   🔥 Current streak: {result['current_streak']} days")
             print(f"   🏆 Longest streak: {result['longest_streak']} days")
-            
-            if result['milestone_reached']:
+
+            if result["milestone_reached"]:
                 print(f"   🎉 MILESTONE: {result['milestone_reached']} days!")
 
     # Show all streaks
@@ -198,7 +205,7 @@ def demo_leaderboards():
     # Show top 10
     print("\n🏆 XP Leaderboard (Top 10):")
     top_entries = leaderboard_system.get_top("xp_all_time", limit=10)
-    
+
     for entry in top_entries:
         rank_emoji = {1: "🥇", 2: "🥈", 3: "🥉"}.get(entry.rank, f"#{entry.rank}")
         highlight = " ← YOU" if entry.user_id == "current_user" else ""
@@ -207,7 +214,7 @@ def demo_leaderboards():
     # Show user stats
     print("\n📊 Your Stats Across Leaderboards:")
     user_stats = leaderboard_system.get_user_stats("current_user")
-    
+
     for lb_id, stats in user_stats.items():
         leaderboard = leaderboard_system.get_leaderboard(lb_id)
         print(f"\n   {leaderboard.name}:")
@@ -233,11 +240,11 @@ def demo_integration():
     streak_result = streak_system.record_activity("daily_login")
     xp_result = xp_system.award_xp("first_login_day")
     achievements = achievement_system.track_event("first_login", 1)
-    
+
     print(f"   ✓ Logged in")
     print(f"   🔥 {streak_result['current_streak']} day streak")
     print(f"   ⭐ +{xp_result['xp_awarded']} XP")
-    
+
     if achievements:
         print(f"   🏆 Unlocked: {achievements[0].name}")
 
@@ -246,10 +253,10 @@ def demo_integration():
     for i in range(3):
         xp_result = xp_system.award_xp("task_complete")
         achievements = achievement_system.track_event("task_complete", 1)
-        
+
         print(f"   ✓ Task {i+1} completed (+{xp_result['xp_awarded']} XP)")
-        
-        if xp_result['level_up']:
+
+        if xp_result["level_up"]:
             print(f"      🎉 Level up to {xp_result['new_level']}!")
 
     streak_system.record_activity("task_completion")
@@ -259,19 +266,14 @@ def demo_integration():
     xp_result = xp_system.award_xp("focus_session")
     streak_system.record_activity("focus_session")
     achievements = achievement_system.track_event("focus_session", 1)
-    
+
     print(f"   ✓ Completed focus session")
     print(f"   ⭐ +{xp_result['xp_awarded']} XP")
 
     # 4. Update leaderboard
     print("\n4️⃣ Update Leaderboard")
-    leaderboard_system.update_score(
-        "xp_all_time",
-        "current_user",
-        "You",
-        xp_result['total_xp']
-    )
-    
+    leaderboard_system.update_score("xp_all_time", "current_user", "You", xp_result["total_xp"])
+
     rank = leaderboard_system.get_user_rank("xp_all_time", "current_user")
     print(f"   📊 Your rank: #{rank}")
 
@@ -280,10 +282,12 @@ def demo_integration():
     xp_stats = xp_system.get_stats()
     achievement_stats = achievement_system.get_progress_stats()
     streak_stats = streak_system.get_stats()
-    
+
     print(f"   Level: {xp_stats['current_level']}")
     print(f"   Total XP: {xp_stats['total_xp']}")
-    print(f"   Achievements: {achievement_stats['unlocked']}/{achievement_stats['total_achievements']}")
+    print(
+        f"   Achievements: {achievement_stats['unlocked']}/{achievement_stats['total_achievements']}"
+    )
     print(f"   Active streaks: {streak_stats['active_streaks']}")
     print(f"   Longest streak: {streak_stats['longest_current']} days")
 

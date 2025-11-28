@@ -36,9 +36,7 @@ class AnalyticsVisualizer:
             "gray": "#6C757D",
         }
 
-    def create_productivity_trend_chart(
-        self, days: int = 30
-    ) -> Tuple[Figure, FigureCanvas]:
+    def create_productivity_trend_chart(self, days: int = 30) -> Tuple[Figure, FigureCanvas]:
         """Create productivity trend line chart"""
 
         fig = Figure(figsize=(10, 4))
@@ -63,9 +61,7 @@ class AnalyticsVisualizer:
         scores = [t[1] * 100 for t in trends]  # Convert to 0-100 scale
 
         # Plot line
-        ax.plot(
-            dates, scores, color=self.color_scheme["primary"], linewidth=2, marker="o"
-        )
+        ax.plot(dates, scores, color=self.color_scheme["primary"], linewidth=2, marker="o")
 
         # Add moving average
         if len(scores) >= 7:
@@ -122,9 +118,7 @@ class AnalyticsVisualizer:
             return fig, canvas
 
         # Sort by count
-        sorted_activities = sorted(
-            breakdown.items(), key=lambda x: x[1]["count"], reverse=True
-        )
+        sorted_activities = sorted(breakdown.items(), key=lambda x: x[1]["count"], reverse=True)
 
         # Take top 8, group rest as "Other"
         if len(sorted_activities) > 8:
@@ -259,9 +253,7 @@ class AnalyticsVisualizer:
         # Create grouped bars
         ax.bar(x - width, events, width, label="Events", color=self.color_scheme["info"])
         ax.bar(x, durations, width, label="Hours", color=self.color_scheme["primary"])
-        ax.bar(
-            x + width, scores, width, label="Score", color=self.color_scheme["success"]
-        )
+        ax.bar(x + width, scores, width, label="Score", color=self.color_scheme["success"])
 
         # Styling
         ax.set_title("Weekly Activity Summary", fontsize=14, fontweight="bold")
@@ -326,9 +318,7 @@ class AnalyticsVisualizer:
             )
 
         # Add target line
-        ax.axvline(
-            x=80, color=self.color_scheme["gray"], linestyle="--", label="Target (80%)"
-        )
+        ax.axvline(x=80, color=self.color_scheme["gray"], linestyle="--", label="Target (80%)")
 
         # Styling
         ax.set_title("Completion Rates", fontsize=14, fontweight="bold")

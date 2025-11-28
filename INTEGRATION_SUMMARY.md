@@ -9,7 +9,7 @@ Successfully integrated advanced AI Agent and Job Hunter features into the main 
 ## 🎯 What Was Integrated
 
 ### 1. **AI Agent (Chat Page)**
-**Before:** Basic AI chat with limited functionality  
+**Before:** Basic AI chat with limited functionality
 **After:** Advanced AI Agent with Ollama + Gemini
 
 **New Features:**
@@ -29,7 +29,7 @@ Successfully integrated advanced AI Agent and Job Hunter features into the main 
 ---
 
 ### 2. **Job Hunter (LinkedIn/Jobs Page)**
-**Before:** Embedded LinkedIn web browser  
+**Before:** Embedded LinkedIn web browser
 **After:** Full-featured Job Hunter with AI capabilities
 
 **New Features:**

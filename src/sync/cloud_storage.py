@@ -60,9 +60,7 @@ class LocalFileProvider(CloudProvider):
         super().__init__("local_file")
 
         if storage_path is None:
-            storage_path = os.path.join(
-                os.path.dirname(__file__), "..", "..", "data", "sync"
-            )
+            storage_path = os.path.join(os.path.dirname(__file__), "..", "..", "data", "sync")
 
         self.storage_path = Path(storage_path)
         self.storage_path.mkdir(parents=True, exist_ok=True)
@@ -94,9 +92,7 @@ class LocalFileProvider(CloudProvider):
             if self.changes_file.exists():
                 with open(self.changes_file, "r") as f:
                     data = json.load(f)
-                    existing_changes = [
-                        SyncChange.from_dict(c) for c in data.get("changes", [])
-                    ]
+                    existing_changes = [SyncChange.from_dict(c) for c in data.get("changes", [])]
 
             # Add new changes
             all_changes = existing_changes + changes
@@ -327,9 +323,7 @@ class CloudStorageManager:
 
         return self.active_provider.upload_changes(changes)
 
-    def download_from_cloud(
-        self, since: Optional[datetime] = None
-    ) -> List[SyncChange]:
+    def download_from_cloud(self, since: Optional[datetime] = None) -> List[SyncChange]:
         """Download changes from active provider"""
         if not self.active_provider:
             self.logger.error("No active provider")

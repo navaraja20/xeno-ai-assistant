@@ -123,9 +123,7 @@ class EntityRelationshipMapper:
             email = match.group(0)
             # Create person entity from email
             name = email.split("@")[0].replace(".", " ").title()
-            entity = self._get_or_create_entity(
-                name, EntityType.PERSON, {"email": email}
-            )
+            entity = self._get_or_create_entity(name, EntityType.PERSON, {"email": email})
             entities.append(entity)
 
         # Extract projects (capitalized multi-word phrases)
@@ -286,9 +284,7 @@ class EntityRelationshipMapper:
                 continue
 
             # Get the other entity
-            other_id = (
-                rel.to_node if rel.from_node == entity.entity_id else rel.from_node
-            )
+            other_id = rel.to_node if rel.from_node == entity.entity_id else rel.from_node
             other_entity = self.entities.get(other_id)
 
             if other_entity:
@@ -296,9 +292,7 @@ class EntityRelationshipMapper:
 
         return related
 
-    def get_entity_network(
-        self, entity: Entity, max_depth: int = 2
-    ) -> Dict[str, Any]:
+    def get_entity_network(self, entity: Entity, max_depth: int = 2) -> Dict[str, Any]:
         """Get network of entities around a central entity"""
 
         nodes, rels = self.graph.get_connected_subgraph(entity.entity_id, max_depth)
@@ -329,16 +323,12 @@ class EntityRelationshipMapper:
 
     def get_most_mentioned_entities(self, limit: int = 10) -> List[Entity]:
         """Get most frequently mentioned entities"""
-        entities = sorted(
-            self.entities.values(), key=lambda e: e.mention_count, reverse=True
-        )
+        entities = sorted(self.entities.values(), key=lambda e: e.mention_count, reverse=True)
         return entities[:limit]
 
     def get_recent_entities(self, limit: int = 10) -> List[Entity]:
         """Get most recently seen entities"""
-        entities = sorted(
-            self.entities.values(), key=lambda e: e.last_seen, reverse=True
-        )
+        entities = sorted(self.entities.values(), key=lambda e: e.last_seen, reverse=True)
         return entities[:limit]
 
     def merge_entities(self, entity1_id: str, entity2_id: str) -> bool:
@@ -397,9 +387,7 @@ class EntityRelationshipMapper:
         return {
             "total_entities": len(self.entities),
             "entity_types": entity_counts,
-            "most_mentioned": [
-                e.to_dict() for e in self.get_most_mentioned_entities(5)
-            ],
+            "most_mentioned": [e.to_dict() for e in self.get_most_mentioned_entities(5)],
         }
 
 

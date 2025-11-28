@@ -7,7 +7,7 @@ import json
 from abc import ABC, abstractmethod
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional, Callable
+from typing import Any, Callable, Dict, List, Optional
 
 from src.core.logger import setup_logger
 
@@ -231,11 +231,11 @@ class Plugin(ABC):
     def initialize(self, context: PluginContext, config: Dict[str, Any]) -> bool:
         """
         Initialize plugin
-        
+
         Args:
             context: Plugin context with logger, data_dir, etc.
             config: Plugin configuration
-            
+
         Returns:
             True if initialization successful
         """
@@ -245,7 +245,7 @@ class Plugin(ABC):
     def activate(self) -> bool:
         """
         Activate plugin
-        
+
         Returns:
             True if activation successful
         """
@@ -255,7 +255,7 @@ class Plugin(ABC):
     def deactivate(self) -> bool:
         """
         Deactivate plugin
-        
+
         Returns:
             True if deactivation successful
         """
@@ -305,10 +305,10 @@ class AutomationPlugin(Plugin):
     def execute(self, context: Dict[str, Any]) -> Dict[str, Any]:
         """
         Execute automation
-        
+
         Args:
             context: Execution context
-            
+
         Returns:
             Execution result
         """
@@ -341,10 +341,10 @@ class UIPlugin(Plugin):
     def render(self, parent_widget) -> Any:
         """
         Render UI component
-        
+
         Args:
             parent_widget: Parent Qt widget
-            
+
         Returns:
             Widget instance
         """
@@ -358,10 +358,10 @@ class AnalyticsPlugin(Plugin):
     def analyze(self, data: List[Dict[str, Any]]) -> Dict[str, Any]:
         """
         Analyze data
-        
+
         Args:
             data: Data to analyze
-            
+
         Returns:
             Analysis results
         """
@@ -375,10 +375,10 @@ class AIPlugin(Plugin):
     def process(self, input_data: Any) -> Any:
         """
         Process input with AI
-        
+
         Args:
             input_data: Input data
-            
+
         Returns:
             Processed output
         """

@@ -5,12 +5,12 @@ Coordinates synchronization across devices
 
 import time
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Callable
+from typing import Any, Callable, Dict, List, Optional
 
 from src.core.logger import setup_logger
-from src.sync.sync_engine import SyncEngine, SyncChange, ChangeType, SyncStatus
 from src.sync.cloud_storage import CloudStorageManager, get_cloud_manager
 from src.sync.offline_support import OfflineManager, get_offline_manager
+from src.sync.sync_engine import ChangeType, SyncChange, SyncEngine, SyncStatus
 
 
 class SyncCoordinator:
@@ -43,9 +43,7 @@ class SyncCoordinator:
         data: Dict[str, Any],
     ) -> SyncChange:
         """Track a local change"""
-        change = self.sync_engine.track_change(
-            change_type, entity_type, entity_id, data
-        )
+        change = self.sync_engine.track_change(change_type, entity_type, entity_id, data)
 
         # Queue for sync
         if self.offline_manager.is_online():
@@ -95,9 +93,7 @@ class SyncCoordinator:
 
             if remote_changes:
                 # Filter out our own changes
-                remote_changes = [
-                    c for c in remote_changes if c.device_id != self.device_id
-                ]
+                remote_changes = [c for c in remote_changes if c.device_id != self.device_id]
 
                 # Apply remote changes
                 apply_results = self.sync_engine.apply_remote_changes(remote_changes)
@@ -204,8 +200,8 @@ def get_sync_coordinator(device_id: str = None) -> SyncCoordinator:
     if _sync_coordinator is None:
         if device_id is None:
             # Generate device ID from machine info
-            import platform
             import hashlib
+            import platform
 
             machine_info = f"{platform.node()}_{platform.machine()}"
             device_id = hashlib.md5(machine_info.encode()).hexdigest()[:12]

@@ -14,16 +14,9 @@ from src.workflows.workflow_engine import (
 )
 
 # Node definitions
-from src.workflows.workflow_nodes import (
-    NodeCategory,
-    NodePort,
-    PortType,
-    WorkflowNode,
-    create_node,
-    get_available_nodes,
-    # Specific node types
-    AITextGenerationNode,
+from src.workflows.workflow_nodes import (  # Specific node types
     AISentimentAnalysisNode,
+    AITextGenerationNode,
     CompareNode,
     CreateTaskNode,
     DelayNode,
@@ -34,17 +27,23 @@ from src.workflows.workflow_nodes import (
     IfNode,
     LogNode,
     ManualTriggerNode,
+    NodeCategory,
+    NodePort,
+    PortType,
     SendEmailNode,
     SendNotificationNode,
     SetVariableNode,
     TimerTriggerNode,
+    WorkflowNode,
+    create_node,
+    get_available_nodes,
 )
-
-# Templates
-from src.workflows.workflow_templates import WorkflowTemplates
 
 # Visual studio
 from src.workflows.workflow_studio import WorkflowStudio, launch_workflow_studio
+
+# Templates
+from src.workflows.workflow_templates import WorkflowTemplates
 
 __all__ = [
     # Engine

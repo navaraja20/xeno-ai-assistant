@@ -13,11 +13,11 @@ from typing import Any, Dict, List, Optional
 from src.core.logger import setup_logger
 from src.plugins.plugin_base import (
     Plugin,
+    PluginAPI,
     PluginContext,
     PluginManifest,
     PluginStatus,
     PluginType,
-    PluginAPI,
 )
 
 
@@ -167,10 +167,10 @@ class PluginManager:
     def install_plugin(self, plugin_path: str) -> Optional[str]:
         """
         Install plugin from path
-        
+
         Args:
             plugin_path: Path to plugin directory or zip file
-            
+
         Returns:
             Plugin ID if successful
         """
@@ -265,9 +265,7 @@ class PluginManager:
 
         try:
             # Import module
-            spec = importlib.util.spec_from_file_location(
-                f"plugins.{plugin_id}", entry_file
-            )
+            spec = importlib.util.spec_from_file_location(f"plugins.{plugin_id}", entry_file)
             module = importlib.util.module_from_spec(spec)
             sys.modules[f"plugins.{plugin_id}"] = module
             spec.loader.exec_module(module)
@@ -355,9 +353,7 @@ class PluginManager:
         """Get loaded plugin"""
         return self.plugins.get(plugin_id)
 
-    def list_plugins(
-        self, status_filter: Optional[PluginStatus] = None
-    ) -> List[PluginManifest]:
+    def list_plugins(self, status_filter: Optional[PluginStatus] = None) -> List[PluginManifest]:
         """List all plugins"""
         manifests = list(self.manifests.values())
 
@@ -372,9 +368,7 @@ class PluginManager:
             return self.manifests[plugin_id].to_dict()
         return None
 
-    def execute_plugin(
-        self, plugin_id: str, method: str, *args, **kwargs
-    ) -> Optional[Any]:
+    def execute_plugin(self, plugin_id: str, method: str, *args, **kwargs) -> Optional[Any]:
         """Execute plugin method"""
         plugin = self.get_plugin(plugin_id)
         if plugin is None or not plugin.is_active:

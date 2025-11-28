@@ -129,9 +129,7 @@ class NotificationBundler:
 
         # Start timer if not running
         if not self.bundle_timer or not self.bundle_timer.is_alive():
-            self.bundle_timer = threading.Timer(
-                self.bundle_interval, self._flush_bundles
-            )
+            self.bundle_timer = threading.Timer(self.bundle_interval, self._flush_bundles)
             self.bundle_timer.start()
 
     def _flush_bundles(self):
@@ -141,18 +139,14 @@ class NotificationBundler:
                 # Create bundled notification
                 bundled = self._create_bundled_notification(notifications)
                 # Deliver via notification manager
-                self.logger.info(
-                    f"Delivering bundle: {len(notifications)} notifications"
-                )
+                self.logger.info(f"Delivering bundle: {len(notifications)} notifications")
             elif len(notifications) == 1:
                 # Deliver single notification
                 notifications[0].delivered = True
 
         self.pending_bundles.clear()
 
-    def _create_bundled_notification(
-        self, notifications: List[Notification]
-    ) -> Notification:
+    def _create_bundled_notification(self, notifications: List[Notification]) -> Notification:
         """Create a single bundled notification"""
         first = notifications[0]
         count = len(notifications)
@@ -271,7 +265,12 @@ class SmartNotificationManager:
 
         elif action == "snooze":
             # Snooze for 15 minutes
-            threading.Timer(900, lambda: self.send_notification(title, message, notification_type, priority, actions, data)).start()
+            threading.Timer(
+                900,
+                lambda: self.send_notification(
+                    title, message, notification_type, priority, actions, data
+                ),
+            ).start()
             return notification
 
         else:  # deliver

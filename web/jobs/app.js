@@ -13,7 +13,7 @@ async function searchJobs() {
     const role = document.getElementById('job-role').value.trim();
     const location = document.getElementById('location').value;
     const jobType = document.getElementById('job-type').value;
-    
+
     // Get selected sources
     const sources = [];
     document.querySelectorAll('.source-chip input:checked').forEach(input => {
@@ -154,13 +154,13 @@ function displayResults(jobs) {
 // Update statistics
 function updateStats(jobs) {
     document.getElementById('internship-count').textContent = jobs.length;
-    
+
     const uniqueCompanies = new Set(jobs.map(j => j.company)).size;
     document.getElementById('company-count').textContent = uniqueCompanies;
-    
+
     const uniqueLocations = new Set(jobs.map(j => j.location)).size;
     document.getElementById('location-count').textContent = uniqueLocations;
-    
+
     const uniqueSources = new Set(jobs.map(j => j.source)).size;
     document.getElementById('source-count').textContent = uniqueSources;
 }
@@ -305,7 +305,7 @@ function openJobUrl(jobIndex) {
         } else {
             alert('Job URL not available');
         }
-    } 
+    }
     // If it's a string (legacy), use it directly
     else if (jobIndex && jobIndex !== 'N/A' && jobIndex !== '') {
         window.open(jobIndex, '_blank');
@@ -340,11 +340,11 @@ function exportResults() {
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
-    
+
     link.setAttribute('href', url);
     link.setAttribute('download', `xeno_jobs_${new Date().toISOString().split('T')[0]}.csv`);
     link.style.visibility = 'hidden';
-    
+
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -360,18 +360,18 @@ function escapeHtml(text) {
 
 function formatDate(dateString) {
     if (!dateString) return 'N/A';
-    
+
     try {
         const date = new Date(dateString);
         const now = new Date();
         const diffTime = Math.abs(now - date);
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        
+
         if (diffDays === 0) return 'Today';
         if (diffDays === 1) return 'Yesterday';
         if (diffDays < 7) return `${diffDays} days ago`;
         if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
-        
+
         return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
     } catch (error) {
         return dateString;

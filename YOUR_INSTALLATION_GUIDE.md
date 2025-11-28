@@ -117,7 +117,7 @@ Some packages might need manual installation. That's okay - the core functionali
    ```powershell
    ollama pull llama3.1:8b
    ```
-   
+
    **What happens:**
    - Downloads ~4.7 GB model
    - Takes 5-10 minutes (depending on internet)
@@ -128,14 +128,14 @@ Some packages might need manual installation. That's okay - the core functionali
    ```powershell
    ollama run llama3.1:8b
    ```
-   
+
    **Try asking:**
    ```
    What is machine learning?
    ```
-   
+
    **Expected:** You'll get a detailed explanation!
-   
+
    **Exit:** Type `/bye`
 
 **Your RTX 4050 Performance:**
@@ -195,8 +195,8 @@ Email: your@email.com | Phone: +33 X XX XX XX XX
 LinkedIn: linkedin.com/in/yourprofile | GitHub: github.com/yourusername
 
 SUMMARY
-Passionate Data Science student with strong background in Machine Learning, 
-Deep Learning, and NLP. Proficient in Python, TensorFlow, PyTorch. Seeking 
+Passionate Data Science student with strong background in Machine Learning,
+Deep Learning, and NLP. Proficient in Python, TensorFlow, PyTorch. Seeking
 6-month internship to apply theoretical knowledge to real-world ML problems.
 
 EDUCATION
@@ -440,18 +440,18 @@ python create_applications.py
    - Make small edits if needed
 
 4. **Convert to PDF:**
-   
+
    **Option A: Use Pandoc**
    ```powershell
    # Install pandoc first: https://pandoc.org/installing.html
    cd "E:\Personal assistant\data\jobs\applications"
-   
+
    # Convert all .md to .pdf
    Get-ChildItem *.md | ForEach-Object {
        pandoc $_.FullName -o $_.FullName.Replace('.md', '.pdf')
    }
    ```
-   
+
    **Option B: Online converter**
    - Go to: https://www.markdowntopdf.com/
    - Upload .md files

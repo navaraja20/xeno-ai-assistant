@@ -10,13 +10,13 @@ from src.avatar.avatar_engine import (
     EmotionState,
     get_avatar_engine,
 )
+from src.avatar.avatar_widget import AvatarWidget, create_avatar_widget
 from src.avatar.holographic_effects import (
     HologramEffect,
     HolographicGlow,
     HolographicRenderer,
     get_holographic_renderer,
 )
-from src.avatar.avatar_widget import AvatarWidget, create_avatar_widget
 
 __all__ = [
     # Engine

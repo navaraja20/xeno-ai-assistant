@@ -43,7 +43,7 @@ XENO now includes powerful AI capabilities with local LLM support (Ollama) and c
    # Open PowerShell and run:
    ollama pull llama3.1:8b
    ```
-   
+
    **Recommended models for RTX 4050 (6GB VRAM):**
    - `llama3.1:8b` - Best overall (8GB, runs well)
    - `phi3:mini` - Faster, smaller (3.8GB)
@@ -53,14 +53,14 @@ XENO now includes powerful AI capabilities with local LLM support (Ollama) and c
    ```powershell
    ollama list
    ```
-   
+
    You should see your installed models.
 
 4. **Test Ollama**
    ```powershell
    ollama run llama3.1:8b
    ```
-   
+
    Type a question, press Enter. Type `/bye` to exit.
 
 5. **✅ Done!** XENO will automatically detect and use Ollama.

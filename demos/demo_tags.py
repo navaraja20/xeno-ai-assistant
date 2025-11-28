@@ -8,12 +8,11 @@ from typing import Any, Dict, List
 
 from src.core.logger import setup_logger
 from src.tags import (
-    get_tag_hierarchy,
-    get_tag_suggestion_engine,
     get_auto_tagger,
     get_tag_analytics,
+    get_tag_hierarchy,
+    get_tag_suggestion_engine,
 )
-
 
 logger = setup_logger("demo.tags")
 
@@ -31,20 +30,12 @@ def create_sample_tag_hierarchy():
     learning = hierarchy.create_tag("Learning", color="#9b59b6", icon="📚")
 
     # Work subcategories
-    projects = hierarchy.create_tag(
-        "Projects", parent_id=work.id, color="#2980b9", icon="📁"
-    )
-    meetings = hierarchy.create_tag(
-        "Meetings", parent_id=work.id, color="#3498db", icon="📅"
-    )
-    tasks = hierarchy.create_tag(
-        "Tasks", parent_id=work.id, color="#5dade2", icon="✓"
-    )
+    projects = hierarchy.create_tag("Projects", parent_id=work.id, color="#2980b9", icon="📁")
+    meetings = hierarchy.create_tag("Meetings", parent_id=work.id, color="#3498db", icon="📅")
+    tasks = hierarchy.create_tag("Tasks", parent_id=work.id, color="#5dade2", icon="✓")
 
     # Project subcategories
-    xeno = hierarchy.create_tag(
-        "XENO", parent_id=projects.id, color="#1abc9c", icon="🚀"
-    )
+    xeno = hierarchy.create_tag("XENO", parent_id=projects.id, color="#1abc9c", icon="🚀")
     client_work = hierarchy.create_tag(
         "Client Work", parent_id=projects.id, color="#16a085", icon="👥"
     )
@@ -55,26 +46,14 @@ def create_sample_tag_hierarchy():
     hierarchy.create_tag("Database", parent_id=xeno.id, color="#c0392b", icon="🗄️")
 
     # Personal subcategories
-    health = hierarchy.create_tag(
-        "Health", parent_id=personal.id, color="#27ae60", icon="💪"
-    )
-    finance = hierarchy.create_tag(
-        "Finance", parent_id=personal.id, color="#2ecc71", icon="💰"
-    )
-    home = hierarchy.create_tag(
-        "Home", parent_id=personal.id, color="#1abc9c", icon="🏡"
-    )
+    health = hierarchy.create_tag("Health", parent_id=personal.id, color="#27ae60", icon="💪")
+    finance = hierarchy.create_tag("Finance", parent_id=personal.id, color="#2ecc71", icon="💰")
+    home = hierarchy.create_tag("Home", parent_id=personal.id, color="#1abc9c", icon="🏡")
 
     # Learning subcategories
-    courses = hierarchy.create_tag(
-        "Courses", parent_id=learning.id, color="#8e44ad", icon="🎓"
-    )
-    books = hierarchy.create_tag(
-        "Books", parent_id=learning.id, color="#9b59b6", icon="📖"
-    )
-    tutorials = hierarchy.create_tag(
-        "Tutorials", parent_id=learning.id, color="#a569bd", icon="🎬"
-    )
+    courses = hierarchy.create_tag("Courses", parent_id=learning.id, color="#8e44ad", icon="🎓")
+    books = hierarchy.create_tag("Books", parent_id=learning.id, color="#9b59b6", icon="📖")
+    tutorials = hierarchy.create_tag("Tutorials", parent_id=learning.id, color="#a569bd", icon="🎬")
 
     # Additional standalone tags
     hierarchy.create_tag("Urgent", color="#e74c3c", icon="⚡")
@@ -363,12 +342,8 @@ def demo_tag_organization():
 
     xeno_tag = hierarchy.get_tag_by_name("XENO")
     if xeno_tag:
-        sprint1 = hierarchy.create_tag(
-            "Sprint 1", parent_id=xeno_tag.id, color="#e74c3c"
-        )
-        sprint2 = hierarchy.create_tag(
-            "Sprint 2", parent_id=xeno_tag.id, color="#3498db"
-        )
+        sprint1 = hierarchy.create_tag("Sprint 1", parent_id=xeno_tag.id, color="#e74c3c")
+        sprint2 = hierarchy.create_tag("Sprint 2", parent_id=xeno_tag.id, color="#3498db")
 
         print(f"   Created: {sprint1.name} under XENO")
         print(f"   Created: {sprint2.name} under XENO")

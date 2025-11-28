@@ -179,17 +179,13 @@ class ShortcutManager:
         total_usage = sum(s.usage_count for s in self.shortcuts.values())
 
         # Most used
-        most_used = sorted(
-            self.shortcuts.values(), key=lambda s: s.usage_count, reverse=True
-        )[:5]
+        most_used = sorted(self.shortcuts.values(), key=lambda s: s.usage_count, reverse=True)[:5]
 
         return {
             "total_shortcuts": total,
             "enabled_shortcuts": enabled,
             "total_usage": total_usage,
-            "most_used": [
-                {"name": s.name, "usage": s.usage_count} for s in most_used
-            ],
+            "most_used": [{"name": s.name, "usage": s.usage_count} for s in most_used],
             "categories": len(self.get_categories()),
         }
 
@@ -204,9 +200,7 @@ class ShortcutManager:
                     "enabled": shortcut.enabled,
                     "requires_confirmation": shortcut.requires_confirmation,
                     "usage_count": shortcut.usage_count,
-                    "last_used": (
-                        shortcut.last_used.isoformat() if shortcut.last_used else None
-                    ),
+                    "last_used": (shortcut.last_used.isoformat() if shortcut.last_used else None),
                 }
                 for name, shortcut in self.shortcuts.items()
             }

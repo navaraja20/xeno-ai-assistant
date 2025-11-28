@@ -9,10 +9,10 @@ import threading
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Callable
+from typing import Any, Callable, Dict, List, Optional
 
 from src.core.logger import setup_logger
-from src.sync.sync_engine import SyncChange, ChangeType
+from src.sync.sync_engine import ChangeType, SyncChange
 
 
 class OfflineQueue:
@@ -210,9 +210,7 @@ class OfflineManager:
         for change in failed_changes:
             self.queue.enqueue(change)
 
-        self.logger.info(
-            f"Processed {processed} changes, {len(failed_changes)} failed"
-        )
+        self.logger.info(f"Processed {processed} changes, {len(failed_changes)} failed")
         return processed
 
     def start_auto_sync(self):
@@ -249,9 +247,7 @@ class OfflineManager:
             "queue_size": self.queue.size(),
             "auto_sync_enabled": self.auto_sync_enabled,
             "sync_interval": self.sync_interval,
-            "auto_sync_running": self._sync_thread.is_alive()
-            if self._sync_thread
-            else False,
+            "auto_sync_running": self._sync_thread.is_alive() if self._sync_thread else False,
         }
 
 

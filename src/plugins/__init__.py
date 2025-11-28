@@ -4,17 +4,17 @@ Exports all plugin components
 """
 
 from src.plugins.plugin_base import (
+    AIPlugin,
+    AnalyticsPlugin,
+    AutomationPlugin,
+    IntegrationPlugin,
     Plugin,
+    PluginAPI,
     PluginContext,
     PluginManifest,
     PluginStatus,
     PluginType,
-    PluginAPI,
-    AutomationPlugin,
-    IntegrationPlugin,
     UIPlugin,
-    AnalyticsPlugin,
-    AIPlugin,
     UtilityPlugin,
 )
 from src.plugins.plugin_manager import PluginManager, PluginSandbox, get_plugin_manager

@@ -104,8 +104,7 @@ class MemoryPersistence:
 
         data = {
             "sessions": {
-                session_id: session.to_dict()
-                for session_id, session in tracker.sessions.items()
+                session_id: session.to_dict() for session_id, session in tracker.sessions.items()
             },
             "current_session_id": (
                 tracker.current_session.session_id if tracker.current_session else None
@@ -165,8 +164,7 @@ class MemoryPersistence:
 
         data = {
             "entities": {
-                entity_id: entity.to_dict()
-                for entity_id, entity in mapper.entities.items()
+                entity_id: entity.to_dict() for entity_id, entity in mapper.entities.items()
             },
             "entity_name_index": mapper.entity_name_index,
         }
@@ -246,12 +244,10 @@ class MemoryPersistence:
             "export_timestamp": datetime.now().isoformat(),
             "graph": json.loads(graph.export_to_json()),
             "conversations": {
-                session_id: session.to_dict()
-                for session_id, session in tracker.sessions.items()
+                session_id: session.to_dict() for session_id, session in tracker.sessions.items()
             },
             "entities": {
-                entity_id: entity.to_dict()
-                for entity_id, entity in mapper.entities.items()
+                entity_id: entity.to_dict() for entity_id, entity in mapper.entities.items()
             },
             "vector_store": {
                 "documents": manager.vector_store.documents,

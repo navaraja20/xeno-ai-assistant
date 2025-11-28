@@ -4,6 +4,7 @@ Demonstrates integration plugin capabilities
 """
 
 from typing import Any, Dict, List
+
 from src.plugins.plugin_base import IntegrationPlugin, PluginContext
 
 

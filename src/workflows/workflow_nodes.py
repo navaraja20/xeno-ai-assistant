@@ -185,9 +185,7 @@ class WorkflowNode:
             "config": self.config,
             "enabled": self.enabled,
             "execution_stats": {
-                "last_executed": (
-                    self.last_executed.isoformat() if self.last_executed else None
-                ),
+                "last_executed": (self.last_executed.isoformat() if self.last_executed else None),
                 "execution_count": self.execution_count,
                 "error_count": self.error_count,
                 "last_error": self.last_error,
@@ -693,12 +691,14 @@ def get_available_nodes() -> List[Dict[str, Any]]:
     for node_type, node_class in NODE_REGISTRY.items():
         # Create temporary instance to get info
         temp_node = node_class("temp")
-        nodes.append({
-            "node_type": node_type,
-            "category": temp_node.category.value,
-            "display_name": temp_node.display_name,
-            "description": temp_node.description,
-            "color": temp_node.color,
-        })
+        nodes.append(
+            {
+                "node_type": node_type,
+                "category": temp_node.category.value,
+                "display_name": temp_node.display_name,
+                "description": temp_node.description,
+                "color": temp_node.color,
+            }
+        )
 
     return nodes

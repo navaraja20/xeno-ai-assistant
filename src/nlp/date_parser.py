@@ -23,47 +23,59 @@ class DateParser:
         """Compile regex patterns for date extraction"""
         # Relative dates
         self.relative_patterns = [
-            (r'\btoday\b', lambda: datetime.now()),
-            (r'\btomorrow\b', lambda: datetime.now() + timedelta(days=1)),
-            (r'\byesterday\b', lambda: datetime.now() - timedelta(days=1)),
-            (r'\bnext week\b', lambda: datetime.now() + timedelta(weeks=1)),
-            (r'\bthis week\b', lambda: datetime.now()),
-            (r'\bnext month\b', lambda: datetime.now() + timedelta(days=30)),
-            (r'\bthis month\b', lambda: datetime.now()),
+            (r"\btoday\b", lambda: datetime.now()),
+            (r"\btomorrow\b", lambda: datetime.now() + timedelta(days=1)),
+            (r"\byesterday\b", lambda: datetime.now() - timedelta(days=1)),
+            (r"\bnext week\b", lambda: datetime.now() + timedelta(weeks=1)),
+            (r"\bthis week\b", lambda: datetime.now()),
+            (r"\bnext month\b", lambda: datetime.now() + timedelta(days=30)),
+            (r"\bthis month\b", lambda: datetime.now()),
         ]
 
         # Day-specific patterns
         self.day_patterns = {
-            'monday': 0,
-            'tuesday': 1,
-            'wednesday': 2,
-            'thursday': 3,
-            'friday': 4,
-            'saturday': 5,
-            'sunday': 6,
-            'mon': 0,
-            'tue': 1,
-            'wed': 2,
-            'thu': 3,
-            'fri': 4,
-            'sat': 5,
-            'sun': 6,
+            "monday": 0,
+            "tuesday": 1,
+            "wednesday": 2,
+            "thursday": 3,
+            "friday": 4,
+            "saturday": 5,
+            "sunday": 6,
+            "mon": 0,
+            "tue": 1,
+            "wed": 2,
+            "thu": 3,
+            "fri": 4,
+            "sat": 5,
+            "sun": 6,
         }
 
         # Month names
         self.month_names = {
-            'january': 1, 'jan': 1,
-            'february': 2, 'feb': 2,
-            'march': 3, 'mar': 3,
-            'april': 4, 'apr': 4,
-            'may': 5,
-            'june': 6, 'jun': 6,
-            'july': 7, 'jul': 7,
-            'august': 8, 'aug': 8,
-            'september': 9, 'sep': 9, 'sept': 9,
-            'october': 10, 'oct': 10,
-            'november': 11, 'nov': 11,
-            'december': 12, 'dec': 12,
+            "january": 1,
+            "jan": 1,
+            "february": 2,
+            "feb": 2,
+            "march": 3,
+            "mar": 3,
+            "april": 4,
+            "apr": 4,
+            "may": 5,
+            "june": 6,
+            "jun": 6,
+            "july": 7,
+            "jul": 7,
+            "august": 8,
+            "aug": 8,
+            "september": 9,
+            "sep": 9,
+            "sept": 9,
+            "october": 10,
+            "oct": 10,
+            "november": 11,
+            "nov": 11,
+            "december": 12,
+            "dec": 12,
         }
 
     def parse_date(self, text: str) -> Optional[datetime]:
@@ -76,38 +88,38 @@ class DateParser:
                 return date_func()
 
         # 2. Try "in X days/weeks/months"
-        in_pattern = r'\bin (\d+) (day|week|month)s?\b'
+        in_pattern = r"\bin (\d+) (day|week|month)s?\b"
         match = re.search(in_pattern, text_lower)
         if match:
             amount = int(match.group(1))
             unit = match.group(2)
 
-            if unit == 'day':
+            if unit == "day":
                 return datetime.now() + timedelta(days=amount)
-            elif unit == 'week':
+            elif unit == "week":
                 return datetime.now() + timedelta(weeks=amount)
-            elif unit == 'month':
+            elif unit == "month":
                 return datetime.now() + timedelta(days=amount * 30)
 
         # 3. Try "next/this <day>"
         for day_name, day_num in self.day_patterns.items():
             # Next <day>
-            pattern = rf'\bnext {day_name}\b'
+            pattern = rf"\bnext {day_name}\b"
             if re.search(pattern, text_lower):
                 return self._next_weekday(day_num)
 
             # This <day>
-            pattern = rf'\bthis {day_name}\b'
+            pattern = rf"\bthis {day_name}\b"
             if re.search(pattern, text_lower):
                 return self._this_weekday(day_num)
 
             # Just <day> (assume next occurrence)
-            pattern = rf'\b{day_name}\b'
+            pattern = rf"\b{day_name}\b"
             if re.search(pattern, text_lower):
                 return self._next_weekday(day_num)
 
         # 4. Try "on <day>"
-        on_day_pattern = r'\bon (\w+)\b'
+        on_day_pattern = r"\bon (\w+)\b"
         match = re.search(on_day_pattern, text_lower)
         if match:
             day_name = match.group(1)
@@ -116,7 +128,7 @@ class DateParser:
 
         # 5. Try specific date formats
         # MM/DD/YYYY or MM-DD-YYYY
-        date_pattern = r'\b(\d{1,2})[/-](\d{1,2})[/-](\d{2,4})\b'
+        date_pattern = r"\b(\d{1,2})[/-](\d{1,2})[/-](\d{2,4})\b"
         match = re.search(date_pattern, text)
         if match:
             try:
@@ -132,7 +144,7 @@ class DateParser:
         # 6. Try "Month Day" or "Day Month"
         # Month Day (e.g., "January 15")
         for month_name, month_num in self.month_names.items():
-            pattern = rf'\b{month_name} (\d{{1,2}})\b'
+            pattern = rf"\b{month_name} (\d{{1,2}})\b"
             match = re.search(pattern, text_lower)
             if match:
                 day = int(match.group(1))
@@ -147,7 +159,7 @@ class DateParser:
                     pass
 
             # Day Month (e.g., "15 January")
-            pattern = rf'\b(\d{{1,2}}) {month_name}\b'
+            pattern = rf"\b(\d{{1,2}}) {month_name}\b"
             match = re.search(pattern, text_lower)
             if match:
                 day = int(match.group(1))
@@ -161,10 +173,10 @@ class DateParser:
                     pass
 
         # 7. Try "end of week/month"
-        if re.search(r'\bend of (the )?week\b', text_lower):
+        if re.search(r"\bend of (the )?week\b", text_lower):
             return self._end_of_week()
 
-        if re.search(r'\bend of (the )?month\b', text_lower):
+        if re.search(r"\bend of (the )?month\b", text_lower):
             return self._end_of_month()
 
         return None
@@ -179,22 +191,22 @@ class DateParser:
 
             # Remove common date patterns
             patterns = [
-                r'\b(today|tomorrow|yesterday)\b',
-                r'\b(next|this) (week|month|year)\b',
-                r'\bin \d+ (day|week|month)s?\b',
-                r'\b(next|this) \w+(day)?\b',
-                r'\bon \w+\b',
-                r'\b\d{1,2}[/-]\d{1,2}[/-]\d{2,4}\b',
-                r'\b(january|february|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec) \d{1,2}\b',
-                r'\b\d{1,2} (january|february|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)\b',
-                r'\bend of (the )?(week|month)\b',
+                r"\b(today|tomorrow|yesterday)\b",
+                r"\b(next|this) (week|month|year)\b",
+                r"\bin \d+ (day|week|month)s?\b",
+                r"\b(next|this) \w+(day)?\b",
+                r"\bon \w+\b",
+                r"\b\d{1,2}[/-]\d{1,2}[/-]\d{2,4}\b",
+                r"\b(january|february|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec) \d{1,2}\b",
+                r"\b\d{1,2} (january|february|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)\b",
+                r"\bend of (the )?(week|month)\b",
             ]
 
             for pattern in patterns:
-                cleaned = re.sub(pattern, '', cleaned, flags=re.IGNORECASE)
+                cleaned = re.sub(pattern, "", cleaned, flags=re.IGNORECASE)
 
             # Clean up extra whitespace
-            cleaned = re.sub(r'\s+', ' ', cleaned).strip()
+            cleaned = re.sub(r"\s+", " ", cleaned).strip()
 
             return date, cleaned
 

@@ -12,11 +12,11 @@ from src.core.logger import setup_logger
 
 class CoverLetterGenerator:
     """Generate personalized cover letters"""
-    
+
     def __init__(self):
         self.logger = setup_logger("jobs.cover_letter")
         self.ai_agent = get_ai_agent()
-    
+
     def generate(
         self,
         resume_text: str,
@@ -29,7 +29,7 @@ class CoverLetterGenerator:
     ) -> str:
         """
         Generate personalized cover letter
-        
+
         Args:
             resume_text: Applicant's resume
             job_description: Full job posting
@@ -40,14 +40,14 @@ class CoverLetterGenerator:
             format_type: Output format
         """
         self.logger.info(f"Generating cover letter for {position_title} at {company_name}")
-        
+
         # Extract applicant name from resume if not provided
         if not applicant_name:
             applicant_name = self._extract_name(resume_text)
-        
+
         # Build prompt
         salutation = f"Dear {hiring_manager}," if hiring_manager else "Dear Hiring Manager,"
-        
+
         prompt = f"""You are a professional cover letter writer. Write a compelling, personalized cover letter.
 
 **Applicant Information:**
@@ -68,7 +68,7 @@ Description:
    - Use specific examples with quantifiable results
    - Show how your skills directly address their needs
    - Demonstrate knowledge of the company/industry
-3. Closing: 
+3. Closing:
    - Reiterate interest and value you'd bring
    - Call to action (request interview)
    - Professional sign-off
@@ -85,30 +85,30 @@ Description:
 {salutation}
 
 """
-        
+
         cover_letter = self.ai_agent.chat(prompt)
-        
+
         # Add date and signature if not present
         if "Sincerely" not in cover_letter and "Best regards" not in cover_letter:
             cover_letter += f"\n\nSincerely,\n{applicant_name}"
-        
+
         self.logger.info("Cover letter generated successfully")
         return cover_letter
-    
+
     def _extract_name(self, resume_text: str) -> str:
         """Extract applicant name from resume"""
         # Usually the first line
-        lines = resume_text.strip().split('\n')
+        lines = resume_text.strip().split("\n")
         if lines:
             # Clean up name
             name = lines[0].strip()
             # Remove common resume headers
-            name = name.replace('Resume', '').replace('CV', '').replace('|', '').strip()
+            name = name.replace("Resume", "").replace("CV", "").replace("|", "").strip()
             if len(name.split()) <= 4 and name:  # Reasonable name length
                 return name
-        
+
         return "Your Name"
-    
+
     def generate_from_template(
         self,
         template: str,
@@ -116,7 +116,7 @@ Description:
     ) -> str:
         """
         Generate cover letter from template
-        
+
         Args:
             template: Cover letter template with {placeholders}
             variables: Dict of placeholder values
@@ -126,7 +126,7 @@ Description:
         except KeyError as e:
             self.logger.error(f"Missing variable in template: {e}")
             return template
-    
+
     def get_default_template(self) -> str:
         """Get default cover letter template"""
         return """Dear {hiring_manager},

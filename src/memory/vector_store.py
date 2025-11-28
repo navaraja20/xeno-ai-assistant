@@ -182,9 +182,7 @@ class VectorStore:
             ],
         }
 
-    def find_similar_documents(
-        self, doc_id: str, limit: int = 5
-    ) -> List[Tuple[str, float, str]]:
+    def find_similar_documents(self, doc_id: str, limit: int = 5) -> List[Tuple[str, float, str]]:
         """Find documents similar to a given document"""
         if doc_id not in self.embeddings:
             return []
@@ -226,9 +224,7 @@ class VectorStore:
                 "documents": self.documents,
                 "metadata": self.metadata,
                 "collections": self.collections,
-                "embeddings": {
-                    doc_id: emb.tolist() for doc_id, emb in self.embeddings.items()
-                },
+                "embeddings": {doc_id: emb.tolist() for doc_id, emb in self.embeddings.items()},
             }
 
             with open(self.persist_dir / "vector_store.json", "w") as f:
@@ -368,9 +364,7 @@ class MemoryManager:
 
         return memories
 
-    def get_context(
-        self, memory_id: str, depth: int = 2
-    ) -> Dict[str, Any]:
+    def get_context(self, memory_id: str, depth: int = 2) -> Dict[str, Any]:
         """Get contextual information around a memory"""
 
         # Get from vector store
@@ -394,14 +388,11 @@ class MemoryManager:
                 if n.node_id != memory_id
             ],
             "relationships": [
-                {"from": r.from_node, "to": r.to_node, "type": r.rel_type}
-                for r in rels
+                {"from": r.from_node, "to": r.to_node, "type": r.rel_type} for r in rels
             ],
         }
 
-    def find_connections(
-        self, memory_id1: str, memory_id2: str
-    ) -> Optional[List[str]]:
+    def find_connections(self, memory_id1: str, memory_id2: str) -> Optional[List[str]]:
         """Find connection path between two memories"""
         return self.graph.find_path(memory_id1, memory_id2)
 

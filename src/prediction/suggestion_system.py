@@ -84,9 +84,7 @@ class SuggestionSystem:
         self.min_confidence = 0.5
         self.suggestion_cooldown_hours = 4  # Don't re-suggest same task within hours
 
-    def generate_suggestions(
-        self, context: Dict[str, Any] = None
-    ) -> List[TaskSuggestion]:
+    def generate_suggestions(self, context: Dict[str, Any] = None) -> List[TaskSuggestion]:
         """Generate task suggestions"""
         suggestions = []
 
@@ -110,7 +108,7 @@ class SuggestionSystem:
         ranked = self._rank_suggestions(filtered)
 
         # Store as active suggestions
-        self.active_suggestions = ranked[:self.max_suggestions]
+        self.active_suggestions = ranked[: self.max_suggestions]
 
         self.logger.info(f"Generated {len(self.active_suggestions)} suggestions")
         return self.active_suggestions
@@ -138,7 +136,9 @@ class SuggestionSystem:
                 confidence=pred.get("probability", 0.5),
                 tags=[],
                 estimated_duration=None,
-                suggested_time=datetime.fromisoformat(pred["expected_time"]) if "expected_time" in pred else None,
+                suggested_time=datetime.fromisoformat(pred["expected_time"])
+                if "expected_time" in pred
+                else None,
                 source="pattern",
             )
 
@@ -187,79 +187,91 @@ class SuggestionSystem:
 
         # Morning suggestions (6-9 AM)
         if 6 <= current_hour < 9:
-            suggestions.append(TaskSuggestion(
-                title="Review today's priorities",
-                priority="medium",
-                reason="Morning planning helps set daily focus",
-                confidence=0.7,
-                tags=["planning", "morning"],
-                estimated_duration=15,
-                suggested_time=now,
-                source="context",
-            ))
+            suggestions.append(
+                TaskSuggestion(
+                    title="Review today's priorities",
+                    priority="medium",
+                    reason="Morning planning helps set daily focus",
+                    confidence=0.7,
+                    tags=["planning", "morning"],
+                    estimated_duration=15,
+                    suggested_time=now,
+                    source="context",
+                )
+            )
 
         # End of day suggestions (4-6 PM)
         elif 16 <= current_hour < 18:
-            suggestions.append(TaskSuggestion(
-                title="Review completed tasks",
-                priority="low",
-                reason="End-of-day review helps track progress",
-                confidence=0.6,
-                tags=["review", "evening"],
-                estimated_duration=10,
-                suggested_time=now,
-                source="context",
-            ))
+            suggestions.append(
+                TaskSuggestion(
+                    title="Review completed tasks",
+                    priority="low",
+                    reason="End-of-day review helps track progress",
+                    confidence=0.6,
+                    tags=["review", "evening"],
+                    estimated_duration=10,
+                    suggested_time=now,
+                    source="context",
+                )
+            )
 
         # Day-specific suggestions
         if now.weekday() == 0:  # Monday
-            suggestions.append(TaskSuggestion(
-                title="Plan weekly goals",
-                priority="medium",
-                reason="Start of week planning",
-                confidence=0.65,
-                tags=["planning", "weekly"],
-                estimated_duration=20,
-                suggested_time=now,
-                source="context",
-            ))
+            suggestions.append(
+                TaskSuggestion(
+                    title="Plan weekly goals",
+                    priority="medium",
+                    reason="Start of week planning",
+                    confidence=0.65,
+                    tags=["planning", "weekly"],
+                    estimated_duration=20,
+                    suggested_time=now,
+                    source="context",
+                )
+            )
 
         elif now.weekday() == 4:  # Friday
-            suggestions.append(TaskSuggestion(
-                title="Prepare weekly summary",
-                priority="low",
-                reason="End of week wrap-up",
-                confidence=0.6,
-                tags=["review", "weekly"],
-                estimated_duration=15,
-                suggested_time=now,
-                source="context",
-            ))
+            suggestions.append(
+                TaskSuggestion(
+                    title="Prepare weekly summary",
+                    priority="low",
+                    reason="End of week wrap-up",
+                    confidence=0.6,
+                    tags=["review", "weekly"],
+                    estimated_duration=15,
+                    suggested_time=now,
+                    source="context",
+                )
+            )
 
         # Context-based (if provided)
         if context.get("recent_completed_count", 0) >= 5:
-            suggestions.append(TaskSuggestion(
-                title="Take a break",
-                priority="low",
-                reason="You've completed 5+ tasks, time to rest",
-                confidence=0.8,
-                tags=["wellbeing"],
-                estimated_duration=15,
-                suggested_time=now,
-                source="context",
-            ))
+            suggestions.append(
+                TaskSuggestion(
+                    title="Take a break",
+                    priority="low",
+                    reason="You've completed 5+ tasks, time to rest",
+                    confidence=0.8,
+                    tags=["wellbeing"],
+                    estimated_duration=15,
+                    suggested_time=now,
+                    source="context",
+                )
+            )
 
         if context.get("overdue_count", 0) > 0:
-            suggestions.append(TaskSuggestion(
-                title="Review overdue tasks",
-                priority="high",
-                reason=f"You have {context['overdue_count']} overdue tasks",
-                confidence=0.9,
-                tags=["urgent", "review"],
-                estimated_duration=10,
-                suggested_time=now,
-                source="context",
-            ))
+            suggestions.append(
+                TaskSuggestion(
+                    title="Review overdue tasks",
+                    priority="high",
+                    reason=f"You have {context['overdue_count']} overdue tasks",
+                    confidence=0.9,
+                    tags=["urgent", "review"],
+                    estimated_duration=10,
+                    suggested_time=now,
+                    source="context",
+                )
+            )
 
         return suggestions
 
@@ -306,17 +318,14 @@ class SuggestionSystem:
         # Check preferred tags
         if suggestion.tags:
             tag_scores = [
-                self.user_preferences["preferred_tags"].get(tag, 0.5)
-                for tag in suggestion.tags
+                self.user_preferences["preferred_tags"].get(tag, 0.5) for tag in suggestion.tags
             ]
             if tag_scores:
                 avg_tag_score = sum(tag_scores) / len(tag_scores)
                 confidence = confidence * 0.7 + avg_tag_score * 0.3
 
         # Check preferred priority
-        priority_score = self.user_preferences["preferred_priorities"].get(
-            suggestion.priority, 0.5
-        )
+        priority_score = self.user_preferences["preferred_priorities"].get(suggestion.priority, 0.5)
         confidence = confidence * 0.8 + priority_score * 0.2
 
         return min(1.0, confidence)
@@ -393,7 +402,9 @@ class SuggestionSystem:
 
         adjustment = 0.1 if accepted else -0.05
         current = self.user_preferences["preferred_priorities"][priority]
-        self.user_preferences["preferred_priorities"][priority] = max(0, min(1, current + adjustment))
+        self.user_preferences["preferred_priorities"][priority] = max(
+            0, min(1, current + adjustment)
+        )
 
     def get_suggestion_stats(self) -> Dict[str, Any]:
         """Get suggestion statistics"""

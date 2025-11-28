@@ -7,16 +7,10 @@ import json
 from typing import Dict, List, Optional
 
 from PyQt6.QtCore import QPointF, QRectF, Qt, pyqtSignal
-from PyQt6.QtGui import (
-    QBrush,
-    QColor,
-    QPainter,
-    QPainterPath,
-    QPen,
-    QFont,
-)
+from PyQt6.QtGui import QBrush, QColor, QFont, QPainter, QPainterPath, QPen
 from PyQt6.QtWidgets import (
     QApplication,
+    QFileDialog,
     QGraphicsEllipseItem,
     QGraphicsItem,
     QGraphicsLineItem,
@@ -26,26 +20,21 @@ from PyQt6.QtWidgets import (
     QGraphicsTextItem,
     QGraphicsView,
     QHBoxLayout,
+    QLabel,
     QListWidget,
     QListWidgetItem,
     QMainWindow,
-    QPushButton,
-    QSplitter,
-    QVBoxLayout,
-    QWidget,
-    QTextEdit,
-    QLabel,
     QMenu,
     QMessageBox,
-    QFileDialog,
+    QPushButton,
+    QSplitter,
+    QTextEdit,
+    QVBoxLayout,
+    QWidget,
 )
 
 from src.core.logger import setup_logger
-from src.workflows.workflow_engine import (
-    Connection,
-    Workflow,
-    get_workflow_manager,
-)
+from src.workflows.workflow_engine import Connection, Workflow, get_workflow_manager
 from src.workflows.workflow_nodes import (
     NodeCategory,
     PortType,
@@ -134,9 +123,7 @@ class NodeGraphicsItem(QGraphicsRectItem):
         # Input ports (left side)
         port_y = 50
         for i, port in enumerate(self.node.input_ports):
-            port_item = PortGraphicsItem(
-                port.port_id, port.name, True, port.port_type
-            )
+            port_item = PortGraphicsItem(port.port_id, port.name, True, port.port_type)
             port_item.setParentItem(self)
             port_item.setPos(-6, port_y + i * 20)
 
@@ -151,9 +138,7 @@ class NodeGraphicsItem(QGraphicsRectItem):
         # Output ports (right side)
         port_y = 50
         for i, port in enumerate(self.node.output_ports):
-            port_item = PortGraphicsItem(
-                port.port_id, port.name, False, port.port_type
-            )
+            port_item = PortGraphicsItem(port.port_id, port.name, False, port.port_type)
             port_item.setParentItem(self)
             port_item.setPos(200 + 6, port_y + i * 20)
 
@@ -342,9 +327,7 @@ class WorkflowCanvas(QGraphicsView):
             )
             end_pos = self.mapToScene(event.pos())
 
-            self.temp_connection.setLine(
-                start_pos.x(), start_pos.y(), end_pos.x(), end_pos.y()
-            )
+            self.temp_connection.setLine(start_pos.x(), start_pos.y(), end_pos.x(), end_pos.y())
 
             return
 
@@ -685,9 +668,7 @@ class WorkflowStudio(QMainWindow):
         )
 
         if file_path:
-            self.workflow_manager.export_workflow(
-                self.current_workflow.workflow_id, file_path
-            )
+            self.workflow_manager.export_workflow(self.current_workflow.workflow_id, file_path)
             QMessageBox.information(self, "Success", "Workflow exported successfully")
 
     def _import_workflow(self):

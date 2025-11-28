@@ -241,9 +241,7 @@ class ConversationContextTracker:
         recent_turns = self.context_window[-max_turns:]
         return [turn.to_dict() for turn in recent_turns]
 
-    def search_conversation_history(
-        self, query: str, limit: int = 5
-    ) -> List[Dict[str, Any]]:
+    def search_conversation_history(self, query: str, limit: int = 5) -> List[Dict[str, Any]]:
         """Search past conversations"""
         return self.memory_manager.recall(
             query=query,
@@ -325,9 +323,7 @@ class ConversationContextTracker:
             "total_sessions": total_sessions,
             "total_turns": total_turns,
             "avg_turns_per_session": total_turns / total_sessions if total_sessions > 0 else 0,
-            "current_session": (
-                self.current_session.session_id if self.current_session else None
-            ),
+            "current_session": (self.current_session.session_id if self.current_session else None),
             "context_window_size": len(self.context_window),
         }
 

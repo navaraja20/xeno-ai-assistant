@@ -28,7 +28,7 @@ class PluginSDK:
     ) -> bool:
         """
         Create a new plugin template
-        
+
         Args:
             plugin_id: Unique plugin identifier
             name: Plugin name
@@ -36,7 +36,7 @@ class PluginSDK:
             output_dir: Output directory
             author: Plugin author
             description: Plugin description
-            
+
         Returns:
             True if successful
         """
@@ -89,9 +89,7 @@ class PluginSDK:
         self.logger.info(f"Created plugin template at {output_path}")
         return True
 
-    def _generate_plugin_code(
-        self, plugin_id: str, name: str, plugin_type: PluginType
-    ) -> str:
+    def _generate_plugin_code(self, plugin_id: str, name: str, plugin_type: PluginType) -> str:
         """Generate plugin code template"""
         if plugin_type == PluginType.AUTOMATION:
             return f'''"""
@@ -128,9 +126,9 @@ class Plugin(AutomationPlugin):
     def execute(self, context: Dict[str, Any]) -> Dict[str, Any]:
         """Execute automation"""
         self.logger.info("Executing automation")
-        
+
         # TODO: Implement automation logic
-        
+
         return {{
             "success": True,
             "message": "Automation completed",
@@ -186,18 +184,18 @@ class Plugin(IntegrationPlugin):
     def connect(self) -> bool:
         """Connect to external service"""
         self.logger.info("Connecting to service...")
-        
+
         # TODO: Implement connection logic
-        
+
         self._connected = True
         return True
 
     def disconnect(self) -> bool:
         """Disconnect from external service"""
         self.logger.info("Disconnecting from service...")
-        
+
         # TODO: Implement disconnection logic
-        
+
         self._connected = False
         return True
 
@@ -206,11 +204,11 @@ class Plugin(IntegrationPlugin):
         if not self._connected:
             self.logger.error("Not connected")
             return False
-        
+
         self.logger.info("Syncing data...")
-        
+
         # TODO: Implement sync logic
-        
+
         return True
 
     def get_config_schema(self) -> Dict[str, Any]:
@@ -260,15 +258,15 @@ class Plugin(UIPlugin):
     def render(self, parent_widget) -> Any:
         """Render UI component"""
         from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel
-        
+
         widget = QWidget(parent_widget)
         layout = QVBoxLayout(widget)
-        
+
         label = QLabel("{name} UI")
         layout.addWidget(label)
-        
+
         # TODO: Implement UI components
-        
+
         return widget
 '''
 
@@ -307,9 +305,9 @@ class Plugin(AnalyticsPlugin):
     def analyze(self, data: List[Dict[str, Any]]) -> Dict[str, Any]:
         """Analyze data"""
         self.logger.info(f"Analyzing {{len(data)}} items")
-        
+
         # TODO: Implement analysis logic
-        
+
         return {{
             "total_items": len(data),
             "insights": [],
@@ -351,9 +349,9 @@ class Plugin(AIPlugin):
     def process(self, input_data: Any) -> Any:
         """Process input with AI"""
         self.logger.info("Processing with AI")
-        
+
         # TODO: Implement AI processing logic
-        
+
         return {{
             "result": input_data,
             "confidence": 0.95,
@@ -395,15 +393,13 @@ class Plugin(UtilityPlugin):
     def execute(self, *args, **kwargs) -> Any:
         """Execute utility function"""
         self.logger.info("Executing utility")
-        
+
         # TODO: Implement utility logic
-        
+
         return {{"success": True}}
 '''
 
-    def _generate_readme(
-        self, plugin_id: str, name: str, plugin_type: PluginType
-    ) -> str:
+    def _generate_readme(self, plugin_id: str, name: str, plugin_type: PluginType) -> str:
         """Generate README template"""
         return f"""# {name}
 
@@ -452,10 +448,10 @@ Version: 1.0.0
     def validate_plugin(self, plugin_dir: str) -> Dict[str, Any]:
         """
         Validate plugin structure and code
-        
+
         Args:
             plugin_dir: Plugin directory
-            
+
         Returns:
             Validation result
         """

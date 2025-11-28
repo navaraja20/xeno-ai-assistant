@@ -46,9 +46,7 @@ class Plugin(AnalyticsPlugin):
         # Calculate statistics
         total_tasks = len(data)
         completed_count = len(completed_tasks)
-        completion_rate = (
-            completed_count / total_tasks if total_tasks > 0 else 0
-        )
+        completion_rate = completed_count / total_tasks if total_tasks > 0 else 0
 
         # Priority distribution
         priority_dist = Counter(t.get("priority", "medium") for t in data)
@@ -73,9 +71,7 @@ class Plugin(AnalyticsPlugin):
                     continue
 
         avg_completion_time = (
-            sum(completion_times) / len(completion_times)
-            if completion_times
-            else 0
+            sum(completion_times) / len(completion_times) if completion_times else 0
         )
 
         # Productivity by day of week

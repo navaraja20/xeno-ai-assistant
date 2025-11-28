@@ -30,9 +30,7 @@ class NotificationIntegration:
     ):
         """Send notification for new email"""
 
-        priority = (
-            NotificationPriority.HIGH if is_important else NotificationPriority.MEDIUM
-        )
+        priority = NotificationPriority.HIGH if is_important else NotificationPriority.MEDIUM
 
         send_notification(
             title=f"📧 New Email from {sender}",
@@ -82,9 +80,7 @@ class NotificationIntegration:
         )
 
     # Task Notifications
-    def notify_task_due(
-        self, task_name: str, due_time: str, project: Optional[str] = None
-    ):
+    def notify_task_due(self, task_name: str, due_time: str, project: Optional[str] = None):
         """Send notification for due task"""
 
         message = f"Due: {due_time}"
@@ -124,9 +120,7 @@ class NotificationIntegration:
 
         # Mentions are more important
         priority = (
-            NotificationPriority.HIGH
-            if event_type == "mention"
-            else NotificationPriority.MEDIUM
+            NotificationPriority.HIGH if event_type == "mention" else NotificationPriority.MEDIUM
         )
 
         send_notification(
@@ -147,9 +141,7 @@ class NotificationIntegration:
         )
 
     # LinkedIn Notifications
-    def notify_linkedin_event(
-        self, event_type: str, title: str, description: str, url: str = None
-    ):
+    def notify_linkedin_event(self, event_type: str, title: str, description: str, url: str = None):
         """Send notification for LinkedIn event"""
 
         event_icons = {
@@ -182,16 +174,10 @@ class NotificationIntegration:
         )
 
     # System Notifications
-    def notify_system_event(
-        self, title: str, message: str, is_critical: bool = False
-    ):
+    def notify_system_event(self, title: str, message: str, is_critical: bool = False):
         """Send system notification"""
 
-        priority = (
-            NotificationPriority.CRITICAL
-            if is_critical
-            else NotificationPriority.MEDIUM
-        )
+        priority = NotificationPriority.CRITICAL if is_critical else NotificationPriority.MEDIUM
 
         send_notification(
             title=f"⚙️ {title}",
@@ -217,11 +203,7 @@ class NotificationIntegration:
         """Send notification for voice command execution"""
 
         icon = "✅" if success else "❌"
-        priority = (
-            NotificationPriority.INFO
-            if success
-            else NotificationPriority.MEDIUM
-        )
+        priority = NotificationPriority.INFO if success else NotificationPriority.MEDIUM
 
         send_notification(
             title=f"{icon} Voice Command: {command}",
@@ -253,9 +235,7 @@ def notify_email(sender: str, subject: str, snippet: str, email_id: str, **kwarg
 
 def notify_calendar(event_title: str, start_time: str, **kwargs):
     """Quick calendar notification"""
-    return get_notification_integration().notify_calendar_event(
-        event_title, start_time, **kwargs
-    )
+    return get_notification_integration().notify_calendar_event(event_title, start_time, **kwargs)
 
 
 def notify_task(task_name: str, due_time: str, **kwargs):

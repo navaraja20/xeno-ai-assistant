@@ -119,9 +119,7 @@ class FocusSession:
         self.goal = goal
         self.start_time = datetime.now()
         self.end_time = (
-            self.start_time + timedelta(minutes=duration_minutes)
-            if duration_minutes
-            else None
+            self.start_time + timedelta(minutes=duration_minutes) if duration_minutes else None
         )
         self.paused = False
         self.pause_time: Optional[datetime] = None
@@ -342,13 +340,9 @@ class FocusModeManager:
             "total_sessions": total_sessions,
             "total_minutes": total_minutes,
             "completed_sessions": completed_sessions,
-            "completion_rate": (
-                completed_sessions / total_sessions if total_sessions > 0 else 0
-            ),
+            "completion_rate": (completed_sessions / total_sessions if total_sessions > 0 else 0),
             "mode_usage": mode_usage,
-            "current_session": (
-                self.current_session.to_dict() if self.current_session else None
-            ),
+            "current_session": (self.current_session.to_dict() if self.current_session else None),
         }
 
     def _apply_mode_settings(self, mode: FocusMode):

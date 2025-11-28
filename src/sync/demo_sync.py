@@ -3,18 +3,18 @@ Multi-Device Sync - Comprehensive Demo
 Demonstrates sync engine, cloud storage, offline support, and conflict resolution
 """
 
-from datetime import datetime, timedelta
 import time
+from datetime import datetime, timedelta
 
 from src.sync import (
-    get_sync_coordinator,
-    get_sync_engine,
-    get_cloud_manager,
-    get_offline_manager,
     ChangeType,
     ConflictResolution,
-    LocalFileProvider,
     EncryptedCloudProvider,
+    LocalFileProvider,
+    get_cloud_manager,
+    get_offline_manager,
+    get_sync_coordinator,
+    get_sync_engine,
 )
 
 
@@ -41,9 +41,7 @@ def demo_basic_sync():
         "created_at": datetime.now().isoformat(),
     }
 
-    change1 = device1.track_change(
-        ChangeType.CREATE, "task", "task_001", task_data
-    )
+    change1 = device1.track_change(ChangeType.CREATE, "task", "task_001", task_data)
     print(f"   ✅ Task created: {task_data['title']}")
 
     # Device 1: Sync to cloud
@@ -63,9 +61,7 @@ def demo_basic_sync():
     updated_data["status"] = "in_progress"
     updated_data["updated_at"] = datetime.now().isoformat()
 
-    change2 = device2.track_change(
-        ChangeType.UPDATE, "task", "task_001", updated_data
-    )
+    change2 = device2.track_change(ChangeType.UPDATE, "task", "task_001", updated_data)
     print(f"   ✅ Task status: pending → in_progress")
 
     # Device 2: Sync to cloud
@@ -110,9 +106,7 @@ def demo_conflict_resolution():
     device1_data["priority"] = "high"
     device1_data["notes"] = "Added by device 1"
 
-    change1 = device1.track_change(
-        ChangeType.UPDATE, "task", "task_conflict", device1_data
-    )
+    change1 = device1.track_change(ChangeType.UPDATE, "task", "task_conflict", device1_data)
     print(f"   Priority: medium → high")
     print(f"   Timestamp: {change1.timestamp}")
 
@@ -123,9 +117,7 @@ def demo_conflict_resolution():
     device2_data["priority"] = "low"
     device2_data["notes"] = "Added by device 2"
 
-    change2 = device2.track_change(
-        ChangeType.UPDATE, "task", "task_conflict", device2_data
-    )
+    change2 = device2.track_change(ChangeType.UPDATE, "task", "task_conflict", device2_data)
     print(f"   Priority: medium → low")
     print(f"   Timestamp: {change2.timestamp}")
 
@@ -214,9 +206,7 @@ def demo_encrypted_sync():
     # Create encrypted provider
     print(f"\n🔒 Setting up encrypted storage...")
     base_provider = LocalFileProvider()
-    encrypted_provider = EncryptedCloudProvider(
-        base_provider, encryption_key="my_secret_key_12345"
-    )
+    encrypted_provider = EncryptedCloudProvider(base_provider, encryption_key="my_secret_key_12345")
 
     # Register and activate
     cloud_mgr.register_provider("encrypted", encrypted_provider)
@@ -237,9 +227,7 @@ def demo_encrypted_sync():
         "priority": "high",
     }
 
-    coordinator.track_change(
-        ChangeType.CREATE, "task", "sensitive_001", sensitive_data
-    )
+    coordinator.track_change(ChangeType.CREATE, "task", "sensitive_001", sensitive_data)
 
     # Sync (will be encrypted)
     print(f"\n2️⃣  Syncing with encryption...")
@@ -330,7 +318,7 @@ def demo_sync_statistics():
         print(f"      Uploaded: {results['uploaded']}")
         print(f"      Downloaded: {results['downloaded']}")
         print(f"      Conflicts: {results['conflicts']}")
-        if results['errors']:
+        if results["errors"]:
             print(f"      Errors: {len(results['errors'])}")
 
     coordinator.on_sync_complete(on_sync_complete)

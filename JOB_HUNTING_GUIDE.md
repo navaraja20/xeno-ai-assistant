@@ -26,8 +26,8 @@ Email: your@email.com | Phone: +33 X XX XX XX XX
 LinkedIn: linkedin.com/in/yourprofile | GitHub: github.com/yourusername
 
 SUMMARY
-Passionate Data Science student with strong background in Machine Learning, 
-Deep Learning, and NLP. Proficient in Python, TensorFlow, PyTorch. Seeking 
+Passionate Data Science student with strong background in Machine Learning,
+Deep Learning, and NLP. Proficient in Python, TensorFlow, PyTorch. Seeking
 internship to apply theoretical knowledge to real-world problems.
 
 EDUCATION
@@ -334,7 +334,7 @@ for md in md_files:
 4. **Track Application**
    ```python
    from src.jobs.job_hunter import get_job_hunter
-   
+
    hunter = get_job_hunter()
    stats = hunter.get_statistics()
    print(stats)

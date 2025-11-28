@@ -137,7 +137,7 @@ class PatternRecognitionEngine:
                 if time_diffs:
                     avg_diff = sum(time_diffs) / len(time_diffs)
                     variance = sum((d - avg_diff) ** 2 for d in time_diffs) / len(time_diffs)
-                    std_dev = variance ** 0.5
+                    std_dev = variance**0.5
 
                     # High confidence if low variance
                     confidence = max(0.0, 1.0 - (std_dev / (7 * 24 * 3600)))  # Normalize by week
@@ -167,7 +167,9 @@ class PatternRecognitionEngine:
                         days_until_next = 7
 
                     pattern.next_expected = last_occurrence + timedelta(days=days_until_next)
-                    pattern.next_expected = pattern.next_expected.replace(hour=hour, minute=0, second=0)
+                    pattern.next_expected = pattern.next_expected.replace(
+                        hour=hour, minute=0, second=0
+                    )
                     pattern.probability = confidence
 
                     patterns.append(pattern)
@@ -206,7 +208,7 @@ class PatternRecognitionEngine:
                 # Check if intervals are consistent
                 avg_interval = sum(intervals) / len(intervals)
                 variance = sum((i - avg_interval) ** 2 for i in intervals) / len(intervals)
-                std_dev = variance ** 0.5
+                std_dev = variance**0.5
 
                 # Determine frequency
                 frequency = "custom"
@@ -375,15 +377,17 @@ class PatternRecognitionEngine:
 
                 # Predict if within next 24 hours
                 if time_until <= 86400:
-                    predictions.append({
-                        "pattern_id": pattern.pattern_id,
-                        "pattern_type": pattern.pattern_type,
-                        "description": pattern.description,
-                        "probability": pattern.probability,
-                        "expected_time": pattern.next_expected.isoformat(),
-                        "time_until_seconds": time_until,
-                        "attributes": pattern.attributes,
-                    })
+                    predictions.append(
+                        {
+                            "pattern_id": pattern.pattern_id,
+                            "pattern_type": pattern.pattern_type,
+                            "description": pattern.description,
+                            "probability": pattern.probability,
+                            "expected_time": pattern.next_expected.isoformat(),
+                            "time_until_seconds": time_until,
+                            "attributes": pattern.attributes,
+                        }
+                    )
 
         # Sort by probability
         predictions.sort(key=lambda p: p["probability"], reverse=True)

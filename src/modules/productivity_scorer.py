@@ -97,9 +97,7 @@ class ProductivityMetrics:
         # Task completion insights
         task_rate = metrics["task_metrics"]["completion_rate"]
         if task_rate > 0.8:
-            insights.append(
-                f"✅ Excellent task completion rate ({task_rate*100:.0f}%). Keep it up!"
-            )
+            insights.append(f"✅ Excellent task completion rate ({task_rate*100:.0f}%). Keep it up!")
         elif task_rate < 0.5:
             insights.append(
                 f"⚠️ Low task completion rate ({task_rate*100:.0f}%). Consider reducing task list size."
@@ -108,13 +106,9 @@ class ProductivityMetrics:
         # Focus time insights
         focus_hours = metrics["focus_metrics"]["total_focus_hours"]
         if focus_hours < 2:
-            insights.append(
-                "💡 Try scheduling more deep focus sessions. Aim for 2-4 hours daily."
-            )
+            insights.append("💡 Try scheduling more deep focus sessions. Aim for 2-4 hours daily.")
         elif focus_hours > 6:
-            insights.append(
-                "⚠️ You're in focus mode a lot. Remember to take breaks!"
-            )
+            insights.append("⚠️ You're in focus mode a lot. Remember to take breaks!")
 
         # Email response time insights
         email_response = metrics["communication_metrics"]["avg_email_response_time_hours"]
@@ -138,9 +132,7 @@ class ProductivityMetrics:
         if consistency > 0.8:
             insights.append("📈 Excellent consistency! You're maintaining steady productivity.")
         elif consistency < 0.5:
-            insights.append(
-                "📊 Productivity varies significantly. Try establishing a routine."
-            )
+            insights.append("📊 Productivity varies significantly. Try establishing a routine.")
 
         # Meeting efficiency
         meeting_hours = metrics["time_metrics"]["meeting_hours"]
@@ -168,7 +160,9 @@ class ProductivityMetrics:
                 "recommendation": "Maintain 3-4 hours of deep focus daily",
             },
             "email_response": {
-                "current": current_metrics["communication_metrics"]["avg_email_response_time_hours"],
+                "current": current_metrics["communication_metrics"][
+                    "avg_email_response_time_hours"
+                ],
                 "target": 4.0,
                 "recommendation": "Respond to emails within 4 hours",
             },
@@ -259,7 +253,7 @@ class ProductivityMetrics:
 
         mean_score = sum(daily_avgs) / len(daily_avgs)
         variance = sum((x - mean_score) ** 2 for x in daily_avgs) / len(daily_avgs)
-        std_dev = variance ** 0.5
+        std_dev = variance**0.5
 
         cv = std_dev / mean_score if mean_score > 0 else 1
 
@@ -354,28 +348,17 @@ class ProductivityMetrics:
         total_duration = sum(e.duration_seconds for e in events) / 3600
 
         meeting_hours = (
-            sum(
-                e.duration_seconds
-                for e in events
-                if e.activity_type == ActivityType.MEETING
-            )
+            sum(e.duration_seconds for e in events if e.activity_type == ActivityType.MEETING)
             / 3600
         )
 
         focus_hours = (
-            sum(
-                e.duration_seconds
-                for e in events
-                if e.activity_type == ActivityType.FOCUS_SESSION
-            )
+            sum(e.duration_seconds for e in events if e.activity_type == ActivityType.FOCUS_SESSION)
             / 3600
         )
 
         break_hours = (
-            sum(
-                e.duration_seconds for e in events if e.activity_type == ActivityType.BREAK
-            )
-            / 3600
+            sum(e.duration_seconds for e in events if e.activity_type == ActivityType.BREAK) / 3600
         )
 
         return {
@@ -394,9 +377,7 @@ class ProductivityMetrics:
         github_prs = sum(1 for e in events if e.activity_type == ActivityType.GITHUB_PR)
         github_reviews = sum(1 for e in events if e.activity_type == ActivityType.GITHUB_REVIEW)
 
-        job_applications = sum(
-            1 for e in events if e.activity_type == ActivityType.JOB_APPLICATION
-        )
+        job_applications = sum(1 for e in events if e.activity_type == ActivityType.JOB_APPLICATION)
 
         return {
             "github_commits": github_commits,
@@ -424,9 +405,7 @@ class ProductivityMetrics:
             "productivity_per_hour": productivity_per_hour,
             "consistency_score": consistency,
             "total_activities": len(events),
-            "avg_activity_score": (
-                total_productivity / len(events) if events else 0
-            ),
+            "avg_activity_score": (total_productivity / len(events) if events else 0),
         }
 
 

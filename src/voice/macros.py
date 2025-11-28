@@ -225,9 +225,7 @@ class MacroManager:
         """Get macro by name"""
         return self.macros.get(name)
 
-    def execute_macro(
-        self, name: str, context: Dict[str, Any] = None
-    ) -> Optional[Dict[str, Any]]:
+    def execute_macro(self, name: str, context: Dict[str, Any] = None) -> Optional[Dict[str, Any]]:
         """Execute a macro by name"""
         macro = self.get_macro(name)
 
@@ -258,9 +256,7 @@ class MacroManager:
         self.recording_start_time = time.time()
         self.logger.info(f"Started recording macro: {name}")
 
-    def record_step(
-        self, action: str, parameters: Dict[str, Any] = None, description: str = ""
-    ):
+    def record_step(self, action: str, parameters: Dict[str, Any] = None, description: str = ""):
         """Record a step in the current macro"""
         if not self.recording_macro:
             self.logger.error("No macro recording in progress")

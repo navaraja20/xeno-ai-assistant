@@ -94,11 +94,7 @@ class Leaderboard:
 
     def get_top(self, limit: int = 10) -> List[LeaderboardEntry]:
         """Get top N entries"""
-        sorted_entries = sorted(
-            self.entries.values(),
-            key=lambda e: e.score,
-            reverse=True
-        )
+        sorted_entries = sorted(self.entries.values(), key=lambda e: e.score, reverse=True)
         return sorted_entries[:limit]
 
     def get_rank(self, user_id: str) -> Optional[int]:
@@ -113,11 +109,7 @@ class Leaderboard:
 
     def _calculate_ranks(self):
         """Calculate ranks for all entries"""
-        sorted_entries = sorted(
-            self.entries.values(),
-            key=lambda e: e.score,
-            reverse=True
-        )
+        sorted_entries = sorted(self.entries.values(), key=lambda e: e.score, reverse=True)
 
         for i, entry in enumerate(sorted_entries, 1):
             entry.rank = i
@@ -130,10 +122,7 @@ class Leaderboard:
             "description": self.description,
             "score_type": self.score_type,
             "period": self.period,
-            "entries": {
-                user_id: entry.to_dict()
-                for user_id, entry in self.entries.items()
-            },
+            "entries": {user_id: entry.to_dict() for user_id, entry in self.entries.items()},
         }
 
     @classmethod
@@ -275,8 +264,7 @@ class LeaderboardSystem:
         try:
             data = {
                 "leaderboards": {
-                    lb_id: leaderboard.to_dict()
-                    for lb_id, leaderboard in self.leaderboards.items()
+                    lb_id: leaderboard.to_dict() for lb_id, leaderboard in self.leaderboards.items()
                 }
             }
 

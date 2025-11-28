@@ -103,9 +103,7 @@ class AnalyticsEngine:
 
         # Auto-calculate productivity score if not provided
         if productivity_score is None:
-            productivity_score = self._calculate_productivity_score(
-                activity_type, metadata
-            )
+            productivity_score = self._calculate_productivity_score(activity_type, metadata)
 
         event = ActivityEvent(
             activity_type=activity_type,
@@ -201,9 +199,7 @@ class AnalyticsEngine:
 
         return self._calculate_monthly_summary(month_events, month_start)
 
-    def get_productivity_trends(
-        self, days: int = 30
-    ) -> List[Tuple[datetime, float]]:
+    def get_productivity_trends(self, days: int = 30) -> List[Tuple[datetime, float]]:
         """Get productivity trend over time"""
 
         end_date = datetime.now()
@@ -286,32 +282,20 @@ class AnalyticsEngine:
         """Get task/goal completion rates"""
 
         # Tasks
-        tasks_created = len(
-            self.get_events(activity_types=[ActivityType.TASK_CREATED])
-        )
-        tasks_completed = len(
-            self.get_events(activity_types=[ActivityType.TASK_COMPLETED])
-        )
+        tasks_created = len(self.get_events(activity_types=[ActivityType.TASK_CREATED]))
+        tasks_completed = len(self.get_events(activity_types=[ActivityType.TASK_COMPLETED]))
 
         # Emails
         emails_received = len(self.get_events(activity_types=[ActivityType.EMAIL_READ]))
-        emails_replied = len(
-            self.get_events(activity_types=[ActivityType.EMAIL_REPLIED])
-        )
+        emails_replied = len(self.get_events(activity_types=[ActivityType.EMAIL_REPLIED]))
 
         # Focus sessions
         focus_events = self.get_events(activity_types=[ActivityType.FOCUS_SESSION])
-        focus_completed = sum(
-            1 for e in focus_events if e.metadata.get("completed", False)
-        )
+        focus_completed = sum(1 for e in focus_events if e.metadata.get("completed", False))
 
         return {
-            "task_completion_rate": (
-                tasks_completed / tasks_created if tasks_created > 0 else 0
-            ),
-            "email_response_rate": (
-                emails_replied / emails_received if emails_received > 0 else 0
-            ),
+            "task_completion_rate": (tasks_completed / tasks_created if tasks_created > 0 else 0),
+            "email_response_rate": (emails_replied / emails_received if emails_received > 0 else 0),
             "focus_completion_rate": (
                 focus_completed / len(focus_events) if len(focus_events) > 0 else 0
             ),
@@ -412,9 +396,7 @@ class AnalyticsEngine:
         total_events = sum(d["total_events"] for d in daily_summaries)
         total_duration = sum(d["total_duration_minutes"] for d in daily_summaries)
         avg_score = (
-            sum(d["productivity_score"] for d in daily_summaries) / 7
-            if daily_summaries
-            else 0
+            sum(d["productivity_score"] for d in daily_summaries) / 7 if daily_summaries else 0
         )
 
         return {
@@ -538,10 +520,6 @@ def get_analytics_engine() -> AnalyticsEngine:
 
 
 # Convenience function
-def track_activity(
-    activity_type: ActivityType, duration_seconds: float = 0, **metadata
-):
+def track_activity(activity_type: ActivityType, duration_seconds: float = 0, **metadata):
     """Quick function to track activity"""
-    return get_analytics_engine().track_activity(
-        activity_type, duration_seconds, metadata
-    )
+    return get_analytics_engine().track_activity(activity_type, duration_seconds, metadata)

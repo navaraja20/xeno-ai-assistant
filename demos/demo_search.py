@@ -9,15 +9,14 @@ from typing import Any, Dict, List
 
 from src.core.logger import setup_logger
 from src.search import (
-    get_search_engine,
-    get_saved_search_manager,
-    get_search_history_tracker,
-    SearchQuery,
-    SearchMode,
     SearchField,
     SearchFilter,
+    SearchMode,
+    SearchQuery,
+    get_saved_search_manager,
+    get_search_engine,
+    get_search_history_tracker,
 )
-
 
 logger = setup_logger("demo.search")
 
@@ -282,9 +281,7 @@ def demo_search_with_filters():
 
     # 2. Search specific field
     print("\n2️⃣ FIELD SEARCH - Search in title only")
-    query = SearchQuery(
-        query="update", mode=SearchMode.PARTIAL, fields=[SearchField.TITLE]
-    )
+    query = SearchQuery(query="update", mode=SearchMode.PARTIAL, fields=[SearchField.TITLE])
     results = engine.search(query)
     print(f"   Found {len(results)} results:")
     for result in results:
@@ -326,9 +323,7 @@ def demo_saved_searches():
         mode=SearchMode.PARTIAL,
         filters=[SearchFilter(SearchField.PRIORITY, "eq", "critical")],
     )
-    saved1 = manager.save_search(
-        "Critical Tasks", query1, "All tasks with critical priority"
-    )
+    saved1 = manager.save_search("Critical Tasks", query1, "All tasks with critical priority")
     print(f"   ✓ Saved: {saved1.name}")
 
     # In progress tasks
@@ -346,9 +341,7 @@ def demo_saved_searches():
         mode=SearchMode.PARTIAL,
         filters=[SearchFilter(SearchField.TAGS, "contains", "security")],
     )
-    saved3 = manager.save_search(
-        "Security Tasks", query3, "All security-related tasks"
-    )
+    saved3 = manager.save_search("Security Tasks", query3, "All security-related tasks")
     print(f"   ✓ Saved: {saved3.name}")
 
     # 2. List saved searches
@@ -440,7 +433,9 @@ def demo_search_history():
     print(f"   Total searches: {analytics['total_searches']}")
     print(f"   Average results: {analytics['average_results']:.1f}")
     print(f"   Average execution time: {analytics['average_execution_time_ms']:.2f}ms")
-    print(f"   Empty searches: {analytics['empty_searches_count']} ({analytics['empty_searches_rate']:.1f}%)")
+    print(
+        f"   Empty searches: {analytics['empty_searches_count']} ({analytics['empty_searches_rate']:.1f}%)"
+    )
 
 
 def demo_autocomplete():

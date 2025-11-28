@@ -3,16 +3,8 @@ AI Module
 Local LLM integration with Ollama + Gemini fallback
 """
 
-from src.ai.ai_agent import (
-    AIAgent,
-    ModelProvider,
-    Message,
-    Tool,
-    get_ai_agent,
-)
-
+from src.ai.ai_agent import AIAgent, Message, ModelProvider, Tool, get_ai_agent
 from src.ai.ai_chat_ui import AIChatWidget
-
 
 __all__ = [
     # Core
@@ -21,7 +13,6 @@ __all__ = [
     "Message",
     "Tool",
     "get_ai_agent",
-    
     # UI
     "AIChatWidget",
 ]

@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from src.core.logger import setup_logger
-from src.search.search_engine import SearchQuery, SearchMode, SearchField
+from src.search.search_engine import SearchField, SearchMode, SearchQuery
 
 
 class SearchHistoryEntry:
@@ -123,21 +123,14 @@ class SearchHistoryTracker:
         if end_date is None:
             end_date = datetime.now()
 
-        return [
-            entry
-            for entry in self.history
-            if start_date <= entry.timestamp <= end_date
-        ]
+        return [entry for entry in self.history if start_date <= entry.timestamp <= end_date]
 
     def get_frequent_queries(self, limit: int = 10) -> List[Dict[str, Any]]:
         """Get most frequent search queries"""
         query_texts = [entry.query.query for entry in self.history]
         counter = Counter(query_texts)
 
-        return [
-            {"query": query, "count": count}
-            for query, count in counter.most_common(limit)
-        ]
+        return [{"query": query, "count": count} for query, count in counter.most_common(limit)]
 
     def get_search_modes_stats(self) -> Dict[str, int]:
         """Get statistics on search modes usage"""
@@ -179,9 +172,7 @@ class SearchHistoryTracker:
             "frequent_queries": self.get_frequent_queries(5),
             "empty_searches_count": len(self.get_empty_searches()),
             "empty_searches_rate": (
-                len(self.get_empty_searches()) / len(self.history) * 100
-                if self.history
-                else 0
+                len(self.get_empty_searches()) / len(self.history) * 100 if self.history else 0
             ),
         }
 
@@ -196,9 +187,7 @@ class SearchHistoryTracker:
         cutoff_date = datetime.now() - timedelta(days=days)
         old_count = len(self.history)
 
-        self.history = [
-            entry for entry in self.history if entry.timestamp >= cutoff_date
-        ]
+        self.history = [entry for entry in self.history if entry.timestamp >= cutoff_date]
 
         removed = old_count - len(self.history)
         if removed > 0:
@@ -248,8 +237,7 @@ class SearchHistoryTracker:
                 data = json.load(f)
 
             self.history = [
-                SearchHistoryEntry.from_dict(entry_data)
-                for entry_data in data.get("history", [])
+                SearchHistoryEntry.from_dict(entry_data) for entry_data in data.get("history", [])
             ]
 
             self.logger.info(f"Loaded {len(self.history)} history entries")

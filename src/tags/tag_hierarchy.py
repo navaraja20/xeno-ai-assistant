@@ -133,9 +133,7 @@ class TagHierarchy:
         """Get tag by ID"""
         return self.tags.get(tag_id)
 
-    def get_tag_by_name(
-        self, name: str, parent_id: Optional[str] = None
-    ) -> Optional[Tag]:
+    def get_tag_by_name(self, name: str, parent_id: Optional[str] = None) -> Optional[Tag]:
         """Get tag by name and optional parent"""
         for tag in self.tags.values():
             if tag.name == name and tag.parent_id == parent_id:

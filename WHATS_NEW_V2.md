@@ -250,7 +250,7 @@ print(letter)
    ```python
    # Apply to jobs at indices 0, 5, 12, 18, 23
    results = hunter.batch_apply([0, 5, 12, 18, 23])
-   
+
    # Check results
    for r in results:
        if r['status'] == 'success':

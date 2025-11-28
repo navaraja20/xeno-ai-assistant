@@ -9,8 +9,8 @@ from typing import Any, Dict, Optional
 
 from src.core.logger import setup_logger
 from src.nlp.date_parser import get_date_parser
-from src.nlp.priority_detector import get_priority_detector
 from src.nlp.entity_extractor import get_entity_extractor
+from src.nlp.priority_detector import get_priority_detector
 
 
 class TaskParser:
@@ -31,12 +31,12 @@ class TaskParser:
 
         # 1. Extract priority
         priority, text = self.priority_detector.extract_priority_from_text(text)
-        task_data['priority'] = priority
+        task_data["priority"] = priority
 
         # 2. Extract date
         due_date, text = self.date_parser.extract_date_from_text(text)
         if due_date:
-            task_data['due_date'] = due_date.strftime('%Y-%m-%d')
+            task_data["due_date"] = due_date.strftime("%Y-%m-%d")
 
         # 3. Extract entities
         entities = self.entity_extractor.extract_entities(text)
@@ -44,47 +44,47 @@ class TaskParser:
         # 4. Extract assignee
         assignee = self.entity_extractor.extract_assignee(text)
         if assignee:
-            task_data['assignee'] = assignee
+            task_data["assignee"] = assignee
 
         # 5. Extract category
         category = self.entity_extractor.extract_category(text)
-        task_data['category'] = category
+        task_data["category"] = category
 
         # 6. Extract tags
         tags = self.entity_extractor.extract_tags(text)
         if tags:
-            task_data['tags'] = tags
+            task_data["tags"] = tags
 
         # 7. Extract URLs
-        if entities.get('urls'):
-            task_data['urls'] = entities['urls']
+        if entities.get("urls"):
+            task_data["urls"] = entities["urls"]
 
         # 8. Extract emails
-        if entities.get('emails'):
-            task_data['emails'] = entities['emails']
+        if entities.get("emails"):
+            task_data["emails"] = entities["emails"]
 
         # 9. Extract actions
-        if entities.get('actions'):
-            task_data['actions'] = entities['actions']
+        if entities.get("actions"):
+            task_data["actions"] = entities["actions"]
 
         # 10. Clean text for title/description
         cleaned_text = self.entity_extractor.clean_text(text, entities)
 
         # 11. Extract title and description
         title, description = self._split_title_description(cleaned_text)
-        task_data['title'] = title
+        task_data["title"] = title
         if description:
-            task_data['description'] = description
+            task_data["description"] = description
 
         # 12. Set default status
-        task_data['status'] = 'pending'
+        task_data["status"] = "pending"
 
         # 13. Store original text
-        task_data['original_text'] = original_text
+        task_data["original_text"] = original_text
 
         # 14. Add metadata
-        task_data['created_at'] = datetime.now().isoformat()
-        task_data['parsed_by'] = 'nlp'
+        task_data["created_at"] = datetime.now().isoformat()
+        task_data["parsed_by"] = "nlp"
 
         return task_data
 
@@ -95,7 +95,7 @@ class TaskParser:
             return text.strip(), None
 
         # Look for sentence breaks
-        sentences = re.split(r'[.!?]\s+', text)
+        sentences = re.split(r"[.!?]\s+", text)
 
         if len(sentences) == 1:
             # Single long sentence - use first 100 chars as title
@@ -104,7 +104,7 @@ class TaskParser:
         else:
             # Use first sentence as title, rest as description
             title = sentences[0].strip()
-            description = ' '.join(sentences[1:]).strip()
+            description = " ".join(sentences[1:]).strip()
 
         return title, description if description else None
 
@@ -113,7 +113,7 @@ class TaskParser:
         tasks = []
 
         # Split by newlines
-        lines = text.strip().split('\n')
+        lines = text.strip().split("\n")
 
         for line in lines:
             line = line.strip()
@@ -121,7 +121,7 @@ class TaskParser:
                 continue
 
             # Remove bullet points
-            line = re.sub(r'^[-*•]\s*', '', line)
+            line = re.sub(r"^[-*•]\s*", "", line)
 
             # Parse as task
             if line:
@@ -133,53 +133,53 @@ class TaskParser:
     def suggest_improvements(self, text: str) -> Dict[str, Any]:
         """Suggest improvements to task text"""
         suggestions = {
-            'has_priority': False,
-            'has_due_date': False,
-            'has_category': False,
-            'has_assignee': False,
-            'improvements': [],
+            "has_priority": False,
+            "has_due_date": False,
+            "has_category": False,
+            "has_assignee": False,
+            "improvements": [],
         }
 
         # Check if has priority
         priority = self.priority_detector.detect_priority(text)
-        if priority != 'medium':  # medium is default
-            suggestions['has_priority'] = True
+        if priority != "medium":  # medium is default
+            suggestions["has_priority"] = True
         else:
-            suggestions['improvements'].append(
+            suggestions["improvements"].append(
                 'Consider adding priority (e.g., "high priority", "urgent", "low priority")'
             )
 
         # Check if has due date
         due_date = self.date_parser.parse_date(text)
         if due_date:
-            suggestions['has_due_date'] = True
+            suggestions["has_due_date"] = True
         else:
-            suggestions['improvements'].append(
+            suggestions["improvements"].append(
                 'Consider adding a due date (e.g., "tomorrow", "next week", "Jan 15")'
             )
 
         # Check if has category indicators
         category = self.entity_extractor.extract_category(text)
-        if category != 'General':
-            suggestions['has_category'] = True
+        if category != "General":
+            suggestions["has_category"] = True
         else:
-            suggestions['improvements'].append(
+            suggestions["improvements"].append(
                 'Consider adding category keywords (e.g., "meeting", "code", "review")'
             )
 
         # Check if has assignee
         assignee = self.entity_extractor.extract_assignee(text)
         if assignee:
-            suggestions['has_assignee'] = True
+            suggestions["has_assignee"] = True
         else:
-            suggestions['improvements'].append(
+            suggestions["improvements"].append(
                 'Consider adding assignee (e.g., "@john", "for Sarah")'
             )
 
         # Check length
         if len(text) < 10:
-            suggestions['improvements'].append(
-                'Task description is very short - consider adding more details'
+            suggestions["improvements"].append(
+                "Task description is very short - consider adding more details"
             )
 
         return suggestions
@@ -189,28 +189,34 @@ class TaskParser:
         subtasks = []
 
         # Look for numbered lists
-        numbered = re.findall(r'^\s*(\d+)[.)]\s*(.+)$', text, re.MULTILINE)
+        numbered = re.findall(r"^\s*(\d+)[.)]\s*(.+)$", text, re.MULTILINE)
         for num, task_text in numbered:
-            subtasks.append({
-                'order': int(num),
-                'text': task_text.strip(),
-            })
+            subtasks.append(
+                {
+                    "order": int(num),
+                    "text": task_text.strip(),
+                }
+            )
 
         # Look for lettered lists
-        lettered = re.findall(r'^\s*([a-z])[.)]\s*(.+)$', text, re.MULTILINE)
+        lettered = re.findall(r"^\s*([a-z])[.)]\s*(.+)$", text, re.MULTILINE)
         for letter, task_text in lettered:
-            subtasks.append({
-                'order': ord(letter) - ord('a') + 1,
-                'text': task_text.strip(),
-            })
+            subtasks.append(
+                {
+                    "order": ord(letter) - ord("a") + 1,
+                    "text": task_text.strip(),
+                }
+            )
 
         # Look for bullet points
-        bullets = re.findall(r'^\s*[-*•]\s*(.+)$', text, re.MULTILINE)
+        bullets = re.findall(r"^\s*[-*•]\s*(.+)$", text, re.MULTILINE)
         for i, task_text in enumerate(bullets, 1):
-            subtasks.append({
-                'order': i,
-                'text': task_text.strip(),
-            })
+            subtasks.append(
+                {
+                    "order": i,
+                    "text": task_text.strip(),
+                }
+            )
 
         return subtasks
 

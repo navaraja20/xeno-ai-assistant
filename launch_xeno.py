@@ -3,11 +3,11 @@ Quick Launch Script for XENO
 Launch the integrated application with all features
 """
 
-import sys
 import os
+import sys
 
 # Add src to path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 
 print("=" * 60)
 print("  XENO v2.0 - Integrated AI Assistant")

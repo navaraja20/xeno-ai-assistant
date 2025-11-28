@@ -70,9 +70,7 @@ class Achievement:
         )
         achievement.unlocked = data.get("unlocked", False)
         achievement.unlocked_at = (
-            datetime.fromisoformat(data["unlocked_at"])
-            if data.get("unlocked_at")
-            else None
+            datetime.fromisoformat(data["unlocked_at"]) if data.get("unlocked_at") else None
         )
         achievement.progress = data.get("progress", 0)
         achievement.max_progress = data.get("max_progress", 1)
@@ -273,7 +271,9 @@ class AchievementSystem:
         for achievement in default_achievements:
             self.achievements[achievement.id] = achievement
 
-    def track_event(self, event_type: str, count: int = 1, metadata: Optional[Dict[str, Any]] = None) -> List[Achievement]:
+    def track_event(
+        self, event_type: str, count: int = 1, metadata: Optional[Dict[str, Any]] = None
+    ) -> List[Achievement]:
         """Track an event and check for achievement unlocks"""
         unlocked = []
 
@@ -307,10 +307,7 @@ class AchievementSystem:
 
     def get_achievements_by_category(self, category: str) -> List[Achievement]:
         """Get achievements in a category"""
-        return [
-            a for a in self.achievements.values()
-            if a.category == category
-        ]
+        return [a for a in self.achievements.values() if a.category == category]
 
     def get_unlocked_achievements(self) -> List[Achievement]:
         """Get all unlocked achievements"""
@@ -327,7 +324,7 @@ class AchievementSystem:
         """Get achievement progress statistics"""
         total = len(self.achievements)
         unlocked = len(self.get_unlocked_achievements())
-        
+
         return {
             "total_achievements": total,
             "unlocked": unlocked,
@@ -344,7 +341,7 @@ class AchievementSystem:
             category = achievement.category
             if category not in stats:
                 stats[category] = {"total": 0, "unlocked": 0}
-            
+
             stats[category]["total"] += 1
             if achievement.unlocked:
                 stats[category]["unlocked"] += 1
@@ -356,8 +353,7 @@ class AchievementSystem:
         try:
             data = {
                 "achievements": {
-                    aid: achievement.to_dict()
-                    for aid, achievement in self.achievements.items()
+                    aid: achievement.to_dict() for aid, achievement in self.achievements.items()
                 }
             }
 

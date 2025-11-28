@@ -37,32 +37,35 @@ class VoiceCommandHandler:
             # TTS queue for thread-safe operation
             import queue
             import threading
+
             self.tts_queue = queue.Queue()
             self.tts_thread_running = False
-            
+
             # Start TTS worker thread (pyttsx3 needs its own thread on Windows)
             def tts_worker():
                 """TTS worker thread - runs pyttsx3 in dedicated thread"""
                 import sys
+
                 try:
                     # Initialize pyttsx3 in this thread
-                    if sys.platform == 'win32':
+                    if sys.platform == "win32":
                         import pythoncom
+
                         pythoncom.CoInitialize()
-                    
+
                     engine = pyttsx3.init()
                     engine.setProperty("rate", 175)
                     engine.setProperty("volume", 0.9)
-                    
+
                     # Set voice (try female voice)
                     voices = engine.getProperty("voices")
                     for voice in voices:
                         if "female" in voice.name.lower() or "zira" in voice.name.lower():
                             engine.setProperty("voice", voice.id)
                             break
-                    
+
                     self.logger.info("TTS worker thread started")
-                    
+
                     # Process queue
                     while self.tts_thread_running:
                         try:
@@ -73,17 +76,17 @@ class VoiceCommandHandler:
                             continue
                         except Exception as e:
                             self.logger.error(f"TTS error: {e}")
-                    
-                    if sys.platform == 'win32':
+
+                    if sys.platform == "win32":
                         pythoncom.CoUninitialize()
-                        
+
                 except Exception as e:
                     self.logger.error(f"TTS worker error: {e}")
-            
+
             self.tts_thread_running = True
             self.tts_worker = threading.Thread(target=tts_worker, daemon=True)
             self.tts_worker.start()
-            
+
             self.tts_enabled = True
             self.logger.info("Text-to-speech initialized")
         except Exception as e:
@@ -143,19 +146,21 @@ class VoiceCommandHandler:
         self.current_emails = []
         self.current_email_index = -1
         self.draft_reply_text = ""
-        
+
         # UI command queue for thread-safe UI operations
         import queue
+
         self.ui_queue = queue.Queue()
-        
+
         # Setup timer to process UI commands in main thread
         if main_window:
             from PyQt6.QtCore import QTimer
+
             # CRITICAL: Set main_window as parent to ensure timer lives in Qt main thread
             self.ui_timer = QTimer(main_window)
             self.ui_timer.timeout.connect(self._process_ui_queue)
             self.ui_timer.start(50)  # Process UI commands every 50ms
-    
+
     def _process_ui_queue(self):
         """Process UI command queue in main Qt thread"""
         try:
@@ -164,7 +169,7 @@ class VoiceCommandHandler:
                 func(*args, **kwargs)
         except Exception as e:
             self.logger.error(f"UI queue processing error: {e}")
-    
+
     def _queue_ui_call(self, func, *args, **kwargs):
         """Queue a UI function call to be executed in the main thread"""
         self.ui_queue.put((func, args, kwargs))
@@ -397,10 +402,14 @@ class VoiceCommandHandler:
             # Add as a goal for now
             try:
                 from PyQt6.QtCore import QTimer
-                QTimer.singleShot(0, lambda t=reminder_text: (
-                    self.main_window._add_goal_widget(f"Reminder: {t}", False),
-                    self.main_window._save_goals()
-                ))
+
+                QTimer.singleShot(
+                    0,
+                    lambda t=reminder_text: (
+                        self.main_window._add_goal_widget(f"Reminder: {t}", False),
+                        self.main_window._save_goals(),
+                    ),
+                )
                 return f"I've added a reminder to {reminder_text}."
             except:
                 pass
@@ -511,7 +520,7 @@ class VoiceCommandHandler:
                 if hasattr(self.main_window, "ai_agent") and self.main_window.ai_agent:
                     # Call AI agent's chat method (it's synchronous, not async)
                     response = self.main_window.ai_agent.chat(question)
-                    
+
                     # Limit spoken response length
                     if len(response) > 200:
                         return response[:200] + "... Check the chat window for the full response."
@@ -597,9 +606,11 @@ class VoiceCommandHandler:
         goal_text = match.group(1)
         if self.main_window:
             try:
+
                 def add_goal():
                     self.main_window._add_goal_widget(goal_text, False)
                     self.main_window._save_goals()
+
                 self._queue_ui_call(add_goal)
                 return f"Goal added: {goal_text}"
             except:

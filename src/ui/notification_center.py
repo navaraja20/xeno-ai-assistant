@@ -6,7 +6,7 @@ PyQt6-based notification display and management
 from datetime import datetime
 from typing import Dict, List, Optional
 
-from PyQt6.QtCore import QTimer, Qt, pyqtSignal
+from PyQt6.QtCore import Qt, QTimer, pyqtSignal
 from PyQt6.QtWidgets import (
     QHBoxLayout,
     QLabel,
@@ -150,9 +150,7 @@ class NotificationItem(QWidget):
     def mark_as_read(self):
         """Mark notification as read"""
         self.notification.read = True
-        self.setStyleSheet(
-            self.styleSheet().replace("background: white;", "background: #f5f5f5;")
-        )
+        self.setStyleSheet(self.styleSheet().replace("background: white;", "background: #f5f5f5;"))
 
 
 class NotificationCenter(QWidget):
@@ -421,9 +419,7 @@ class NotificationCenter(QWidget):
     def _update_ui(self):
         """Update UI stats and badges"""
         # Count unread
-        unread_count = sum(
-            1 for w in self.notification_widgets.values() if not w.notification.read
-        )
+        unread_count = sum(1 for w in self.notification_widgets.values() if not w.notification.read)
 
         self.unread_badge.setText(str(unread_count))
         self.unread_badge.setVisible(unread_count > 0)

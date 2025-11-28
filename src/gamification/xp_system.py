@@ -235,8 +235,7 @@ class XPSystem:
             self.current_level = data.get("current_level", 1)
 
             self.xp_history = [
-                XPEvent.from_dict(event_data)
-                for event_data in data.get("xp_history", [])
+                XPEvent.from_dict(event_data) for event_data in data.get("xp_history", [])
             ]
 
             self.logger.info(f"Loaded XP data: Level {self.current_level}, {self.total_xp} XP")

@@ -8,13 +8,7 @@ from datetime import datetime
 from typing import Any, Dict, List
 
 from src.core.logger import setup_logger
-from src.nlp import (
-    get_date_parser,
-    get_priority_detector,
-    get_entity_extractor,
-    get_task_parser,
-)
-
+from src.nlp import get_date_parser, get_entity_extractor, get_priority_detector, get_task_parser
 
 logger = setup_logger("demo.nlp")
 
@@ -157,17 +151,17 @@ def demo_task_parsing():
 
         print(f"   📋 Parsed Task:")
         print(f"   - Title: {task_data['title']}")
-        if task_data.get('description'):
+        if task_data.get("description"):
             print(f"   - Description: {task_data['description']}")
         print(f"   - Priority: {task_data['priority']}")
-        if task_data.get('due_date'):
+        if task_data.get("due_date"):
             print(f"   - Due Date: {task_data['due_date']}")
         print(f"   - Category: {task_data['category']}")
-        if task_data.get('assignee'):
+        if task_data.get("assignee"):
             print(f"   - Assignee: {task_data['assignee']}")
-        if task_data.get('tags'):
+        if task_data.get("tags"):
             print(f"   - Tags: {task_data['tags']}")
-        if task_data.get('urls'):
+        if task_data.get("urls"):
             print(f"   - URLs: {task_data['urls']}")
 
 
@@ -196,7 +190,7 @@ def demo_bulk_parsing():
     for i, task in enumerate(tasks, 1):
         print(f"\n{i}. {task['title']}")
         print(f"   Priority: {task['priority']}")
-        if task.get('due_date'):
+        if task.get("due_date"):
             print(f"   Due: {task['due_date']}")
         print(f"   Category: {task['category']}")
 
@@ -251,9 +245,9 @@ def demo_suggestions():
         print(f"   ✓ Has category: {suggestions['has_category']}")
         print(f"   ✓ Has assignee: {suggestions['has_assignee']}")
 
-        if suggestions['improvements']:
+        if suggestions["improvements"]:
             print(f"   💡 Suggestions:")
-            for suggestion in suggestions['improvements']:
+            for suggestion in suggestions["improvements"]:
                 print(f"      - {suggestion}")
 
 

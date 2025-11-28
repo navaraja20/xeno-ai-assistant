@@ -3,22 +3,10 @@ Prediction Module
 Exports all prediction components
 """
 
-from src.prediction.pattern_recognition import (
-    Pattern,
-    PatternRecognitionEngine,
-    get_pattern_engine,
-)
+from src.prediction.auto_scheduler import AutoScheduler, ScheduleSlot, get_auto_scheduler
+from src.prediction.pattern_recognition import Pattern, PatternRecognitionEngine, get_pattern_engine
+from src.prediction.suggestion_system import SuggestionSystem, TaskSuggestion, get_suggestion_system
 from src.prediction.task_predictor import TaskPredictor, get_task_predictor
-from src.prediction.auto_scheduler import (
-    ScheduleSlot,
-    AutoScheduler,
-    get_auto_scheduler,
-)
-from src.prediction.suggestion_system import (
-    TaskSuggestion,
-    SuggestionSystem,
-    get_suggestion_system,
-)
 
 __all__ = [
     # Pattern Recognition

@@ -7,8 +7,8 @@ import hashlib
 import json
 import time
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Set
 from enum import Enum
+from typing import Any, Dict, List, Optional, Set
 
 from src.core.logger import setup_logger
 
@@ -193,9 +193,7 @@ class SyncEngine:
         """Get pending changes to sync"""
         return self.pending_changes.copy()
 
-    def apply_remote_changes(
-        self, remote_changes: List[SyncChange]
-    ) -> Dict[str, Any]:
+    def apply_remote_changes(self, remote_changes: List[SyncChange]) -> Dict[str, Any]:
         """Apply changes from remote device"""
         self.status = SyncStatus.SYNCING
         results = {
@@ -230,9 +228,7 @@ class SyncEngine:
                     self.applied_changes.add(remote_change.change_id)
                 except Exception as e:
                     self.logger.error(f"Error applying change: {e}")
-                    results["errors"].append(
-                        {"change": remote_change.to_dict(), "error": str(e)}
-                    )
+                    results["errors"].append({"change": remote_change.to_dict(), "error": str(e)})
 
         # Clear applied pending changes
         self.pending_changes = [
@@ -256,8 +252,7 @@ class SyncEngine:
         local_changes = [
             c
             for c in self.pending_changes
-            if c.entity_id == remote_change.entity_id
-            and c.entity_type == remote_change.entity_type
+            if c.entity_id == remote_change.entity_id and c.entity_type == remote_change.entity_type
         ]
 
         if not local_changes:
@@ -280,10 +275,7 @@ class SyncEngine:
     def _changes_conflict(self, change1: SyncChange, change2: SyncChange) -> bool:
         """Check if two changes conflict"""
         # Both are deletes - no conflict
-        if (
-            change1.change_type == ChangeType.DELETE
-            and change2.change_type == ChangeType.DELETE
-        ):
+        if change1.change_type == ChangeType.DELETE and change2.change_type == ChangeType.DELETE:
             return False
 
         # Different checksums indicate conflict
@@ -323,9 +315,7 @@ class SyncEngine:
         # MANUAL or failed merge
         return None
 
-    def _merge_changes(
-        self, change1: SyncChange, change2: SyncChange
-    ) -> Optional[SyncChange]:
+    def _merge_changes(self, change1: SyncChange, change2: SyncChange) -> Optional[SyncChange]:
         """Attempt to merge two changes"""
         # Simple field-level merge
         merged_data = change1.data.copy()
@@ -369,9 +359,7 @@ class SyncEngine:
         """Get unresolved conflicts"""
         return [c for c in self.conflicts if not c.resolved]
 
-    def resolve_conflict_manually(
-        self, entity_id: str, resolution_change: SyncChange
-    ) -> bool:
+    def resolve_conflict_manually(self, entity_id: str, resolution_change: SyncChange) -> bool:
         """Manually resolve a conflict"""
         for conflict in self.conflicts:
             if conflict.entity_id == entity_id and not conflict.resolved:

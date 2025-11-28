@@ -33,9 +33,7 @@ class TagAnalytics:
         # Load usage data
         self._load_usage()
 
-    def record_tag_usage(
-        self, tag_id: str, item_id: str, context: Optional[Dict[str, Any]] = None
-    ):
+    def record_tag_usage(self, tag_id: str, item_id: str, context: Optional[Dict[str, Any]] = None):
         """Record tag usage"""
         usage_record = {
             "item_id": item_id,
@@ -78,9 +76,7 @@ class TagAnalytics:
             "path": hierarchy.get_path(tag_id),
         }
 
-    def get_usage_trends(
-        self, tag_id: str, days: int = 30
-    ) -> Dict[str, int]:
+    def get_usage_trends(self, tag_id: str, days: int = 30) -> Dict[str, int]:
         """Get usage trends over time"""
         usage_records = self.tag_usage.get(tag_id, [])
         cutoff_date = datetime.now() - timedelta(days=days)
@@ -118,9 +114,7 @@ class TagAnalytics:
                         if tag:
                             usage_counts[tag.name] += 1
 
-            sorted_tags = sorted(
-                usage_counts.items(), key=lambda x: x[1], reverse=True
-            )
+            sorted_tags = sorted(usage_counts.items(), key=lambda x: x[1], reverse=True)
             return sorted_tags[:limit]
 
     def get_unused_tags(self) -> List[str]:
@@ -134,9 +128,7 @@ class TagAnalytics:
 
         return unused
 
-    def get_tag_co_occurrences(
-        self, tag_id: str, limit: int = 10
-    ) -> List[Tuple[str, int]]:
+    def get_tag_co_occurrences(self, tag_id: str, limit: int = 10) -> List[Tuple[str, int]]:
         """Get tags frequently used together with this tag"""
         hierarchy = get_tag_hierarchy()
         co_occurrences = defaultdict(int)
@@ -156,9 +148,7 @@ class TagAnalytics:
                     if other_tag:
                         co_occurrences[other_tag.name] += 1
 
-        sorted_co_occurrences = sorted(
-            co_occurrences.items(), key=lambda x: x[1], reverse=True
-        )
+        sorted_co_occurrences = sorted(co_occurrences.items(), key=lambda x: x[1], reverse=True)
         return sorted_co_occurrences[:limit]
 
     def get_tag_distribution(self) -> Dict[str, int]:
@@ -208,8 +198,7 @@ class TagAnalytics:
                 "top_tags": self.get_top_tags(20),
                 "unused_tags": self.get_unused_tags(),
                 "tag_statistics": [
-                    self.get_tag_statistics(tag_id)
-                    for tag_id in list(hierarchy.tags.keys())[:50]
+                    self.get_tag_statistics(tag_id) for tag_id in list(hierarchy.tags.keys())[:50]
                 ],
                 "exported_at": datetime.now().isoformat(),
             }
@@ -255,9 +244,7 @@ class TagAnalytics:
         """Save usage data to disk"""
         try:
             data = {
-                "tag_usage": {
-                    tag_id: records for tag_id, records in self.tag_usage.items()
-                },
+                "tag_usage": {tag_id: records for tag_id, records in self.tag_usage.items()},
             }
 
             with open(self.usage_file, "w") as f:

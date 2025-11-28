@@ -5,8 +5,8 @@ Advanced search with multiple search strategies
 
 import re
 from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional, Set, Callable
 from enum import Enum
+from typing import Any, Callable, Dict, List, Optional, Set
 
 from src.core.logger import setup_logger
 
@@ -206,10 +206,7 @@ class SearchEngine:
 
         # If no text query, return filtered results
         if not query.query:
-            results = [
-                SearchResult(self._items[item_id], score=1.0)
-                for item_id in candidate_ids
-            ]
+            results = [SearchResult(self._items[item_id], score=1.0) for item_id in candidate_ids]
         else:
             # Apply text search
             results = self._text_search(query, candidate_ids)
@@ -249,16 +246,14 @@ class SearchEngine:
         text = text.lower()
 
         # Split on non-alphanumeric characters
-        tokens = re.findall(r'\w+', text)
+        tokens = re.findall(r"\w+", text)
 
         # Remove very short tokens
         tokens = [t for t in tokens if len(t) > 1]
 
         return tokens
 
-    def _apply_filters(
-        self, candidate_ids: Set[str], filters: List[SearchFilter]
-    ) -> Set[str]:
+    def _apply_filters(self, candidate_ids: Set[str], filters: List[SearchFilter]) -> Set[str]:
         """Apply filters to candidate items"""
         filtered_ids = candidate_ids.copy()
 
@@ -274,9 +269,7 @@ class SearchEngine:
 
         return filtered_ids
 
-    def _text_search(
-        self, query: SearchQuery, candidate_ids: Set[str]
-    ) -> List[SearchResult]:
+    def _text_search(self, query: SearchQuery, candidate_ids: Set[str]) -> List[SearchResult]:
         """Perform text search"""
         if query.mode == SearchMode.EXACT:
             return self._exact_search(query, candidate_ids)
@@ -295,9 +288,7 @@ class SearchEngine:
 
         return []
 
-    def _exact_search(
-        self, query: SearchQuery, candidate_ids: Set[str]
-    ) -> List[SearchResult]:
+    def _exact_search(self, query: SearchQuery, candidate_ids: Set[str]) -> List[SearchResult]:
         """Exact match search"""
         results = []
         query_lower = query.query.lower()
@@ -315,9 +306,7 @@ class SearchEngine:
 
         return results
 
-    def _partial_search(
-        self, query: SearchQuery, candidate_ids: Set[str]
-    ) -> List[SearchResult]:
+    def _partial_search(self, query: SearchQuery, candidate_ids: Set[str]) -> List[SearchResult]:
         """Partial match search (contains)"""
         results = []
         query_tokens = self._tokenize(query.query)
@@ -351,9 +340,7 @@ class SearchEngine:
 
         return results
 
-    def _fuzzy_search(
-        self, query: SearchQuery, candidate_ids: Set[str]
-    ) -> List[SearchResult]:
+    def _fuzzy_search(self, query: SearchQuery, candidate_ids: Set[str]) -> List[SearchResult]:
         """Fuzzy match search"""
         results = []
         query_tokens = self._tokenize(query.query)
@@ -385,9 +372,7 @@ class SearchEngine:
 
         return results
 
-    def _regex_search(
-        self, query: SearchQuery, candidate_ids: Set[str]
-    ) -> List[SearchResult]:
+    def _regex_search(self, query: SearchQuery, candidate_ids: Set[str]) -> List[SearchResult]:
         """Regular expression search"""
         results = []
 
@@ -406,9 +391,7 @@ class SearchEngine:
 
         return results
 
-    def _semantic_search(
-        self, query: SearchQuery, candidate_ids: Set[str]
-    ) -> List[SearchResult]:
+    def _semantic_search(self, query: SearchQuery, candidate_ids: Set[str]) -> List[SearchResult]:
         """Semantic search (basic implementation)"""
         # This is a simplified version
         # A full implementation would use embeddings and vector similarity

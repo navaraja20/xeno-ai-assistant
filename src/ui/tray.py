@@ -145,7 +145,9 @@ class SystemTrayApp:
 
     def show_notification(self, message, title="XENO", duration=3000):
         """Show tray notification"""
-        self.tray_icon.showMessage(title, message, QSystemTrayIcon.MessageIcon.Information, duration)
+        self.tray_icon.showMessage(
+            title, message, QSystemTrayIcon.MessageIcon.Information, duration
+        )
 
     def show_greeting(self):
         """Show greeting message"""

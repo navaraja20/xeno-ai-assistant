@@ -3,16 +3,12 @@ Plugin System - Comprehensive Demo
 Demonstrates plugin development, installation, and management
 """
 
-from datetime import datetime, timedelta
 import os
 import tempfile
+from datetime import datetime, timedelta
 from pathlib import Path
 
-from src.plugins import (
-    get_plugin_manager,
-    get_plugin_sdk,
-    PluginType,
-)
+from src.plugins import PluginType, get_plugin_manager, get_plugin_sdk
 
 
 def generate_sample_tasks():
@@ -24,15 +20,17 @@ def generate_sample_tasks():
         created = base_date + timedelta(days=i * 0.6)
         completed = created + timedelta(hours=18) if i % 3 != 0 else None
 
-        tasks.append({
-            "id": f"task_{i}",
-            "title": f"Task {i}",
-            "status": "completed" if completed else "pending",
-            "priority": ["high", "medium", "low"][i % 3],
-            "tags": [["work", "urgent"], ["personal"], ["review", "low-priority"]][i % 3],
-            "created_at": created.isoformat(),
-            "completed_at": completed.isoformat() if completed else None,
-        })
+        tasks.append(
+            {
+                "id": f"task_{i}",
+                "title": f"Task {i}",
+                "status": "completed" if completed else "pending",
+                "priority": ["high", "medium", "low"][i % 3],
+                "tags": [["work", "urgent"], ["personal"], ["review", "low-priority"]][i % 3],
+                "created_at": created.isoformat(),
+                "completed_at": completed.isoformat() if completed else None,
+            }
+        )
 
     return tasks
 
@@ -145,11 +143,11 @@ def demo_sample_plugins():
         print(f"  Most Productive Day: {results['most_productive_day']}")
 
         print(f"\n📊 Priority Distribution:")
-        for priority, count in results['priority_distribution'].items():
+        for priority, count in results["priority_distribution"].items():
             print(f"  • {priority}: {count}")
 
         print(f"\n💡 Insights:")
-        for insight in results['insights']:
+        for insight in results["insights"]:
             print(f"  • {insight}")
 
         # Deactivate
